@@ -1,4 +1,4 @@
-# PrivacyBIDSApp
+# metaprivBIDS
 
 This Python build tool enables a given user to calculate a variety of different data privacy metrics on tabular data from a user interface, with limited knowledge of coding.  
 
@@ -20,7 +20,7 @@ source venv/bin/activate
 You can then install the metaprivBIDS tool using git.
 
 ```console
-https://github.com/EmiKib/PrivacyBIDSApp.git
+git clone <respositories>
 ```
 
 
