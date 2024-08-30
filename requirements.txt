@@ -1,0 +1,9 @@
+PySide6
+numpy
+pandas
+matplotlib
+networkx
+suda2
+piflib
+seaborn
+tqdm
