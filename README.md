@@ -20,7 +20,7 @@ source venv/bin/activate
 You can then install the metaprivBIDS tool using git.
 
 ```console
-git clone <respositories>
+git clone https://github.com/CPernet/metaprivBIDS.git
 ```
 
 
