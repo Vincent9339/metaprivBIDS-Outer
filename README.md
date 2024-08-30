@@ -1,6 +1,6 @@
 # metaprivBIDS
 
-This Python build tool enables a given user to calculate a variety of different data privacy metrics on tabular data from a user interface, with limited knowledge of coding.  
+This Python build tool enables a given user to calculate a variety of different data privacy metrics on tabular data from a user interface.  
 
 # Input data format
 
