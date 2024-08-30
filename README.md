@@ -72,8 +72,6 @@ After the selected data has been loaded the user is then able to select columns 
 >[!NOTE]
 >Selecting which data field qualify as quasi-identifers is a subjective matter but is broadly defined as "A variable that can be used to identify an individual through association with another variable."
 
-<img width="987" alt="Screenshot 2024-08-29 at 10 58 14" src="https://github.com/user-attachments/assets/d930c0a0-5cb8-4b71-9acb-558603ca895a">
-
 
 The **Unique Value** field is sum of combined unique values in the column. So for this example the Age variable has 67 unique associated ages. The **Type** Field indicates if a variable is categorical e.g. Female Male or continous e.g. Age 20,21,22,23 ect. In case the user want to change a categorical variable to continous or vice versa they double cick on the cell in the type field and a drop down menu will appear. 
 The **Select Sensitive Attribute** is an option associated with L-diversity. 
@@ -82,8 +80,10 @@ The **Select Sensitive Attribute** is an option associated with L-diversity.
 
 Clicking on the Privacy Calculation button after selection of chosen fields, computes the metrics seen in the lower left corner. L-diversity is **None** indicating that no sensitive attribute has been selected for this specific use case. Importanly we notice that 997 rows are unique meaning that if an adversary were to have background knowledge of a specfic invidual or be in posession of external data that could be linked to this dataset (linkage attack) he/she would with high probability be able to uniquely identify a research subject. 
 
+<img width="978" alt="Screenshot 2024-08-30 at 15 00 04" src="https://github.com/user-attachments/assets/11cab63a-b029-4573-9685-0946e4687422">
+
 This is also indicated by **K-Anonymity**, a privacy-preserving technique ensuring that each record in the dataset is indistinguishable from at least k-1 other records, being equal to 1.
-We, in other words want to perform permutaiton to the data in effort to increase K's value, so we ensure that every participant is in at least k-1 other records. 
+K-anonymisation gets improved by generalising the, thus increasing K's value, ensuring that every participant is in at least k-1 other records. 
 
 >[!NOTE]
 >Determining the value of K is up to the individual user. Higher values of k imply a lower probability of re-identification, but also more distortion to the data hence a lower utility. 
