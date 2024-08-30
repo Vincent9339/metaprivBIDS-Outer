@@ -12,7 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
-from suda2 import suda_calculation, find_msu
+from suda_adapted import suda_calculation, find_msu
 import piflib.pif_calculator as pif
 from PySide6.QtWidgets import QTextBrowser
 import seaborn as sns
