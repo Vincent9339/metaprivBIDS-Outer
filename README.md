@@ -26,11 +26,11 @@ git clone https://github.com/CPernet/metaprivBIDS.git
 
 # Dependencies
 
-To execute the program make sure all dependencies from requirements.txt is avalible in a python 3 enviroment. 
-For a bulk download of all requirements run 
+To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3 enviroment. 
+
 
 ```console
-python dependencies.py
+pyproject.toml
 ```
 
 # Usage
