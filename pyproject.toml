@@ -21,8 +21,8 @@ networkx = "^3.3"
 numpy = "^2.1.0"
 
 [project.urls]
-homepage = "https://your_project_homepage.com"
-repository = "https://github.com/yourusername/metaprivBIDS"
+
+repository = "https://github.com/cpernet/metaprivBIDS"
 
 
 
