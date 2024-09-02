@@ -214,73 +214,55 @@ class FileAnalyzer(QMainWindow):
 
 
     def plot_tree_graph(self, column_name):
-        # Step 1: Create a new directed graph
+       
         G = nx.DiGraph()
-
-        # Step 2: Clear the graph completely
         G.clear()
-
-        # Step 3: Add the column name as the root node
         G.add_node(column_name)
 
-        # Step 4: Initialize the replacement node
         replacement_node = None
 
-        # Step 5: Track nodes and edges to add
         nodes_to_add = set()
         edges_to_add = set()
 
-        # Step 6: Track combined values so they don't get direct edges from the column name
         combined_values_set = set()
 
-        # Step 7: Process combined values from history
         if column_name in self.combined_values_history:
             for combined_values, replacement_value in self.combined_values_history[column_name]:
                 # Add the replacement value as a new node
                 replacement_node = replacement_value
                 nodes_to_add.add(replacement_node)
-                edges_to_add.add((column_name, replacement_node))  # Edge from column_name to replacement_node
+                edges_to_add.add((column_name, replacement_node))  
 
-                # For each combined value, link to the replacement node
                 for value in combined_values:
                     if pd.notna(value):
                         nodes_to_add.add(value)
-                        edges_to_add.add((replacement_node, value))  # Edge from replacement_node to old combined value
-                        combined_values_set.add(value)  # Track combined values
+                        edges_to_add.add((replacement_node, value))
+                        combined_values_set.add(value)  
 
-        # Step 8: Add values from the column that are not part of combined values directly to the column
         unique_values = self.data[column_name].unique()
         for value in unique_values:
             if pd.notna(value) and value not in combined_values_set:
                 nodes_to_add.add(value)
-                edges_to_add.add((column_name, value))  # Direct edge from column_name to value
+                edges_to_add.add((column_name, value)) 
 
-        # Step 9: Add nodes and edges to the graph
         G.add_nodes_from(nodes_to_add)
         G.add_edges_from(edges_to_add)
 
-        # Debugging: Print initial state
         print("Initial Nodes:", G.nodes())
         print("Initial Edges:", G.edges())
 
-        # Step 10: Remove edges from the root node to any nodes that are part of combined values
-        # Root should only connect to nodes that are not in combined values
         for node in G.successors(column_name):
             if node in combined_values_set:
                 G.remove_edge(column_name, node)
 
-        # Debugging: Print state after cleanup
         print("Nodes after cleanup:", G.nodes())
         print("Edges after cleanup:", G.edges())
-
-        # Step 11: Get positions for the nodes in the graph using graphviz_layout for hierarchy
         pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot')
 
-        # Step 12: Create a plot
+      
         plt.figure(figsize=(12, 8))
         nx.draw(G, pos, with_labels=True, node_size=1000, node_color='white', font_size=6, font_weight='normal', edge_color='black')
 
-        # Step 13: Add title and show plot
         plt.title(f'Tree Graph of Values in Column \"{column_name}\"', fontsize=12)
         plt.show()
 
@@ -299,7 +281,7 @@ class FileAnalyzer(QMainWindow):
 
             if ok and column_name:
                 unique_values = self.data[column_name].unique()
-                unique_values = [val for val in unique_values if pd.notna(val)]  # Remove NaN values
+                unique_values = [val for val in unique_values if pd.notna(val)] 
 
                 if len(unique_values) < 2:
                     QMessageBox.warning(self, "Not Enough Values", "The selected column does not have enough unique values to combine.")
@@ -311,12 +293,12 @@ class FileAnalyzer(QMainWindow):
                 # Create a dialog to select unique values
                 dialog = QDialog(self)
                 dialog.setWindowTitle("Select Values to Combine")
-                dialog.setStyleSheet("background-color: #121212; color: #FFFFFF;")  # Dialog background color
+                dialog.setStyleSheet("background-color: #121212; color: #FFFFFF;")  
                 layout = QVBoxLayout(dialog)
 
                 list_widget = QListWidget(dialog)
                 list_widget.setSelectionMode(QListWidget.MultiSelection)
-                list_widget.addItems(unique_values)  # Add values as strings
+                list_widget.addItems(unique_values)
 
                 # Style the list widget to ensure text visibility
                 list_widget.setStyleSheet("""
@@ -350,17 +332,11 @@ class FileAnalyzer(QMainWindow):
 
     def combine_selected_values(self, column_name, selected_items):
         selected_values = [item.text() for item in selected_items]
-
-        # Check if at least two items are selected
         if len(selected_values) < 2:
             QMessageBox.warning(self, "Insufficient Selection", "Please select at least two values to combine.")
             return
-
-        # Store original data for the column if not already stored
         if column_name not in self.original_columns:
             self.original_columns[column_name] = self.data[column_name].copy()
-
-        # Ask the user for the replacement value
         replacement_value, ok = QInputDialog.getText(self, "Combine Values", "Enter the new value for the selected items:")
         
         if ok and replacement_value:  # Check if the user clicked OK and provided a value
@@ -372,20 +348,12 @@ class FileAnalyzer(QMainWindow):
             if column_name not in self.combined_values_history:
                 self.combined_values_history[column_name] = []
             self.combined_values_history[column_name].append((selected_values, replacement_value))
-
-            # Ensure the column data is also treated as strings for replacement
             self.data[column_name] = self.data[column_name].astype(str)
-
-            # Replace the selected values with the new combined value in the data
             self.data[column_name] = self.data[column_name].replace(selected_values, replacement_value)
+ 
+            self.show_preview() 
 
-            # Show the updated data in the preview (refresh the view)
-            self.show_preview()  # This should refresh the data in your UI so you see the combined values
-
-            # Notify the user that the combination was successful
             QMessageBox.information(self, "Success", "Values have been successfully combined.")
-
-
 
 
 
@@ -393,22 +361,14 @@ class FileAnalyzer(QMainWindow):
 
     def describe_cig(self):
         if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
-            # Remove the 'RIG' column if it exists
             if 'RIG' in self.cigs_df.columns:
                 cigs_df_for_description = self.cigs_df.drop(columns=['RIG'])
             else:
                 cigs_df_for_description = self.cigs_df
             
-            # Compute descriptive statistics
             description = cigs_df_for_description.describe()
-
-            # Format the DataFrame to 2 decimal places
             description = description.applymap(lambda x: f"{x:.2f}")
-
-            # Convert the DataFrame to HTML table
             description_html = description.to_html(classes='dataframe', border=0)
-
-            # Define custom CSS to style the HTML content
             custom_css = """
             <style>
             .dataframe {
@@ -429,11 +389,9 @@ class FileAnalyzer(QMainWindow):
                 background-color: #2c2c2c;
             }
             </style>
-            """
-
-            # Update the QTextBrowser with the HTML content
+            """    
             self.cig_result_browser.setHtml(f"{custom_css}<html><body>{description_html}</body></html>")
-            self.cig_result_browser.setMaximumHeight(400)  # Optional: Set maximum height
+            self.cig_result_browser.setMaximumHeight(400)  
         else:
             self.cig_result_browser.setPlainText("Please compute CIG before describing it.")
 
@@ -449,11 +407,8 @@ class FileAnalyzer(QMainWindow):
     def generate_heatmap(self):
         if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
             cigs_df_no_rig = self.cigs_df.drop(columns=['RIG'])
-
-            # Generate a colormap
             color_map = mcolors.ListedColormap(sns.color_palette("RdYlGn", 256).as_hex()[::-1])
-
-            # Save the heatmap to a file
+      
             heatmap_filename = "heatmap.png"
             plt.figure(figsize=(10, 8))
             sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
@@ -463,12 +418,12 @@ class FileAnalyzer(QMainWindow):
             plt.savefig(heatmap_filename, bbox_inches='tight', pad_inches=0.1)  # Save the heatmap image
             plt.close()  # Close the plot to free up memory
 
-            # Create QLabel for the heatmap if it does not exist
+
             if not hasattr(self, 'heatmap_label'):
                 self.heatmap_label = QLabel()
                 self.privacy_info_layout.addWidget(self.heatmap_label)
 
-            # Update the QLabel with the heatmap image
+          
             self.heatmap_label.setPixmap(QPixmap(heatmap_filename))
             self.heatmap_label.show()
             self.close_heatmap_button.show()  # Ensure the close button is visible
@@ -481,22 +436,16 @@ class FileAnalyzer(QMainWindow):
         import piflib.pif_calculator as pif
         from PySide6.QtWidgets import QInputDialog
         import numpy as np
-
-        # Get the selected columns
         selected_columns = self.get_selected_columns()
 
         if not selected_columns:
             self.cig_result_browser.setPlainText("Please select at least one column.")
             return
-
-        # Use the full data stored in self.data
         df = self.data[selected_columns]
 
         if df.empty:
             self.cig_result_browser.setPlainText("Data not available.")
             return
-
-        # Ask the user if they want to apply a mask
         mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or leave blank to skip):')
 
         if ok and mask_value != '':
@@ -507,21 +456,18 @@ class FileAnalyzer(QMainWindow):
                 self.cig_result_browser.setPlainText("Invalid mask value. Please enter a number.")
                 return
 
-            # Compute CIGs using the selected columns DataFrame and apply the mask
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
-
-            # Apply the mask by setting masked positions to 0
             cigs_df[mask] = 0
         else:
-            # Compute CIGs without masking
+       
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
 
-        # Calculate RIG column (sum across rows)
+    
         cigs_df['RIG'] = cigs_df.sum(axis=1)
 
-        # Ask user for percentile value
+   
         percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
 
         if not ok:
@@ -531,15 +477,15 @@ class FileAnalyzer(QMainWindow):
         # Calculate the PIF
         pif_value = np.percentile(cigs_df['RIG'], percentile)
 
-        # Store the computed CIGs for heatmap generation
+     
         self.cigs_df = cigs_df
         cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)
 
-        # Format the DataFrame for display, excluding the RIG column
+   
         
         cigs_df_display = cigs_df_display.applymap(lambda x: f"{x:.2f}")
 
-        # Convert the DataFrame to an HTML table with custom CSS
+
         cigs_html = cigs_df_display.to_html(classes='dataframe', index=True, border=0)
         custom_css = """
         <style>
@@ -561,14 +507,9 @@ class FileAnalyzer(QMainWindow):
         </style>
         """
 
-        # Update the QTextBrowser with the HTML content
+    
         self.cig_result_browser.setHtml(f"{custom_css}<html><body><p>PIF at {percentile}th percentile: {pif_value:.2f}</p>{cigs_html}</body></html>")
         self.cig_result_browser.setMaximumHeight(400)
-
-        
-
-
-
 
 
 
@@ -601,7 +542,7 @@ class FileAnalyzer(QMainWindow):
             QMessageBox.warning(self, 'Error', 'No data loaded.')
             return
 
-        # Prompt user for max_msu and dis values
+
         max_msu, ok = QInputDialog.getInt(self, "Input", "Enter the max_msu value:", 2, 1, 10, 1)
         if not ok:
             return  # User cancelled or input is invalid
@@ -610,10 +551,10 @@ class FileAnalyzer(QMainWindow):
         if not ok:
             return  # User cancelled or input is invalid
 
-        # Reset the data to its original state to avoid issues with subsequent runs
+ 
         self.data = self.original_data.copy()
 
-        # Get the selected columns
+ 
         selected_columns = self.get_selected_columns()
         original_index = self.data.index
 
@@ -623,7 +564,7 @@ class FileAnalyzer(QMainWindow):
             QMessageBox.warning(self, 'Error', 'No columns selected.')
             return
 
-        # Perform SUDA calculation with user-specified parameters
+  
         suda_result = suda_calculation(filtered_data, max_msu=max_msu, dis=dis)
         suda_result['original_index'] = original_index
         columns = ['original_index'] + [col for col in suda_result.columns if col != 'original_index']
@@ -636,12 +577,6 @@ class FileAnalyzer(QMainWindow):
         
         mad_formatted = f"{mad:.5f}"
         
-        # Add MAD as a new column in suda_result
-        
-        
-        
-        
-        # Show the SUDA results
         self.show_results_dialog(suda_result, result_type="suda", mad_value=mad_formatted)
 
 
@@ -659,7 +594,6 @@ class FileAnalyzer(QMainWindow):
             QMessageBox.warning(self, "Warning", "Please select at least one column.")
             return
 
-        # Ask user for the combination range (min and max)
         min_size, ok_min = QInputDialog.getInt(self, "Select Minimum Combination Size", "Enter minimum combination size:", 3, 1, len(selected_columns))
         if not ok_min:
             return  # User canceled the input dialog
@@ -671,129 +605,107 @@ class FileAnalyzer(QMainWindow):
         results = []
         total_unique_rows = None
 
-        # Generate combinations for different sizes based on user input
         for r in range(min_size, max_size + 1):  # Adjust based on user input
             print(f"Processing combinations of size {r}...")
             
-            # Generate all combinations of size r
             all_combinations = combinations(selected_columns, r)
             
             for comb in all_combinations:
                 selected_cols = list(comb)
-                
-                # Compute value counts for the selected columns
                 value_counts = self.data[selected_cols].value_counts()
-                
-                # Count how many rows have exactly one occurrence (i.e., unique rows)
                 num_unique_rows = len(value_counts[value_counts == 1])
-                
-                # Calculate unique rows excluding the specified columns
+                        
                 remaining_columns = [col for col in selected_columns if col not in selected_cols]
                 
-                # Ensure remaining_columns is not empty
+       
                 if remaining_columns:
                     value_counts_excluded = self.data[remaining_columns].value_counts()
                     num_excluded_unique_rows = len(value_counts_excluded[value_counts_excluded == 1])
                 else:
                     num_excluded_unique_rows = 0  # If no remaining columns, set to 0
                 
-                # Store the results in a dictionary
+            
                 results.append({
                     'Combination': ', '.join(selected_cols),
                     'Unique Rows': num_unique_rows,
                     'Unique Rows Excluding Columns': num_excluded_unique_rows
                 })
         
-        # Convert the results into a DataFrame
+      
         all_combinations_df = pd.DataFrame(results)
         
-        # Compute total unique rows
+      
         if total_unique_rows is None:
             total_value_counts = self.data[selected_columns].value_counts()
             total_unique_rows = len(total_value_counts[total_value_counts == 1])
         
-        # Compute the score
+    
         all_combinations_df['Score'] = (total_unique_rows - all_combinations_df['Unique Rows Excluding Columns']) / all_combinations_df['Unique Rows']
         
-        # Show results in the dialog
+  
         self.show_results_dialog(all_combinations_df)
 
 
 
 
     def show_results_dialog(self, results_df, result_type="combined", mad_value=None):
-        # Create a QDialog window
+    
         dialog = QDialog(self)
 
-        # Set the window title based on the result type
         if result_type == "suda":
             dialog.setWindowTitle("SUDA Calculation Results")
         else:
             dialog.setWindowTitle("Combined Column Contribution Results")
 
-        # Style the dialog window
         dialog.setStyleSheet("background-color: #121212; color: #FFFFFF;")
         layout = QVBoxLayout(dialog)
 
-        # If mad_value is provided, show it as a QLabel at the top of the dialog
         if mad_value is not None:
             mad_label = QLabel(f"Median Absolute Deviation (MAD): {mad_value}")
             mad_label.setStyleSheet("font-size: 14px; color: #FFFFFF;")
             layout.addWidget(mad_label)
 
-        # Create a QTableView for displaying the results
+    
         results_table = QTableView()
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(results_df.columns)
 
-        # Populate the table with the results
+    
         for row in results_df.itertuples(index=False):
             items = [QStandardItem(str(item)) for item in row]
             model.appendRow(items)
 
         results_table.setModel(model)
 
-        # Set table properties
         results_table.setSortingEnabled(True)  # Enable sorting of columns
         results_table.resizeColumnsToContents()  # Auto resize columns to fit content
 
-        # Add the table to the layout
         layout.addWidget(results_table)
 
-        # Add a "Save as CSV" button
         save_button = QPushButton("Save as CSV")
         save_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
         layout.addWidget(save_button)
 
-        # Save the CSV file when the button is clicked
         def save_as_csv():
-            # Get the current timestamp
+      
             timestamp = QDateTime.currentDateTime().toString("yyyyMMdd_HHmmss")
-
-            # Create a default filename based on result type and timestamp
+       
             if result_type == "suda":
                 default_filename = f"sudaresult_{timestamp}.csv"
             else:
                 default_filename = f"combinedresult_{timestamp}.csv"
 
-            # Show a QFileDialog to allow the user to choose the save location
             file_path, _ = QFileDialog.getSaveFileName(dialog, "Save as CSV", default_filename, "CSV Files (*.csv)")
 
-            # If the user provided a path, save the CSV file
             if file_path:
                 results_df.to_csv(file_path, index=False)
                 QMessageBox.information(dialog, "Success", f"File saved as {file_path}")
 
-        # Connect the button click event to the save_as_csv function
+      
         save_button.clicked.connect(save_as_csv)
 
-        # Resize and show the dialog
         dialog.resize(800, 600)
         dialog.exec()
-
-
-
-
 
 
     def update_value_list(self):
@@ -807,10 +719,6 @@ class FileAnalyzer(QMainWindow):
     def get_categorical_columns(self):
         return [self.columns_model.item(row, 0).text() for row in range(self.columns_model.rowCount())
                 if self.columns_model.item(row, 2).text() == "Categorical"]
-
-
-
-
 
 
 
@@ -832,7 +740,7 @@ class FileAnalyzer(QMainWindow):
         self.columns_model.setHorizontalHeaderLabels(["Select Columns", "Unique Value", "Type", "Select Sensitive Attribute"])
         self.columns_view.setModel(self.columns_model)
 
-        # Set up the delegate for the "Type" column
+
         self.type_delegate = ComboBoxDelegate(self.columns_view)
         self.columns_view.setItemDelegateForColumn(2, self.type_delegate)
 
@@ -849,10 +757,10 @@ class FileAnalyzer(QMainWindow):
         variable_optimization_layout.addWidget(self.results_view)
 
     def add_preview_page_widgets(self, layout):
-        # Create a horizontal layout for buttons
+
         button_layout = QHBoxLayout()
         
-        # Existing buttons
+  
         button_data = [
             ('Round Continuous Values', '673AB7', self.round_values),
             ('Add Laplacian Noise', '009688', lambda: self.add_noise('laplacian')),
@@ -867,7 +775,7 @@ class FileAnalyzer(QMainWindow):
             button.clicked.connect(func)
             button_layout.addWidget(button)
         
-        # Add the new "Graph Categorical" button
+     
         self.graph_button = QPushButton('Graph Categorical')
         self.graph_button.setStyleSheet("background-color: #3F51B5; color: #FFFFFF;")
         self.graph_button.clicked.connect(self.show_graph_categorical_dialog)
@@ -875,12 +783,12 @@ class FileAnalyzer(QMainWindow):
         
         layout.addLayout(button_layout)
 
-        # Metadata display
+      
         self.metadata_display = QLabel('')
         self.metadata_display.setStyleSheet("color: #FFFFFF;")
         layout.addWidget(self.metadata_display)
 
-        # Create vertical layout for metadata controls
+    
         metadata_layout = QVBoxLayout()
         self.column_dropdown = QComboBox()
         self.column_dropdown.addItem("Select Column")
@@ -921,7 +829,6 @@ class FileAnalyzer(QMainWindow):
     def add_noise(self, noise_type):
 
         print(f"Add noise triggered with type: {noise_type}") 
-        # Get columns of type "Continuous"
         continuous_columns = [self.columns_model.item(row, 0).text() for row in range(self.columns_model.rowCount())
                               if self.columns_model.item(row, 2).text() == "Continuous"]
 
@@ -945,7 +852,7 @@ class FileAnalyzer(QMainWindow):
                 QMessageBox.critical(self, "Error", f"An error occurred while adding noise: {e}")
 
     def setup_treeview(self, view):
-        # Configure tree view
+    
         is_columns_view = view is self.columns_view
         view.setSelectionMode(QTreeView.MultiSelection if is_columns_view else QTreeView.NoSelection)
         view.setStyleSheet("background-color: #121212; color: #FFFFFF;")
@@ -988,22 +895,18 @@ class FileAnalyzer(QMainWindow):
         if selected_columns:
             sensitive_attr = self.get_sensitive_attribute()
             try:
-                # Calculate the number of unique rows
+            
                 value_counts = self.data[selected_columns].value_counts()
                 num_unique_rows = len(value_counts[value_counts == 1])
-                
-                # Calculate the total number of rows
+            
                 total_rows = len(self.data)
-                
-                # Calculate the total number of columns and the number of selected columns
+            
                 total_columns = len(self.data.columns)
                 num_selected_columns = len(selected_columns)
-                
-                # Calculate k-anonymity and l-diversity
                 k_anonymity = self.calculate_k_anonymity(selected_columns)
                 l_diversity = self.calculate_l_diversity(selected_columns, sensitive_attr) if sensitive_attr else None
                 
-                # Prepare the result text
+              
                 result_text = (f"Total Rows: {total_rows}\n"
                                f"Total Columns: {total_columns}\n"
                                f"Selected Columns: {num_selected_columns}\n"
@@ -1073,7 +976,7 @@ class FileAnalyzer(QMainWindow):
                 items = [NumericStandardItem(str(item)) if isinstance(item, (int, float)) else QStandardItem(str(item)) for item in row]
                 model.appendRow(items)
             self.preview_table.setModel(model)
-            self.preview_table.setMaximumHeight(200)  # Set a maximum height for the preview table
+            self.preview_table.setMaximumHeight(200) 
             self.update_column_dropdown()
             self.stacked_widget.setCurrentWidget(self.preview_page)
         else:
