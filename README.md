@@ -17,20 +17,19 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-You can then install the metaprivBIDS tool using git.
+You can then install metaprivBIDS by cloning the git respository.
 
 ```console
 git clone https://github.com/CPernet/metaprivBIDS.git
 ```
 
-
 # Dependencies
 
-To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3 enviroment. 
-
+To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment. 
+This can be done by running
 
 ```console
-pyproject.toml
+pip install .
 ```
 
 # Usage
