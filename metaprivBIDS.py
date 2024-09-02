@@ -228,7 +228,7 @@ class FileAnalyzer(QMainWindow):
 
         if column_name in self.combined_values_history:
             for combined_values, replacement_value in self.combined_values_history[column_name]:
-                # Add the replacement value as a new node
+      
                 replacement_node = replacement_value
                 nodes_to_add.add(replacement_node)
                 edges_to_add.add((column_name, replacement_node))  
