@@ -85,7 +85,7 @@ class FileAnalyzer(QMainWindow):
         self.add_buttons(self.main_page_layout)
         self.add_frames(self.main_page_layout)
 
-        # Create a horizontal layout for the "Combine Column Contribution" button
+  
         combine_button_layout = QHBoxLayout()
         combine_button_layout.addStretch(1)  # Pushes the button to the right
 
@@ -94,7 +94,7 @@ class FileAnalyzer(QMainWindow):
         self.combine_column_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
         self.combine_column_button.clicked.connect(self.compute_combined_column_contribution)
 
-        # Add the button to the bottom-right layout
+
         combine_button_layout.addWidget(self.combine_column_button)
 
         # Add the horizontal layout to the main page layout
