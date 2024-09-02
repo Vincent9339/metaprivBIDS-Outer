@@ -52,7 +52,7 @@ The dataset consists of 30 sub-dataset including measurements such as blood pane
 [^2]: [Demographics File Download Link.](https://openneuro.org/datasets/ds004215/versions/1.0.3/file-display/phenotype:demographics.tsv)
 
 ## Main Page 
-running the 
+Running the 
 
 ```console
 python metaprivBIDS.py
