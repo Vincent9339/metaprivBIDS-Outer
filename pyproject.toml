@@ -6,7 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "metaprivBIDS"
 version = "0.1.0"
 description = "A tool for assessing data privacy in tabular data."
+<<<<<<< HEAD
 authors = [{name = "Your Name", email = "you@example.com"}]
+=======
+
+
+>>>>>>> 7cd6c13020f426e1dcd4cbec7baa8b6dbd0093fd
 license = {text = "MIT License"}
 readme = "README.md"
 requires-python = ">=3.7"
@@ -21,4 +26,13 @@ dependencies = [
 ]
 
 [project.urls]
+<<<<<<< HEAD
 repository = "https://github.com/yourusername/metaprivBIDS"
+=======
+
+repository = "https://github.com/cpernet/metaprivBIDS"
+
+
+
+
+>>>>>>> 7cd6c13020f426e1dcd4cbec7baa8b6dbd0093fd
