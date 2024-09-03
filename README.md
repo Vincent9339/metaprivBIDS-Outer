@@ -102,6 +102,21 @@ The combined column contribution button computes the normalized value score for 
 Computes the "Special unique" using the Special Uniques Detection Algorithm (SUDA).
 The principle behind this concept is that a microdata record that is unique within a dataset based on broader, less detailed information is more vulnerable to re-identification than a record that is unique based on finer, more detailed information. A specific example of this occurs when a record is unique based on a set of variables, K, and remains unique on a subset of K. Such a record is referred to as a "special unique" with respect to the variable set K.
 
+In order to estimate record-level disclosure risks, SUDA scores can be used in combination with the Data Intrusion Simulation (DIS) metric 
+
+$$
+\text { Data Intrusion Simulation DIS: } =\frac{U \times S}{U \times S+P \times(1-S)}
+$$
+
+
+
+
+The DIS-SUDA method allocates the file-level risk assessed by the DIS metric across individual records based on their SUDA scores. By calibrating the SUDA scores against this consistent measure, it generates DIS-SUDA scores, which reflect the disclosure risk at the record level.
+
+
+
+<img width="790" alt="Screenshot 2024-09-03 at 12 11 36" src="https://github.com/user-attachments/assets/eeb6ae58-7d45-4cf0-be87-c5d518d2f4fd">
+
 ###### Elliot, M., Manning, A., Mayes, K., Gurd, J. and Bane, M., 2005. SUDA: A program for detecting special uniques. Proceedings of the Joint UNECE/Eurostat Work Session on Statistical Data Confidentiality, pp.353-362.
 
 ## Preview Data  
