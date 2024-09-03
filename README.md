@@ -60,7 +60,7 @@ python metaprivBIDS.py
 
 prompts the program to start and opens up the main page of metaprivBIDS. within the main page we then have a variety of data handling options. 
 
-#### **Load TSV/CSV File:** 
+### **Load TSV/CSV File:** 
 
 Prompts the user with a window to select files avalible on their device. 
 
@@ -73,7 +73,7 @@ After the selected data has been loaded, the user is then able to select columns
 The **Unique Value** field is sum of combined unique values in the column. So for this example the Age variable has 67 unique associated ages. The **Type** Field indicates if a variable is categorical e.g. Female Male or continous e.g. Age 20,21,22,23 ect. In case the user want to change a categorical variable to continuous or vice versa they double click on the cell in the type field and a drop down menu will appear. 
 The **Select Sensitive Attribute** is an option associated with L-diversity. 
 
-#### **Privacy Calculation:** 
+### **Privacy Calculation:** 
 
 Clicking on the Privacy Calculation button after selection of chosen fields, computes the metrics seen in the lower left corner. Here L-diversity is **None** indicating that no sensitive attribute has been selected for this specific use case. Importanly we notice that 997 rows are unique meaning that if an adversary were to have background knowledge of a specific invidual or be in posession of external data that could be linked to this dataset (linkage attack) he/she would with high probability be able to uniquely identify a participant. 
 
@@ -89,13 +89,13 @@ K-anonymisation gets improved by generalising the data, thus increasing K's valu
 
 
 
-#### **Variable Optimization:** 
+### **Variable Optimization:** 
 
 The Variable Optimization button calculates the metrics found in the second window below the initial load of data window in the top. Here the **Quasi Identifer** field display the fields chosen. The **Unique Rows After Removal** fields indicates how many unique rows would be left after removing the specfic field from the dataset completely. The **Difference** is calculated by the the *Unique rows - Unique Rows After Removal*. The **Normalized** field is calculated by $\frac{\text {Difference}}{\text{Unique Value}}$,  giving the normalized value score for the individual field.
 
-#### **Combined Column Contribution**
+### **Combined Column Contribution**
 
-#### **SUDA Compute** 
+### **SUDA Compute** 
 
 Computes the "Special unique" using the Special Uniques Detection Algorithm (SUDA).
 The principle behind this concept is that a microdata record that is unique within a dataset based on broader, less detailed information is more vulnerable to re-identification than a record that is unique based on finer, more detailed information. A specific example of this occurs when a record is unique based on a set of variables, K, and remains unique on a subset of K. Such a record is referred to as a "special unique" with respect to the variable set K.
