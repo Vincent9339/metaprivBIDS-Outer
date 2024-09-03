@@ -109,11 +109,16 @@ $$
 $$
 
 
+U: Number of unique records in the sample.
+S: Sampling fraction (percentage of data removed and replaced).
+P: Number of records in pairs (records that have duplicates or are not unique).
 
 
-The DIS-SUDA method allocates the file-level risk assessed by the DIS metric across individual records based on their SUDA scores. By calibrating the SUDA scores against this consistent measure, it generates DIS-SUDA scores, which reflect the disclosure risk at the record level.
 
+The DIS-SUDA method allocates the file-level risk assessed by the DIS metric across individual records based on their SUDA scores. 
+By calibrating the SUDA scores against this consistent measure, it generates DIS-SUDA scores, which reflect the disclosure risk at the record level.
 
+Computing the metric on the NIMH dataset would result in the display below
 
 <img width="790" alt="Screenshot 2024-09-03 at 12 11 36" src="https://github.com/user-attachments/assets/eeb6ae58-7d45-4cf0-be87-c5d518d2f4fd">
 
