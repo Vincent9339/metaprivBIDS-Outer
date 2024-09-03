@@ -95,22 +95,22 @@ The Variable Optimization button calculates the metrics found in the second wind
 
 ### **Combined Column Contribution**
 
-#  SUDA Compute
+##  SUDA Compute
 
 Computes the "Special unique" using the Special Uniques Detection Algorithm (SUDA).
 The principle behind this concept is that a microdata record that is unique within a dataset based on broader, less detailed information is more vulnerable to re-identification than a record that is unique based on finer, more detailed information. A specific example of this occurs when a record is unique based on a set of variables, K, and remains unique on a subset of K. Such a record is referred to as a "special unique" with respect to the variable set K.
 
 ###### Elliot, M., Manning, A., Mayes, K., Gurd, J. and Bane, M., 2005. SUDA: A program for detecting special uniques. Proceedings of the Joint UNECE/Eurostat Work Session on Statistical Data Confidentiality, pp.353-362.
 
-# Preview Data  
+## Preview Data  
 Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
 
-# Privacy Information Factor (PIF)
+## Privacy Information Factor (PIF)
 
 
 
 
-# Related tools
+## Related tools
 
 - https://github.com/JiscDACT/suda/blob/main/test/test_suda.py
 
