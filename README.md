@@ -124,11 +124,35 @@ Computing the metric on the NIMH dataset would result in the display below
 
 ###### Elliot, M., Manning, A., Mayes, K., Gurd, J. and Bane, M., 2005. SUDA: A program for detecting special uniques. Proceedings of the Joint UNECE/Eurostat Work Session on Statistical Data Confidentiality, pp.353-362.
 
-## Preview Data  
-Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
 
 ## Privacy Information Factor (PIF)
 
+Pushing the privacy Information Factor button prompts the window below
+
+<img width="966" alt="Screenshot 2024-09-03 at 12 57 44" src="https://github.com/user-attachments/assets/d2302d56-d3fa-475a-8e92-27d806c1f5d5">
+
+The PIF tool enables the user to compute the Cell Information Gain (CIG) through the KL-divergence between the distribution of values of the whole dataset (the features' priors) and the distribution of a feature values given all remaining features' values (posterior).
+
+
+$$
+\begin{aligned}
+D_{\mathrm{KL}}(P \| Q) & =-\sum_{x \in \mathcal{X}} p(x) \log q(x)+\sum_{x \in \mathcal{X}} p(x) \log p(x) \\
+& =\mathrm{H}(P, Q)-\mathrm{H}(P)
+\end{aligned}
+$$
+
+P(x): is the posterior distribution (the actual distribution of values given the context).
+Q(x): the prior distribution (the expected distribution of values without knowing the context).
+
+Quantifies  how "surprising" or "unexpected" the value of a feature is, given everything else we know about the person. If the value is highly unexpected, it provides more information, and thus, the information gain (CIG) is higher.
+
+
+
+
+
+
+## Preview Data  
+Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
 
 
 
