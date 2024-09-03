@@ -95,6 +95,8 @@ The Variable Optimization button calculates the metrics found in the second wind
 
 ### **Combined Column Contribution**
 
+The combined column contribution button computes the normalized value score for the all possible combination of combined fields, providing an overview of which columns in combination results in the highest number of unique rows normalized based on the columns unique values.
+
 ##  SUDA Compute
 
 Computes the "Special unique" using the Special Uniques Detection Algorithm (SUDA).
