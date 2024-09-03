@@ -21,7 +21,7 @@ dependencies = [
 ]
 
 [project.urls]
-repository = "https://github.com/yourusername/metaprivBIDS"
+repository = "https://github.com/cpernet/metaprivBIDS"
 
 [tool.setuptools]
 packages = ["metaprivBIDS"]
