@@ -102,10 +102,10 @@ The principle behind this concept is that a microdata record that is unique with
 
 ###### Elliot, M., Manning, A., Mayes, K., Gurd, J. and Bane, M., 2005. SUDA: A program for detecting special uniques. Proceedings of the Joint UNECE/Eurostat Work Session on Statistical Data Confidentiality, pp.353-362.
 
-#### **Preview Data:** 
+### **Preview Data:** 
 Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
 
-#### **Privacy Information Factor (PIF)**
+### **Privacy Information Factor (PIF)**
 
 
 
