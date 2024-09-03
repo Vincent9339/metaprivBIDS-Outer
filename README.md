@@ -127,7 +127,7 @@ Computing the metric on the NIMH dataset would result in the display below
 
 ## Privacy Information Factor (PIF)
 
-Pushing the privacy Information Factor button prompts the window below
+Pushing the privacy Information Factor button and then the Compute CIG button prompts the window below
 
 <img width="966" alt="Screenshot 2024-09-03 at 12 57 44" src="https://github.com/user-attachments/assets/d2302d56-d3fa-475a-8e92-27d806c1f5d5">
 
@@ -145,7 +145,12 @@ P(x): is the posterior distribution (the actual distribution of values given the
 Q(x): the prior distribution (the expected distribution of values without knowing the context).
 
 Quantifies  how "surprising" or "unexpected" the value of a feature is, given everything else we know about the person. If the value is highly unexpected, it provides more information, and thus, the information gain (CIG) is higher.
+After computation of the CIG values the **RIG** field is calculated by summation of the individual cell in the given row, the user is then able to quantify which rows pose the highest risk of reidentifcation. 
 
+Likewise we can compute the Field Information Gain (FIG) and visualise it through the **Generate CIG Heatmap** button. 
+
+
+<img width="769" alt="Screenshot 2024-09-03 at 13 56 54" src="https://github.com/user-attachments/assets/53295987-bac9-47bc-aac1-4dca3715613e">
 
 
 
