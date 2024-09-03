@@ -89,20 +89,23 @@ K-anonymisation gets improved by generalising the data, thus increasing K's valu
 
 
 
-**Variable Optimization:** 
+#### **Variable Optimization:** 
 
 The Variable Optimization button calculates the metrics found in the second window below the initial load of data window in the top. Here the **Quasi Identifer** field display the fields chosen. The **Unique Rows After Removal** fields indicates how many unique rows would be left after removing the specfic field from the dataset completely. The **Difference** is calculated by the the *Unique rows - Unique Rows After Removal*. The **Normalized** field is calculated by $\frac{\text {Difference}}{\text{Unique Value}}$,  giving the normalized value score for the individual field.
 
+#### **Combined Column Contribution**
 
-## SUDA Compute 
+#### **SUDA Compute** 
 
 Computes the "Special unique" using the Special Uniques Detection Algorithm (SUDA).
 The principle behind this concept is that a microdata record that is unique within a dataset based on broader, less detailed information is more vulnerable to re-identification than a record that is unique based on finer, more detailed information. A specific example of this occurs when a record is unique based on a set of variables, K, and remains unique on a subset of K. Such a record is referred to as a "special unique" with respect to the variable set K.
 
 ###### Elliot, M., Manning, A., Mayes, K., Gurd, J. and Bane, M., 2005. SUDA: A program for detecting special uniques. Proceedings of the Joint UNECE/Eurostat Work Session on Statistical Data Confidentiality, pp.353-362.
 
-## **Preview Data:** 
+#### **Preview Data:** 
 Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
+
+#### **Privacy Information Factor (PIF)**
 
 
 
