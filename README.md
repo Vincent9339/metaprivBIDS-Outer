@@ -157,8 +157,14 @@ Likewise we can compute the Field Information Gain (FIG) and visualise it throug
 
 
 ## Preview Data  
-Takes the user to a different page where an example of the data is avilable along with different anonymisation tool.
+Takes the user to a different page where an example of the data is avilable along with different anonymisation tool as well as an option to load in json files for metadata specifications. 
 
+
+<img width="961" alt="Screenshot 2024-09-04 at 11 13 30" src="https://github.com/user-attachments/assets/2834e65c-f6d1-49c4-91a7-b6139174c317">
+
+The graph categorical button enables the user to keep track of the combined variables from different columns so the user is able track changes. Below is an example of 1,3,4,5 and 6 being combined into a new variable Single. 
+
+<img width="1036" alt="Screenshot 2024-09-04 at 11 17 22" src="https://github.com/user-attachments/assets/dc8b03ff-5591-4021-bbdf-3cb4651df816">
 
 
 ## Related tools
