@@ -12,7 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
-from suda_adapted import suda_calculation, find_msu
+from .suda_adapted import suda_calculation, find_msu
 import piflib.pif_calculator as pif
 from PySide6.QtWidgets import QTextBrowser
 import seaborn as sns
@@ -1050,8 +1050,13 @@ class FileAnalyzer(QMainWindow):
     def show_hierarchical_page(self):
         self.stacked_widget.setCurrentWidget(self.hierarchical_page)
 
-if __name__ == "__main__":
+def main():
+    # This is where your GUI is launched
     app = QApplication(sys.argv)
-    window = FileAnalyzer()
+    window = FileAnalyzer()  # Assuming FileAnalyzer is your main window
     window.show()
     sys.exit(app.exec())
+
+# This block will only run if the script is executed directly
+if __name__ == "__main__":
+    main()
