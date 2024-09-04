@@ -29,7 +29,7 @@ To execute the program make sure all dependencies from pyproject.toml is avalibl
 This can be done by running
 
 ```console
-pip install .
+pip install -e . 
 ```
 
 # Usage
@@ -37,9 +37,10 @@ pip install .
 To execute the program run from command line 
 
 ```console
-python metaprivBIDS.py
+metaprivBIDS
 ```
 
+prompting the program to start
 # NIMH Use Case 
 
 A comprehensive dataset characterizing healthy research volunteers in terms of clinical assessments, mood-related psychometrics, cognitive function neuropsychological tests, structural and functional magnetic resonance imaging (MRI), along with diffusion tensor imaging (DTI), and a comprehensive magnetoencephalography battery (MEG).[^1]
@@ -55,7 +56,7 @@ The dataset consists of 30 sub-dataset including measurements such as blood pane
 Running the 
 
 ```console
-python metaprivBIDS.py
+metaprivBIDS
 ```
 
 prompts the program to start and opens up the main page of metaprivBIDS. within the main page we then have a variety of data handling options. 
