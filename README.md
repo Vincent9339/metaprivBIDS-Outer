@@ -40,7 +40,8 @@ To execute the program run from command line
 metaprivBIDS
 ```
 
-prompting the program to start
+prompting the program to start.
+
 # NIMH Use Case 
 
 A comprehensive dataset characterizing healthy research volunteers in terms of clinical assessments, mood-related psychometrics, cognitive function neuropsychological tests, structural and functional magnetic resonance imaging (MRI), along with diffusion tensor imaging (DTI), and a comprehensive magnetoencephalography battery (MEG).[^1]
