@@ -6,10 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "metaprivBIDS"
 version = "0.1.0"
 description = "A tool for assessing data privacy in tabular data."
-authors = [{name = "Emilie B. Kibsgaard", email = "em_kibsgaard@outlook.dk"},{name = "Cyril Pernet", email = "author2@.com"}]
+authors = [{name = "Emilie B. Kibsgaard", email = "em_kibsgaard@outlook.dk"},{name = "Cyril Pernet", email = "cyrilmail@input.com"}]
 license = {text = "MIT License"}
 readme = "README.md"
 requires-python = ">=3.7.4"
+
+
 
 dependencies = [
     "seaborn>=0.11.0",
@@ -19,6 +21,9 @@ dependencies = [
     "networkx>=2.6.3",
     "numpy>=1.21.6"
 ]
+
+[project.scripts]
+metaprivBIDS = 'metaprivBIDS.metaprivBIDS:main'
 
 [project.urls]
 repository = "https://github.com/cpernet/metaprivBIDS"
