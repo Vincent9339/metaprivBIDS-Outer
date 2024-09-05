@@ -1651,12 +1651,12 @@ class FileAnalyzer(QMainWindow):
 
 
 def main():
-    # This is where your GUI is launched
+   
     app = QApplication(sys.argv)
     window = FileAnalyzer()  # Assuming FileAnalyzer is your main window
     window.show()
     sys.exit(app.exec())
 
-# This block will only run if the script is executed directly
+
 if __name__ == "__main__":
     main()
