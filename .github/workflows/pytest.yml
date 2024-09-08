@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'  
+        python-version: '3.9'
 
     - name: Install dependencies from pyproject.toml
       run: |
@@ -27,9 +27,10 @@ jobs:
         pip install setuptools wheel
         pip install .
 
+    # Set the PYTHONPATH to ensure the inner metaprivBIDS folder is recognized
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/metaprivBIDS" >> $GITHUB_ENV
+
     - name: Run tests
       run: |
-        pytest --maxfail=1 --disable-warnings
-
-
-
+        python -m pytest --maxfail=1 --disable-warnings
