@@ -7,6 +7,7 @@ import matplotlib.colors as mcolors
 import seaborn as sns
 from itertools import combinations
 import math
+from piflib.pif_calculator import compute_cigs
 
 
 
