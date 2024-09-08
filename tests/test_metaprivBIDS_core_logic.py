@@ -136,13 +136,11 @@ def test_describe_cig(mp):
 
 def test_generate_heatmap(mp):
     cig_data = pd.DataFrame(np.random.rand(5, 5), columns=list('ABCDE'))
-    cig_data['RIG'] = np.random.rand(5)  # Add a 'RIG' column for testing
+    cig_data['RIG'] = np.random.rand(5) 
 
-    # Ensure it runs without errors (visual tests are hard to assert)
     mp.generate_heatmap(cig_data)
 
 
 def test_plot_tree_graph(mp, mock_data):
     combined_values_history = mp.combine_values(mock_data, 'city')
-    # Ensure the function runs without errors
     mp.plot_tree_graph(mock_data, 'city')
