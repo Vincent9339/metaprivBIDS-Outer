@@ -108,16 +108,16 @@ class metaprivBIDS_core_logic:
 
         return all_combinations_df
 
-def round_values(self, data, column_name, precision):
-    if column_name in data.columns:
-        self.original_columns.setdefault(column_name, data[column_name].copy())
-        
-        # Use round(-1) to round to the nearest 10
-        data[column_name] = data[column_name].round(-1)  # Rounds to nearest 10
-        
-        return data
-    else:
-        raise ValueError(f"Column {column_name} not found in data.")
+    def round_values(self, data, column_name, precision):
+        if column_name in data.columns:
+            self.original_columns.setdefault(column_name, data[column_name].copy())
+            
+            # Use round(-1) to round to the nearest 10
+            data[column_name] = data[column_name].round(-1)  # Rounds to nearest 10
+            
+            return data
+        else:
+            raise ValueError(f"Column {column_name} not found in data.")
 
 
     def revert_to_original(self, data, column_name):
