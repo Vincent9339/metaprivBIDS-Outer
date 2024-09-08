@@ -108,16 +108,20 @@ class metaprivBIDS_core_logic:
 
         return all_combinations_df
 
+
     def round_values(self, data, column_name, precision):
-     
+        """
+        Round the specified column in the data to the precision selected by the user.
+        Precision options are based on powers of 10 (e.g., 10^1, 10^2, etc.).
+        """
         try:
             factor = 10 ** int(precision.split('^')[1])  # Extract the power of 10 from precision
             if column_name in data.columns:
                 # Store the original column data for later potential restoration
                 self.original_columns.setdefault(column_name, data[column_name].copy())
                 
-                # Perform the rounding
-                data[column_name] = (data[column_name] / factor).round() * factor
+                # Perform the rounding using numpy.around with a round-half-up behavior
+                data[column_name] = np.round(data[column_name] / factor) * factor
                 
                 return data  # Return the modified dataframe
             else:
