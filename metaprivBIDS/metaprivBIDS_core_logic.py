@@ -110,26 +110,26 @@ class metaprivBIDS_core_logic:
 
 
 
- def round_values(self, data, column_name, precision):
+    def round_values(self, data, column_name, precision):
 
-    try:
-        factor = 10 ** precision 
-        
-        if column_name in data.columns:
-           
-            self.original_columns.setdefault(column_name, data[column_name].copy())
+        try:
+            factor = 10 ** precision 
             
-          
-            data[column_name] = data[column_name].apply(lambda x: math.ceil(x / factor) * factor)
-            
-            return data  
-        else:
-            raise ValueError(f"Column {column_name} not found in data.")
-    except Exception as e:
-        raise ValueError(f"An error occurred while rounding: {e}")
+            if column_name in data.columns:
+               
+                self.original_columns.setdefault(column_name, data[column_name].copy())
+                
+              
+                data[column_name] = data[column_name].apply(lambda x: math.ceil(x / factor) * factor)
+                
+                return data  
+            else:
+                raise ValueError(f"Column {column_name} not found in data.")
+        except Exception as e:
+            raise ValueError(f"An error occurred while rounding: {e}")
 
 
-        
+
 
     def revert_to_original(self, data, column_name):
         if column_name in self.original_columns:
