@@ -107,19 +107,17 @@ def test_combine_values(mp, mock_data):
 
 
 def test_compute_cig(mp, mock_data):
-    # Mock the pif.compute_cigs function
-    with patch('metaprivBIDS.metaprivBIDS_core_logic.pif.compute_cigs') as mock_compute_cigs:
-        # Define the mock return value
+   
+    with patch('piflib.pif_calculator.compute_cigs') as mock_compute_cigs:
+      
         mock_compute_cigs.return_value = pd.DataFrame({'RIG': [0, 1, 2, 3, 4]})
 
-        # Call the compute_cig method
-        result = mp.compute_cig(mock_data, ['salary', 'city', 'department'])
-
-        # Check that pif.compute_cigs was called once
+        pif_value, cig_df_sorted = mp.compute_cig(mock_data, ['salary', 'city', 'department'])
+       
         mock_compute_cigs.assert_called_once()
-
-        # Check the result is as expected (based on mock return value)
-        assert result[0] == 3  # This is an example, adjust it based on the expected return value
+       
+        assert pif_value == 3  
+        assert not cig_df_sorted.empty  
 
 
 def test_describe_cig(mp):
