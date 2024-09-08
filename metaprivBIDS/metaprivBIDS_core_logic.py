@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from suda_adapted import suda_calculation, find_msu
+from .suda_adapted import suda_calculation, find_msu
 import matplotlib.colors as mcolors
 import seaborn as sns
 from itertools import combinations
