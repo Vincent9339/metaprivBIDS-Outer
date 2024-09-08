@@ -107,15 +107,22 @@ def test_combine_values(mp, mock_data):
 
 
 def test_compute_cig(mp, mock_data):
-    
+   
     with patch('piflib.pif_calculator.compute_cigs') as mock_compute_cigs, \
-         patch('builtins.input', return_value=''): 
+         patch('builtins.input', side_effect=['', '50']): 
         
-        mock_compute_cigs.return_value = pd.DataFrame({'RIG': [0, 1, 2, 3, 4]})       
+      
+        mock_compute_cigs.return_value = pd.DataFrame({'RIG': [0, 1, 2, 3, 4]})
+
+      
         pif_value, cig_df_sorted = mp.compute_cig(mock_data, ['salary', 'city', 'department'])
+
+      
         mock_compute_cigs.assert_called_once()
-        assert pif_value == 3  # Adjust the expected value accordingly
-        assert not cig_df_sorted.empty  # Check that a DataFrame is returned
+
+       
+        assert pif_value == 2.0  
+        assert not cig_df_sorted.empty  
 
 
 def test_describe_cig(mp):
