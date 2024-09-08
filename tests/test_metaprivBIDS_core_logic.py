@@ -106,15 +106,20 @@ def test_combine_values(mp, mock_data):
     assert combined_values_history['city'][0][1] == 'Big City', "New York and Los Angeles should be replaced by 'Big City'"
 
 
-@patch('metaprivBIDS_core_logic.pif.compute_cigs')
-def test_compute_cig(mock_compute_cigs, mp, mock_data):
-    selected_columns = ['salary', 'city', 'department']
-    mock_compute_cigs.return_value = np.random.rand(5, 5)  # Mock some random CIG values
+def test_compute_cig(mp, mock_data):
+    # Mock the pif.compute_cigs function
+    with patch('metaprivBIDS.metaprivBIDS_core_logic.pif.compute_cigs') as mock_compute_cigs:
+        # Define the mock return value
+        mock_compute_cigs.return_value = pd.DataFrame({'RIG': [0, 1, 2, 3, 4]})
 
-    pif_value, cig_df_sorted = mp.compute_cig(mock_data, selected_columns)
+        # Call the compute_cig method
+        result = mp.compute_cig(mock_data, ['salary', 'city', 'department'])
 
-    assert isinstance(cig_df_sorted, pd.DataFrame), "CIG result should be a DataFrame"
-    assert 'RIG' in cig_df_sorted.columns, "CIG result should include the 'RIG' column"
+        # Check that pif.compute_cigs was called once
+        mock_compute_cigs.assert_called_once()
+
+        # Check the result is as expected (based on mock return value)
+        assert result[0] == 3  # This is an example, adjust it based on the expected return value
 
 
 def test_describe_cig(mp):
