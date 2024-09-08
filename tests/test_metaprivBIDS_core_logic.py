@@ -63,12 +63,16 @@ def test_compute_combined_column_contribution(mp, mock_data):
 
 
 def test_round_values(mp, mock_data):
+    # Simulate rounding 'age' column to the nearest 10
+    precision = "10^1"  # Precision selected by the user in the format '10^X'
+    
     # Modify mock_data by rounding the 'age' column
-    modified_data = mp.round_values(mock_data.copy(), 'age', 1)
+    modified_data = mp.round_values(mock_data.copy(), 'age', precision)
     
     # Check that the 'age' column was correctly rounded to the nearest 10
-    expected_values = [30, 40, 50, 30, 40]  # Expected output
+    expected_values = [30, 40, 50, 30, 40]  # Expected output after rounding
     assert (modified_data['age'] == expected_values).all(), "Ages should be rounded to the nearest 10"
+
 
 
 
