@@ -4,7 +4,7 @@ import numpy as np
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QPushButton, QFileDialog, QMessageBox, QTreeView, QHeaderView, QLabel,
                                QFrame, QTableView, QStackedWidget, QComboBox, QInputDialog, QSizePolicy,
-                               QStyledItemDelegate, QMenu, QListWidget, QDialog)  # Added QDialog
+                               QStyledItemDelegate, QMenu, QListWidget, QDialog) 
 
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction
 from PySide6.QtCore import Qt, QDir
