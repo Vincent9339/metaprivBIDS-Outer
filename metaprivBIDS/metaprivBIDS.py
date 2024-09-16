@@ -24,6 +24,9 @@ from PySide6.QtCore import QDateTime
 
 
 
+
+
+
 class NumericStandardItem(QStandardItem):
     def __init__(self, text):
         super().__init__(text)
@@ -496,7 +499,7 @@ class FileAnalyzer(QMainWindow):
         5. Applies custom CSS styles to the HTML table for better readability and displays it in the `cig_result_browser`.
         6. Sets a maximum height for the `cig_result_browser` to ensure proper display.
 
-        If `cigs_df` is not available or is empty, a message prompting the user to compute CIG is shown instead.
+        If 'cigs_df' is not available or is empty, a message prompting the user to compute CIG is shown instead.
 
         Parameters:
         ----------
@@ -592,7 +595,7 @@ class FileAnalyzer(QMainWindow):
         Generates and displays a heatmap of the CIG (Categorical Information Gain) DataFrame.
 
         This method performs the following actions:
-        1. Checks if the `cigs_df` attribute exists and is not empty.
+        1. Checks if the 'cigs_df' attribute exists and is not empty.
         2. Excludes the 'RIG' column from the DataFrame for heatmap generation.
         3. Creates a heatmap using seaborn with a custom color map and saves it as an image file (`heatmap.png`).
         4. Displays the generated heatmap image in the user interface.
@@ -656,15 +659,13 @@ class FileAnalyzer(QMainWindow):
         1. Retrieves the selected columns from the DataFrame.
         2. Prompts the user to input a mask value, which is used to set specific values to zero in the CIG computation.
            - If a valid numeric mask value is provided, it is applied to the DataFrame.
-           - If the input is invalid or left blank, no masking is applied.
-        3. Computes the CIG values using the `pif` module and stores the results in a DataFrame.
-        4. Adds a 'RIG' column to the DataFrame, which contains the sum of CIG values for each row.
-        5. Prompts the user to input a percentile value to calculate the PIF (Percentile Information Factor).
-        6. Displays the computed CIG values in an HTML table, along with the calculated PIF at the specified percentile.
-        7. Applies custom CSS to format the HTML table and sets a maximum height for the result display.
-
-        If no columns are selected or if the DataFrame is empty, appropriate messages are displayed.
-        If the user cancels the percentile input, a message is shown indicating cancellation.
+           - If the input is "NaN", it masks the NaN values.
+        3. Converts NaN values in the DataFrame to the string 'NaN' to avoid treating them as missing values.
+        4. Computes the CIG values using the `pif` module and stores the results in a DataFrame.
+        5. Adds a 'RIG' column to the DataFrame, which contains the sum of CIG values for each row.
+        6. Prompts the user to input a percentile value to calculate the PIF (Percentile Information Factor).
+        7. Displays the computed CIG values in an HTML table, along with the calculated PIF at the specified percentile.
+        8. Applies custom CSS to format the HTML table and sets a maximum height for the result display.
 
         Parameters:
         ----------
@@ -678,7 +679,7 @@ class FileAnalyzer(QMainWindow):
 
         Raises:
         -------
-        ValueError: If the mask value is not a valid number.
+        ValueError: If the mask value is not a valid number or 'NaN'.
         ValueError: If the percentile input is not within the range 0-100.
 
         Returns:
@@ -686,9 +687,6 @@ class FileAnalyzer(QMainWindow):
         None
         """
 
-        import piflib.pif_calculator as pif
-        from PySide6.QtWidgets import QInputDialog
-        import numpy as np
         selected_columns = self.get_selected_columns()
 
         if not selected_columns:
@@ -699,46 +697,56 @@ class FileAnalyzer(QMainWindow):
         if df.empty:
             self.cig_result_browser.setPlainText("Data not available.")
             return
-        mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or leave blank to skip):')
+
+        # Convert NaN values in the DataFrame to the string 'NaN'
+        df = df.astype(object).where(pd.notnull(df), 'NaN')
+
+        # Prompt user to input mask value
+        mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or type "NaN" for missing values):')
 
         if ok and mask_value != '':
             try:
-                mask_value = float(mask_value)
-                mask = df == mask_value
+                if mask_value.lower() == 'nan':
+                    # If user inputs "NaN", create a mask for the string 'NaN' values
+                    mask = df == 'NaN'
+                else:
+                    # Otherwise, convert input to float and create mask for that value
+                    mask_value = float(mask_value)
+                    mask = df == mask_value
             except ValueError:
-                self.cig_result_browser.setPlainText("Invalid mask value. Please enter a number.")
+                self.cig_result_browser.setPlainText("Invalid mask value. Please enter a number or 'NaN'.")
                 return
 
+            # Compute CIGs and apply the mask
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
             cigs_df[mask] = 0
         else:
-       
+            # Compute CIGs without masking
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
 
-    
+        # Add RIG column
         cigs_df['RIG'] = cigs_df.sum(axis=1)
 
-   
+        # Prompt for percentile input
         percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
 
         if not ok:
             self.cig_result_browser.setPlainText("Percentile input canceled.")
             return
 
-        # Calculate the PIF
+        # Calculate the PIF value
         pif_value = np.percentile(cigs_df['RIG'], percentile)
 
-     
+        # Display the results
         self.cigs_df = cigs_df
         cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)
 
-   
-        
+        # Format CIG DataFrame for display
         cigs_df_display = cigs_df_display.applymap(lambda x: f"{x:.2f}")
 
-
+        # Generate HTML for display
         cigs_html = cigs_df_display.to_html(classes='dataframe', index=True, border=0)
         custom_css = """
         <style>
@@ -760,9 +768,9 @@ class FileAnalyzer(QMainWindow):
         </style>
         """
 
-    
         self.cig_result_browser.setHtml(f"{custom_css}<html><body><p>PIF at {percentile}th percentile: {pif_value:.2f}</p>{cigs_html}</body></html>")
         self.cig_result_browser.setMaximumHeight(400)
+
 
 
 

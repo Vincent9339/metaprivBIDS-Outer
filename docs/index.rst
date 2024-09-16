@@ -9,9 +9,11 @@ Welcome to metaprivBIDS documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
+   
+   getting_started
    modules 
    metaprivBIDS 
+   examples
 
 Indices and tables
 ==================
