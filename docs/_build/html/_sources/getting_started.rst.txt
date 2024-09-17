@@ -47,5 +47,5 @@ Next Steps
 ----------
 
 
-- Explore the :ref:`Examples <examples_section>` to see advanced use cases.
+- Explore the :ref:`Examples <examples_section>` to see Interactive Tutorial.
 

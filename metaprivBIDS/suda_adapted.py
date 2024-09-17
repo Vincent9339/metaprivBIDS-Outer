@@ -2,9 +2,16 @@ from itertools import combinations
 import pandas as pd
 from math import factorial
 import logging
-from tqdm import tqdm  
+from tqdm import tqdm
 from math import factorial
+from multiprocessing import Pool, cpu_count
+pd.options.mode.chained_assignment = None
 
+# Helper function moved to the top level
+def process_combinations(args):
+    dataframe, columns, i, aggregations, att = args
+    groups = list(combinations(columns, i))
+    return find_msu(dataframe, groups, aggregations, att)
 
 def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
     """
@@ -32,7 +39,7 @@ def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
     copies or substantial portions of the Software.
     """
     
-    # --- Wildcard row removal logic ---
+    # Wildcard row removal logic 
     # Count the total number of columns
     total_columns = len(dataframe.columns)
     
@@ -82,9 +89,7 @@ def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
     
     return df_updates
 
-
 pd.set_option('display.float_format', '{:.6f}'.format)
-
 
 def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     """
@@ -104,7 +109,8 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
 
     for col in columns:
         if dataframe[col].nunique() < 600:
-            dataframe[col] = dataframe[col].astype(pd.CategoricalDtype(ordered=True))
+            # Use .loc to avoid SettingWithCopyWarning
+            dataframe.loc[:, col] = dataframe[col].astype(pd.CategoricalDtype(ordered=True))
 
     att = len(columns)
     if att > 20:
@@ -116,13 +122,14 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     for column in dataframe.columns:
         aggregations[column] = 'max'
 
+    # Use multiprocessing to parallelize the processing of combinations
     results = []
-    # Wrap the loop with tqdm to show progress
-    for i in tqdm(range(1, max_msu+1), desc="Processing MSU combinations"):
-        groups = list(combinations(columns, i))
-        result = (find_msu(dataframe, groups, aggregations, att))
-        if len(result) != 0:
-            results.append(result)
+    with Pool(processes=cpu_count()) as pool:
+        # Pass all necessary arguments to the process_combinations function
+        results = pool.map(process_combinations, [(dataframe, columns, i, aggregations, att) for i in range(1, max_msu + 1)])
+
+    # Filter out empty results
+    results = [result for result in results if len(result) != 0]
 
     if len(results) == 0:
         logger.info("No special uniques found")
@@ -137,9 +144,8 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
         if 'fM' not in result.columns:
             result['fM'] = 0
             result['suda'] = 0
-    dataframe['fM'] = 0
+    dataframe.loc[:, 'fM'] = 0
     dataframe['suda'] = 0
-    
 
     # Concatenate all results
     results.append(dataframe)
@@ -150,6 +156,6 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
 
     results.loc[dataframe['suda'] > 0, 'dis-suda'] = results.suda * dis_value
     results['dis-suda'] = results.suda * dis_value
-    result['dis'] = dis
+    
    
     return results

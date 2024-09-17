@@ -11,8 +11,7 @@ Welcome to metaprivBIDS documentation!
    :caption: Contents:
    
    getting_started
-   modules 
-   metaprivBIDS 
+   modules  
    examples
 
 Indices and tables

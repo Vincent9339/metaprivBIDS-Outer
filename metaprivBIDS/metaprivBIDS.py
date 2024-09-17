@@ -49,16 +49,14 @@ class ComboBoxDelegate(QStyledItemDelegate):
     def setModelData(self, editor, model, index):
         model.setData(index, editor.currentText(), Qt.EditRole)
 
-class FileAnalyzer(QMainWindow):
+class metaprivBIDS(QMainWindow):
     def __init__(self):
         super().__init__()
         self.file_path, self.data, self.column_unique_counts, self.metadata, self.sensitive_attr = None, None, {}, {}, None
-        self.original_data = pd.DataFrame()  # To store the original data for reverting changes
-        self.original_columns = {}  # To store the original data of individual columns
+        self.original_data = pd.DataFrame()  
+        self.original_columns = {}  
         self.combined_values = {} 
         self.combined_values_history = {}  
-        
-        # Initialize main UI elements
         self.initUI()
 
      
@@ -209,6 +207,7 @@ class FileAnalyzer(QMainWindow):
         4. Plots a tree graph for the selected column using combined values, if available.
         
         Raises:
+        -------
             QMessageBox.Warning: If no data is loaded or no categorical columns are available.
 
         Parameters:
@@ -270,13 +269,10 @@ class FileAnalyzer(QMainWindow):
           into a single entity, the relationship will be reflected in the graph.
         - Uses Graphviz for positioning (`prog='dot'`) to ensure a hierarchical tree layout.
 
-        Raises:
-        -------
-        None
 
         Returns:
         --------
-        Plot
+        nx.drawing.nx_agraph
         """      
         G = nx.DiGraph()
         G.clear()
@@ -350,12 +346,9 @@ class FileAnalyzer(QMainWindow):
         5. Opens another dialog to select and combine unique values from the column.
         6. Applies styling to the dialog and its components for better visibility and usability.
 
-        Parameters:
-        -----------
-        Column
 
         Notes:
-        -----
+        ------
         - The method uses a 'QDialog' to allow the user to select values to combine.
         - If no categorical columns are available or if the dataset is not loaded, appropriate warnings are shown.
 
@@ -364,7 +357,7 @@ class FileAnalyzer(QMainWindow):
         QMessageBox.Warning: If no data is loaded, no categorical columns are available, or not enough unique values are present.
 
         Returns:
-        -------
+        --------
         QDialog Window
         """
 
@@ -498,8 +491,8 @@ class FileAnalyzer(QMainWindow):
         This method performs the following steps:
         1. Retrieves the selected columns from the DataFrame.
         2. Prompts the user to input a mask value, which is used to set specific values to zero in the CIG computation.
-           - If a valid numeric mask value is provided, it is applied to the DataFrame.
-           - If the input is "NaN", it masks the NaN values.
+        - If a valid numeric mask value is provided, it is applied to the DataFrame.
+        - If the input is "NaN", it masks the NaN values.
         3. Converts NaN values in the DataFrame to the string 'NaN' to avoid treating them as missing values.
         4. Computes the CIG values using the 'PIF' module and stores the results in a DataFrame.
         5. Adds a 'RIG' column to the DataFrame, which contains the sum of CIG values for each row.
@@ -630,12 +623,9 @@ class FileAnalyzer(QMainWindow):
 
         If 'cigs_df' is not available or is empty, a message prompting the user to compute CIG is shown instead.
 
-        Parameters:
-        ----------
-        None
 
         Notes:
-        -----
+        ------
         - The method requires that the 'cigs_df' attribute is present and contains data.
         - Custom CSS is used to enhance the visual appearance of the HTML table.
 
@@ -644,7 +634,7 @@ class FileAnalyzer(QMainWindow):
         Missing CIG calculation: "Please compute CIG before describing it."
 
         Returns:
-        -------
+        --------
         CIG statistical description.
         """
 
@@ -698,12 +688,9 @@ class FileAnalyzer(QMainWindow):
         If the 'cigs_df' attribute is not present or is empty, the method displays a message in 
         'cig_result_browser' prompting the user to compute CIG before generating the heatmap.
 
-        Parameters:
-        ----------
-        None
 
         Notes:
-        -----
+        ------
         - The heatmap is saved as 'heatmap.png' in the current working directory.
         - A custom color map from seaborn's "RdYlGn" palette is used for the heatmap.
         - The method checks for and manages the presence of 'heatmap_label' to display the heatmap 
@@ -714,7 +701,7 @@ class FileAnalyzer(QMainWindow):
         Missing CIG computation: "Please compute CIG before generating the heatmap."
 
         Returns:
-        -------
+        --------
         Matplotlib plot (Heatmap)
         """
 
@@ -751,32 +738,12 @@ class FileAnalyzer(QMainWindow):
 
         This method checks if the heatmap label and the close heatmap button exist as attributes. 
         If they are present, it hides both the heatmap label and the close heatmap button from view.
-
-
-        Parameters:
-        ----------
-        None
-
-        Notes:
-        -----
-        None 
-
-        Raises:
-        -------
-        None 
-
-        Returns:
-        -------
-        None
         """
 
         if hasattr(self, 'heatmap_label'):
             self.heatmap_label.hide()
         if hasattr(self, 'close_heatmap_button'):
             self.close_heatmap_button.hide()
-
-
-
 
 
 
@@ -833,16 +800,12 @@ class FileAnalyzer(QMainWindow):
         This method performs the following steps:
         1. Checks if data is loaded; if not, it shows an error message.
         2. Prompts the user to input values for 'max_msu' and 'DIS':
-           - 'max_msu': The maximum number of minimum sample uniques (MSUs) to consider.
-           - 'DIS': The data intrusion simulation value for the SUDA calculation.
+        - 'max_msu': The maximum number of minimum sample uniques (MSUs) to consider.
+        - 'DIS': The data intrusion simulation value for the SUDA calculation.
         3. Copies the original data and selects the columns specified by the user.
         4. Performs the SUDA computation, a sample uniques detection algorithm, using the provided parameters.
         5. Computes the Median Absolute Deviation (MAD) of the SUDA results.
         6. Displays the results in a dialog, including the MAD value.
-
-        Parameters:
-        -----------
-        None
 
         Notes:
         ------
@@ -913,18 +876,14 @@ class FileAnalyzer(QMainWindow):
         2. Prompts the user to input minimum and maximum combination sizes for column combinations.
         3. Iterates over all column combinations of sizes ranging from 'min_size' to 'max_size'.
         4. For each combination:
-           - Calculates the number of unique rows (rows with unique values) in the dataset for the selected columns.
-           - Calculates the number of unique rows excluding the selected columns.
-           - Stores the combination, the number of unique rows, and the number of unique rows excluding columns.
+        - Calculates the number of unique rows (rows with unique values) in the dataset for the selected columns.
+        - Calculates the number of unique rows excluding the selected columns.
+        - Stores the combination, the number of unique rows, and the number of unique rows excluding columns.
         5. Computes a score for each combination based on the total unique rows and the unique rows excluding columns.
         6. Displays the results in a Qdialog.
 
-        Parameters:
-        ----------
-        None
-
         Notes:
-        -----
+        ------
         - The results include the combination of columns, the count of unique rows, and a score based on the contribution to unique row counts.
         - The 'show_results_dialog' method is used to display the results to the user.
 
@@ -933,7 +892,7 @@ class FileAnalyzer(QMainWindow):
         QMessageBox: If no data is loaded or no columns are selected.
 
         Returns:
-        -------
+        --------
         Combined Column Contribution calculation.
         """
 
@@ -1008,13 +967,11 @@ class FileAnalyzer(QMainWindow):
         The dialog includes an optional Median Absolute Deviation (MAD) value and allows saving the results as a CSV file.
 
         Parameters:
-        ----------
+        -----------
         results_df : pandas.DataFrame
-            DataFrame containing the results to display.
         result_type : str, optional
-            Type of results ("combined" or "suda") for setting the dialog title and default filename.
-        mad_value : float, optional
-            MAD value to display, if applicable.
+        Type of results ("combined" or "suda") for setting the dialog title and default filename.
+        mad_value : float.
 
         Returns:
         --------
@@ -1023,11 +980,11 @@ class FileAnalyzer(QMainWindow):
         Raises:
         -------
         FileNotFoundError
-            If the file path for saving the CSV is invalid.
+        If the file path for saving the CSV is invalid.
 
         Exception:
         ----------
-            For unexpected errors during the save process.
+        For unexpected errors during the save process.
         """
 
         dialog = QDialog(self)
@@ -1113,11 +1070,8 @@ class FileAnalyzer(QMainWindow):
         Clears the existing items in the column combobox and repopulates it with
         the columns from the loaded dataset. If no data is loaded, only the default 
         "Select Column" option is available.
-
-        Returns:
-        --------
-        None
         """
+
         self.column_combobox.clear()
         self.column_combobox.addItem("Select Column")
 
@@ -1139,6 +1093,7 @@ class FileAnalyzer(QMainWindow):
         list of str
             A list containing the names of columns identified as categorical.
         """
+
         return [self.columns_model.item(row, 0).text() for row in range(self.columns_model.rowCount())
                 if self.columns_model.item(row, 2).text() == "Categorical"]
 
@@ -1215,6 +1170,20 @@ class FileAnalyzer(QMainWindow):
 
 
     def add_variable_optimization_layout(self):
+
+        """
+        Add a layout to the `variable_optimization_frame` for displaying variable optimization results.
+
+        This method sets up a vertical layout within `variable_optimization_frame`. It creates a `QTreeView`
+        (`results_view`) to display the variable optimization results using a `QStandardItemModel`. 
+        The model's headers are set to "Quasi Identifiers", "Unique Rows After Removal", "Difference", 
+        and "Normalized". The tree view is configured using `setup_treeview` and added to the layout.
+
+        Returns:
+        --------
+        QVBoxLayout
+            The layout containing the `QTreeView` for variable optimization results.
+        """
         variable_optimization_layout = QVBoxLayout(self.variable_optimization_frame)
         self.results_view = QTreeView()
         self.results_model = QStandardItemModel()
@@ -1230,6 +1199,20 @@ class FileAnalyzer(QMainWindow):
 
 
     def add_preview_page_widgets(self, layout):
+        """
+        Add preview page widgets to the specified layout.
+
+        This method creates and adds various widgets to the given layout, including:
+        - A horizontal layout of buttons for rounding values, adding noise, reverting data, and combining values.
+        - A 'Graph Categorical' button to display graphs for categorical data.
+        - A label for metadata display and a dropdown for selecting columns.
+        - A 'Load JSON Metadata' button for loading and displaying metadata.
+
+        Parameters:
+        -----------
+        layout : QVBoxLayout
+            The layout to which the widgets will be added.
+        """
 
         button_layout = QHBoxLayout()
         
@@ -1288,8 +1271,19 @@ class FileAnalyzer(QMainWindow):
 
 
 
-
     def create_noise_menu(self):
+        """
+        Create a noise menu with options to add Laplacian or Gaussian noise.
+
+        This method creates a QMenu with actions for adding Laplacian and Gaussian noise 
+        to the data. Each action is connected to the `add_noise` method with the respective 
+        noise type as a parameter.
+
+        Returns:
+        --------
+        QMenu:
+            The menu containing noise addition actions.
+        """
         noise_menu = QMenu()
         laplacian_action = QAction('Add Laplacian Noise', self)
         laplacian_action.triggered.connect(lambda: self.add_noise('laplacian'))
@@ -1307,27 +1301,29 @@ class FileAnalyzer(QMainWindow):
         This method allows the user to select a continuous column from which noise will be added based on the specified noise type. The available noise types are Laplacian and Gaussian. The original column data is preserved before applying the noise.
 
         Parameters:
-        ----------
+        -----------
         noise_type : str
             The type of noise to add. Options are:
+
             - 'laplacian': Adds Laplacian noise.
             - 'gaussian': Adds Gaussian noise.
 
         Raises:
-        ------
+        -------
         ValueError
-            If an invalid `noise_type` is provided.
+            If an invalid 'noise_type' is provided.
 
         Notes:
-        -----
+        ------
         - The method first checks if there are any continuous columns available. If not, a warning is shown.
         - The user is prompted to select a column to which the noise will be added.
         - The method preserves the original data of the selected column before modifying it with the specified noise.
-        - The `show_preview` method is called after adding the noise to update any relevant displays.
+        - The 'show_preview' function is called after adding the noise to update any relevant displays.
 
         Returns:
-        -------
-        None
+        --------
+        
+        Continous Column with noise. 
         """
 
 
@@ -1354,7 +1350,22 @@ class FileAnalyzer(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"An error occurred while adding noise: {e}")
 
+
+
+
     def setup_treeview(self, view):
+
+        """
+        Configure the appearance and behavior of the given QTreeView.
+
+        Sets the selection mode, background color, font, and sorting behavior for the provided
+        QTreeView. Adjusts settings based on whether the view is the columns view.
+
+        Parameters
+        ----------
+        view : QTreeView
+            The tree view to be configured.
+        """
     
         is_columns_view = view is self.columns_view
         view.setSelectionMode(QTreeView.MultiSelection if is_columns_view else QTreeView.NoSelection)
@@ -1365,7 +1376,17 @@ class FileAnalyzer(QMainWindow):
         view.header().setStyleSheet("QHeaderView::section { background-color: #333; color: #FFFFFF; }")
 
 
+
+
     def load_file(self):
+
+        """
+        Open a file dialog to load a CSV or TSV file.
+
+        Displays a file dialog allowing the user to select a CSV, TSV, or other file type. 
+        If a file is selected, it calls `load_data` to load the file's content.
+        """
+
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath(), "CSV files (*.csv);;TSV files (*.tsv);;All files (*)")
         if file_path:
             self.load_data(file_path)
@@ -1380,12 +1401,12 @@ class FileAnalyzer(QMainWindow):
         This method reads a CSV or TSV file from the provided file path and processes the data. It distinguishes between continuous and categorical columns based on the number of unique values and updates the internal data structures accordingly.
 
         Parameters:
-        ----------
+        -----------
         file_path : str
             The path to the file to be loaded. The file extension should be either '.csv' or '.tsv'.
 
         Raises:
-        ------
+        -------
         FileNotFoundError
             If the specified file does not exist or cannot be found.
         pd.errors.EmptyDataError
@@ -1394,15 +1415,15 @@ class FileAnalyzer(QMainWindow):
             If there is a parsing error in the file content.
 
         Notes:
-        -----
+        ------
         - The file extension determines the delimiter used: tab (`\t`) for TSV files and comma (`,`) for CSV files.
         - Column names are stripped of leading and trailing whitespace.
         - Columns are classified as "Continuous" if they have more than 45 unique values; otherwise, they are classified as "Categorical".
         - The method stores a copy of the original data and updates the tree view with the column types and options for selecting columns.
 
         Returns:
-        -------
-        None
+        --------
+        Loaded Data
         """
 
         try:
@@ -1420,6 +1441,22 @@ class FileAnalyzer(QMainWindow):
 
 
     def update_treeview(self, model, data_list, add_checkbox=False):
+
+        """
+        Populate the given model with data and optionally add checkboxes.
+
+        Clears the model and populates it with items from 'data_list'. 
+        Optionally adds a checkable item to each row if 'add_checkbox' is True.
+
+        Parameters
+        ----------
+        model : QStandardItemModel
+            The model to update with the new data.
+        data_list : list of list
+            The data to populate the model, where each sublist represents a row.
+        add_checkbox : bool, optional
+            If True, adds a checkable item to each row (default is False).
+        """
         model.removeRows(0, model.rowCount())
         for values in data_list:
             items = [NumericStandardItem(str(value)) if isinstance(value, (int, float)) else QStandardItem(str(value)) for value in values]
@@ -1438,28 +1475,25 @@ class FileAnalyzer(QMainWindow):
         This method computes the number of unique rows based on the selected columns, as well as other metrics such as total rows, total columns, the number of selected columns, K-Anonymity, and L-Diversity. It updates a result label with these statistics.
 
         Computes:
-        ----------
+
         - Unique rows: The number of rows where the combination of values in the selected columns is unique.
         - K-Anonymity: A measure of how well the dataset is anonymized with respect to the selected columns.
         - L-Diversity: A measure of diversity within the sensitive attribute values if a sensitive attribute is selected.
 
         Uses:
         -----
-        - `self.get_selected_columns()`: Retrieves the currently selected columns.
-        - `self.get_sensitive_attribute()`: Retrieves the currently selected sensitive attribute.
-        - `self.calculate_k_anonymity(selected_columns)`: Calculates the K-Anonymity for the selected columns.
-        - `self.calculate_l_diversity(selected_columns, sensitive_attr)`: Calculates the L-Diversity for the selected columns and sensitive attribute.
+        - 'self.get_selected_columns()': Retrieves the currently selected columns.
+        - 'self.get_sensitive_attribute()': Retrieves the currently selected sensitive attribute.
+        - 'self.calculate_k_anonymity(selected_columns)': Calculates the K-Anonymity for the selected columns.
+        - 'self.calculate_l_diversity(selected_columns, sensitive_attr)': Calculates the L-Diversity for the selected columns and sensitive attribute.
 
         Updates:
         --------
-        - `self.result_label`: Displays the computed statistics including total rows, total columns, number of selected columns, number of unique rows, K-Anonymity, and L-Diversity.
+        - 'self.result_label`: Displays the computed statistics including total rows, total columns, number of selected columns, number of unique rows, K-Anonymity, and L-Diversity.
 
-        Returns:
-        -------
-        None
 
         Raises:
-        ------
+        -------
         Exception
             If an error occurs during the computation of unique rows or other statistics.
         """
@@ -1493,13 +1527,42 @@ class FileAnalyzer(QMainWindow):
 
 
     def get_selected_columns(self):
+
+        """
+        Retrieve the names of the selected columns in the columns view.
+
+        Collects and returns the names of columns currently selected in 'columns_view'. 
+        If no columns are selected, displays a message on 'result_label'.
+
+        Returns:
+        --------
+        list of str
+            The list of selected column names.
+        """
+
         selected_indexes = self.columns_view.selectionModel().selectedRows()
         selected_columns = [self.columns_model.itemFromIndex(index).text() for index in selected_indexes]
         if not selected_columns:
             self.result_label.setText("Please select at least one column.")
         return selected_columns
 
+
+
+
     def get_sensitive_attribute(self):
+
+        """
+        Retrieve the name of the selected sensitive attribute.
+
+        Iterates through the rows of `columns_model` to find the column marked 
+        as the sensitive attribute (checked in the fourth column). Returns the 
+        name of the first checked sensitive attribute or None if none are found.
+
+        Returns:
+        --------
+        str or None
+            The name of the sensitive attribute if one is selected, otherwise None.
+        """
         for row in range(self.columns_model.rowCount()):
             if self.columns_model.item(row, 3).checkState() == Qt.Checked:
                 return self.columns_model.item(row, 0).text()
@@ -1511,8 +1574,6 @@ class FileAnalyzer(QMainWindow):
         """
         Calculates the K-Anonymity for the specified columns in the dataset.
 
-        K-Anonymity is a measure of how well the dataset is anonymized with respect to the selected columns. It is defined as the smallest number of records that have the same values for the selected columns. Higher K-Anonymity indicates better anonymization.
-
         Parameters:
         -----------
         selected_columns : list of str
@@ -1520,12 +1581,8 @@ class FileAnalyzer(QMainWindow):
 
         Returns:
         --------
-        int
+        int:
             The K-Anonymity value, which is the smallest group size of records with the same values for the selected columns.
-
-        Example:
-        --------
-        If the selected columns are `['Age', 'ZipCode']` and there are groups of 5 records with the same `Age` and `ZipCode` values, and groups of 10 records with other `Age` and `ZipCode` values, the method will return 5.
 
         Notes:
         ------
@@ -1535,7 +1592,7 @@ class FileAnalyzer(QMainWindow):
         Raises:
         -------
         ValueError
-            If the `selected_columns` list is empty or contains invalid column names.
+            If the 'selected_columns' list is empty or contains invalid column names.
         """
 
         grouped = self.data.groupby(selected_columns).size().reset_index(name='counts')
@@ -1560,13 +1617,9 @@ class FileAnalyzer(QMainWindow):
 
         Returns:
         --------
-        int
+        int:
             The L-Diversity value, which is the minimum number of distinct values of the sensitive attribute within any group.
-
-        Example:
-        --------
-        If the selected columns are `['Age', 'ZipCode']` and there are groups of 3 records with 2 distinct values for the sensitive attribute (e.g., 'Income') in one group, and groups with 5 distinct values in other groups, the method will return 2.
-
+      
         Notes:
         ------
         - This method groups the dataset by the selected columns and calculates the number of unique values for the sensitive attribute in each group.
@@ -1575,7 +1628,7 @@ class FileAnalyzer(QMainWindow):
         Raises:
         -------
         ValueError
-            If the `selected_columns` list is empty, or if `sensitive_attr` is not present in the dataset.
+            If the 'selected_columns' list is empty, or if 'sensitive_attr' is not present in the dataset.
         """
 
         grouped = self.data.groupby(selected_columns)
@@ -1585,6 +1638,27 @@ class FileAnalyzer(QMainWindow):
 
 
     def find_lowest_unique_columns(self):
+
+        """
+        Identify columns with the lowest impact on unique row counts when removed.
+
+        This method analyzes the selected columns to determine their contribution 
+        to the uniqueness of rows in the dataset. It performs the following steps:
+        1. Retrieves selected columns.
+        2. Calculates the number of unique rows using the selected columns.
+        3. Iteratively removes each column to find the impact on the number of unique rows.
+        4. Computes the difference in unique row counts and normalizes this difference based on the number of unique values in the column.
+        5. Sorts and displays the results in descending order of normalized difference using `update_treeview`.
+
+        Results are displayed in a tree view and include:
+        - Column name
+        - Unique rows after removal
+        - Difference in unique row counts
+        - Normalized difference
+
+        If an error occurs, an error message is displayed on 'result_label'.
+
+        """
         selected_columns = self.get_selected_columns()
         if selected_columns:
             try:
@@ -1616,8 +1690,6 @@ class FileAnalyzer(QMainWindow):
     def show_preview(self):
         """
         Displays the first 10 rows of the loaded dataset in a preview table.
-
-        Updates the preview table with the first 10 rows of `self.data` and adjusts the table's height. Updates the column dropdown and switches to the preview page. Shows a warning if no data is loaded.
 
         Raises:
         -------
@@ -1655,7 +1727,7 @@ class FileAnalyzer(QMainWindow):
         """
         Loads metadata from a JSON file and updates the column dropdown.
 
-        Opens a file dialog to select a JSON file. Loads the selected file's content into `self.metadata` and updates the column dropdown. Shows an error message if file loading fails.
+        Opens a file dialog to select a JSON file. Loads the selected file's content into 'self.metadata'and updates the column dropdown. Shows an error message if file loading fails.
 
         Example:
         --------
@@ -1678,6 +1750,12 @@ class FileAnalyzer(QMainWindow):
 
 
     def update_column_dropdown(self):
+        """
+        Update the column dropdown menu with metadata keys.
+
+        Clears the current items in the dropdown and repopulates it with column names 
+        from the metadata. Adds a default "Select Column" option at the top.
+        """
         self.column_dropdown.clear()
         self.column_dropdown.addItem("Select Column")
         if self.metadata:
@@ -1716,7 +1794,7 @@ class FileAnalyzer(QMainWindow):
         """
         Rounds values in a selected continuous column to a specified precision.
 
-        Prompts the user to select a continuous column and rounding precision. Rounds the values in the selected column according to the chosen precision. Stores the original data if not already stored and updates the preview.
+        Rounds the values in the selected column according to the chosen precision. Stores the original data if not already stored and updates the preview.
 
         Raises:
         -------
@@ -1751,12 +1829,11 @@ class FileAnalyzer(QMainWindow):
 
 
 
-
     def revert_to_original(self):
         """
         Reverts the values in a selected column to their original state.
 
-        Prompts the user to select a column and restores its values from the original data. Updates the preview to reflect the reverted column. If no original data is available for the selected column, shows a warning message.
+        Updates the preview to reflect the reverted column. If no original data is available for the selected column, shows a warning message.
 
         Raises:
         -------
@@ -1782,7 +1859,7 @@ class FileAnalyzer(QMainWindow):
         """
         Switches the displayed widget to the main page.
 
-        Sets the 'stacked_widget' to show the `main_page`. This method is used to navigate back to the main interface of the application.
+        Sets the 'stacked_widget' to show the 'main_page'. Function is used to navigate back to the main interface of the application.
         """
 
         self.stacked_widget.setCurrentWidget(self.main_page)
@@ -1795,11 +1872,9 @@ class FileAnalyzer(QMainWindow):
         Switches the displayed widget to the preview page.
 
         Sets the 'stacked_widget' to show the 'preview_page'. 
-        This function is used to navigate to the preview interface of the application.
+        Function is used to navigate to the preview interface of the application.
         """
         self.stacked_widget.setCurrentWidget(self.preview_page)
-
-
 
 
 
@@ -1807,7 +1882,7 @@ class FileAnalyzer(QMainWindow):
 def main():
    
     app = QApplication(sys.argv)
-    window = FileAnalyzer()  # Assuming FileAnalyzer is your main window
+    window = metaprivBIDS()  # Assuming FileAnalyzer is your main window
     window.show()
     sys.exit(app.exec())
 
