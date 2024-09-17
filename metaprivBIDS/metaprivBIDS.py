@@ -4,25 +4,18 @@ import numpy as np
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QPushButton, QFileDialog, QMessageBox, QTreeView, QHeaderView, QLabel,
                                QFrame, QTableView, QStackedWidget, QComboBox, QInputDialog, QSizePolicy,
-                               QStyledItemDelegate, QMenu, QListWidget, QDialog) 
+                               QStyledItemDelegate, QMenu, QListWidget, QDialog, QTextBrowser) 
 
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction
-from PySide6.QtCore import Qt, QDir
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction, QPixmap
+from PySide6.QtCore import Qt, QDir, QDateTime
 import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
 from .suda_adapted import suda_calculation, find_msu
 import piflib.pif_calculator as pif
-from PySide6.QtWidgets import QTextBrowser
 import seaborn as sns
-import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QLabel
-from PySide6.QtCore import QDateTime
-
-
 
 
 
@@ -70,6 +63,20 @@ class FileAnalyzer(QMainWindow):
 
      
     def initUI(self):
+
+        """
+        Initialize the user interface of the File Analyzer application.
+        This method sets up the main window with its title, dimensions, and style. It
+        creates a central widget containing a stacked widget to hold multiple pages:
+        the main page, a privacy information page, and a preview page. Each page contains
+        various UI components such as buttons, layouts, and text display elements to interact
+        with different functionalities like computing column contributions, generating CIG
+        heatmaps, and previewing data.
+
+        The method also connects buttons to their respective event handlers to facilitate
+        user interaction.
+        """
+
         self.setWindowTitle('File Analyzer')
         self.setGeometry(100, 100, 1000, 800)
         self.setStyleSheet("background-color: #121212; color: #FFFFFF;")
@@ -191,14 +198,10 @@ class FileAnalyzer(QMainWindow):
         self.stacked_widget.addWidget(self.preview_page)
 
     def show_graph_categorical_dialog(self):
+
         """
         Opens a dialog to select and graph a categorical column from the loaded dataset.
-
-        This method displays a dialog for the user to choose a column from the available categorical
-        columns in the dataset. If the dataset contains categorical columns, the user can select one, 
-        and a tree graph based on the selected column will be plotted. If no categorical columns are 
-        found, or no data is loaded, appropriate warning messages are shown.
-
+    
         Steps:
         1. Checks if data is loaded.
         2. Retrieves the categorical columns from the dataset.
@@ -209,11 +212,15 @@ class FileAnalyzer(QMainWindow):
             QMessageBox.Warning: If no data is loaded or no categorical columns are available.
 
         Parameters:
-            None
+        -----------
+            Column
 
         Returns:
-            None
+        -------- 
+            Visual display of graph
+
         """
+
         if self.data is not None:
             # Get categorical columns
             categorical_columns = self.get_categorical_columns()
@@ -234,6 +241,7 @@ class FileAnalyzer(QMainWindow):
 
 
     def plot_tree_graph(self, column_name):
+
         """
         Plots a tree graph representing the relationships between the unique values of a selected 
         categorical column, including combined values if applicable.
@@ -244,20 +252,20 @@ class FileAnalyzer(QMainWindow):
         values are combined into a replacement node. The graph is visualized using Matplotlib.
 
         Workflow:
-        1. Creates a directed graph (`DiGraph`) with the column name as the root node.
-        2. Adds nodes and edges for combined values from `combined_values_history`.
+        1. Creates a directed graph ('DiGraph') with the column name as the root node.
+        2. Adds nodes and edges for combined values from 'combined_values_history'.
         3. Adds nodes and edges for unique values in the selected column.
         4. Removes edges related to combined values to prevent overlap.
         5. Uses Graphviz layout for proper positioning of nodes.
-        6. Draws and displays the graph using Matplotlib.
+        6. Draws and displays the graph using Matplotlib and NetworkX.
 
         Parameters:
-        ----------
+        -----------
         column_name : str
             The name of the categorical column from the dataset to plot.
 
         Notes:
-        -----
+        ------
         - The graph will include nodes for individual values, and if any values were combined 
           into a single entity, the relationship will be reflected in the graph.
         - Uses Graphviz for positioning (`prog='dot'`) to ensure a hierarchical tree layout.
@@ -267,8 +275,8 @@ class FileAnalyzer(QMainWindow):
         None
 
         Returns:
-        -------
-        None
+        --------
+        Plot
         """      
         G = nx.DiGraph()
         G.clear()
@@ -343,12 +351,12 @@ class FileAnalyzer(QMainWindow):
         6. Applies styling to the dialog and its components for better visibility and usability.
 
         Parameters:
-        ----------
-        None
+        -----------
+        Column
 
         Notes:
         -----
-        - The method uses a `QDialog` to allow the user to select values to combine.
+        - The method uses a 'QDialog' to allow the user to select values to combine.
         - If no categorical columns are available or if the dataset is not loaded, appropriate warnings are shown.
 
         Raises:
@@ -357,7 +365,7 @@ class FileAnalyzer(QMainWindow):
 
         Returns:
         -------
-        None
+        QDialog Window
         """
 
         if self.data is not None:
@@ -435,7 +443,7 @@ class FileAnalyzer(QMainWindow):
         6. Refreshes the preview to reflect the changes.
 
         Parameters:
-        ----------
+        -----------
         column_name : str
             The name of the column where values are to be combined.
 
@@ -443,19 +451,19 @@ class FileAnalyzer(QMainWindow):
             The list of selected items from the dialog containing the values to be combined.
 
         Notes:
-        -----
+        ------
         - The method requires that at least two values are selected for combining. If fewer than two 
           values are selected, a warning is shown.
         - The original values of the column are stored to allow for potential future reference or undo operations.
-        - The method updates both the `combined_values_history` and the dataset with the new combination.
+        - The method updates both the 'combined_values_history' and the dataset with the new combination.
 
         Raises:
         -------
         QMessageBox.Warning: If fewer than two values are selected or if the user does not provide a replacement value.
 
         Returns:
-        -------
-        None
+        --------
+        QMessageBox
     """
 
         selected_values = [item.text() for item in selected_items]
@@ -483,174 +491,6 @@ class FileAnalyzer(QMainWindow):
             QMessageBox.information(self, "Success", "Values have been successfully combined.")
 
 
-
-
-
-    def describe_cig(self):
-        """
-        Generates and displays a statistical description of the CIG (Categorical Information Gain) DataFrame.
-
-        This method provides a summary of statistics for the CIG DataFrame (`cigs_df`) by generating 
-        descriptive statistics and formatting the output as an HTML table. The following actions are performed:
-        1. Checks if `cigs_df` exists and is not empty.
-        2. Excludes the 'RIG' column from the description if it exists.
-        3. Computes descriptive statistics for the remaining columns.
-        4. Formats the statistics to two decimal places and converts them to an HTML table.
-        5. Applies custom CSS styles to the HTML table for better readability and displays it in the `cig_result_browser`.
-        6. Sets a maximum height for the `cig_result_browser` to ensure proper display.
-
-        If 'cigs_df' is not available or is empty, a message prompting the user to compute CIG is shown instead.
-
-        Parameters:
-        ----------
-        None
-
-        Notes:
-        -----
-        - The method requires that the `cigs_df` attribute is present and contains data.
-        - Custom CSS is used to enhance the visual appearance of the HTML table.
-
-        Raises:
-        -------
-        None
-
-        Returns:
-        -------
-        None
-        """
-
-        if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
-            if 'RIG' in self.cigs_df.columns:
-                cigs_df_for_description = self.cigs_df.drop(columns=['RIG'])
-            else:
-                cigs_df_for_description = self.cigs_df
-            
-            description = cigs_df_for_description.describe()
-            description = description.applymap(lambda x: f"{x:.2f}")
-            description_html = description.to_html(classes='dataframe', border=0)
-            custom_css = """
-            <style>
-            .dataframe {
-                border-collapse: collapse;
-                width: 100%;
-                color: #FFFFFF;
-                background-color: #333333;
-            }
-            .dataframe th, .dataframe td {
-                border: 1px solid #666666;
-                padding: 8px;
-                text-align: right;
-            }
-            .dataframe th {
-                background-color: #444444;
-            }
-            .dataframe tr:nth-child(even) {
-                background-color: #2c2c2c;
-            }
-            </style>
-            """    
-            self.cig_result_browser.setHtml(f"{custom_css}<html><body>{description_html}</body></html>")
-            self.cig_result_browser.setMaximumHeight(400)  
-        else:
-            self.cig_result_browser.setPlainText("Please compute CIG before describing it.")
-
-
-
-    def hide_heatmap(self):
-        """
-        Hides the heatmap and its associated controls from the user interface.
-
-        This method checks if the heatmap label and the close heatmap button exist as attributes. 
-        If they are present, it hides both the heatmap label and the close heatmap button from view.
-
-        The primary purpose of this method is to remove the heatmap visualization and related 
-        controls from the user interface when they are no longer needed.
-
-        Parameters:
-        ----------
-        None
-
-        Notes:
-        -----
-        - The method relies on the presence of `heatmap_label` and `close_heatmap_button` attributes.
-        - If these attributes are not present, the method does not perform any actions.
-
-        Raises:
-        -------
-        None
-
-        Returns:
-        -------
-        None
-        """
-
-        if hasattr(self, 'heatmap_label'):
-            self.heatmap_label.hide()
-        if hasattr(self, 'close_heatmap_button'):
-            self.close_heatmap_button.hide()
-
-
-    def generate_heatmap(self):
-        """
-        Generates and displays a heatmap of the CIG (Categorical Information Gain) DataFrame.
-
-        This method performs the following actions:
-        1. Checks if the 'cigs_df' attribute exists and is not empty.
-        2. Excludes the 'RIG' column from the DataFrame for heatmap generation.
-        3. Creates a heatmap using seaborn with a custom color map and saves it as an image file (`heatmap.png`).
-        4. Displays the generated heatmap image in the user interface.
-        5. Ensures that the heatmap label and close button are visible.
-
-        If the `cigs_df` attribute is not present or is empty, the method displays a message in 
-        `cig_result_browser` prompting the user to compute CIG before generating the heatmap.
-
-        Parameters:
-        ----------
-        None
-
-        Notes:
-        -----
-        - The heatmap is saved as `heatmap.png` in the current working directory.
-        - A custom color map from seaborn's "RdYlGn" palette is used for the heatmap.
-        - The method checks for and manages the presence of `heatmap_label` to display the heatmap 
-          and ensures the `close_heatmap_button` is visible.
-
-        Raises:
-        -------
-        None
-
-        Returns:
-        -------
-        None
-        """
-
-        if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
-            cigs_df_no_rig = self.cigs_df.drop(columns=['RIG'])
-            color_map = mcolors.ListedColormap(sns.color_palette("RdYlGn", 256).as_hex()[::-1])
-      
-            heatmap_filename = "heatmap.png"
-            plt.figure(figsize=(10, 8))
-            sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
-            plt.title("CIG Heatmap")
-            plt.xticks(fontsize=10)
-            plt.yticks(fontsize=10)
-            plt.savefig(heatmap_filename, bbox_inches='tight', pad_inches=0.1)  # Save the heatmap image
-            plt.close()  # Close the plot to free up memory
-
-
-            if not hasattr(self, 'heatmap_label'):
-                self.heatmap_label = QLabel()
-                self.privacy_info_layout.addWidget(self.heatmap_label)
-
-          
-            self.heatmap_label.setPixmap(QPixmap(heatmap_filename))
-            self.heatmap_label.show()
-            self.close_heatmap_button.show()  # Ensure the close button is visible
-        else:
-            self.cig_result_browser.setPlainText("Please compute CIG before generating the heatmap.")
-
-
-
     def compute_cig(self):
         """
         Computes and displays the Categorical Information Gain (CIG) for selected columns in the DataFrame.
@@ -661,19 +501,20 @@ class FileAnalyzer(QMainWindow):
            - If a valid numeric mask value is provided, it is applied to the DataFrame.
            - If the input is "NaN", it masks the NaN values.
         3. Converts NaN values in the DataFrame to the string 'NaN' to avoid treating them as missing values.
-        4. Computes the CIG values using the `pif` module and stores the results in a DataFrame.
+        4. Computes the CIG values using the 'PIF' module and stores the results in a DataFrame.
         5. Adds a 'RIG' column to the DataFrame, which contains the sum of CIG values for each row.
         6. Prompts the user to input a percentile value to calculate the PIF (Percentile Information Factor).
         7. Displays the computed CIG values in an HTML table, along with the calculated PIF at the specified percentile.
-        8. Applies custom CSS to format the HTML table and sets a maximum height for the result display.
 
         Parameters:
-        ----------
-        None
+        -----------
+        Mask Value
+        Percentile value for PIF. (Default: 95)
+        
 
         Notes:
-        -----
-        - The method requires the `piflib.pif_calculator` module for computing CIG values.
+        ------
+        - The method requires the 'piflib.pif_calculator' module for computing CIG values.
         - The mask value is used to set specific values to zero in the CIG DataFrame if provided.
         - The percentile input is used to calculate the PIF value, which is displayed along with the CIG values.
 
@@ -683,8 +524,8 @@ class FileAnalyzer(QMainWindow):
         ValueError: If the percentile input is not within the range 0-100.
 
         Returns:
-        -------
-        None
+        --------
+        Cell Information Gain (CIG) in tabular format. 
         """
 
         selected_columns = self.get_selected_columns()
@@ -774,10 +615,197 @@ class FileAnalyzer(QMainWindow):
 
 
 
+
+    def describe_cig(self):
+        """
+        Generates and displays a statistical description of the CIG (Categorical Information Gain) DataFrame.
+
+        This method provides a summary of statistics for the CIG DataFrame ('cigs_df') by generating 
+        descriptive statistics and formatting the output as an HTML table. The following actions are performed:
+        1. Checks if 'cigs_df' exists and is not empty.
+        2. Excludes the 'RIG' column from the description if it exists.
+        3. Computes descriptive statistics for the remaining columns.
+        4. Formats the statistics to two decimal places and converts them to an HTML table.
+        5. Applies custom CSS styles to the HTML table for better readability and displays it in the 'cig_result_browser'.
+
+        If 'cigs_df' is not available or is empty, a message prompting the user to compute CIG is shown instead.
+
+        Parameters:
+        ----------
+        None
+
+        Notes:
+        -----
+        - The method requires that the 'cigs_df' attribute is present and contains data.
+        - Custom CSS is used to enhance the visual appearance of the HTML table.
+
+        Raises:
+        -------
+        Missing CIG calculation: "Please compute CIG before describing it."
+
+        Returns:
+        -------
+        CIG statistical description.
+        """
+
+        if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
+            if 'RIG' in self.cigs_df.columns:
+                cigs_df_for_description = self.cigs_df.drop(columns=['RIG'])
+            else:
+                cigs_df_for_description = self.cigs_df
+            
+            description = cigs_df_for_description.describe()
+            description = description.applymap(lambda x: f"{x:.2f}")
+            description_html = description.to_html(classes='dataframe', border=0)
+            custom_css = """
+            <style>
+            .dataframe {
+                border-collapse: collapse;
+                width: 100%;
+                color: #FFFFFF;
+                background-color: #333333;
+            }
+            .dataframe th, .dataframe td {
+                border: 1px solid #666666;
+                padding: 8px;
+                text-align: right;
+            }
+            .dataframe th {
+                background-color: #444444;
+            }
+            .dataframe tr:nth-child(even) {
+                background-color: #2c2c2c;
+            }
+            </style>
+            """    
+            self.cig_result_browser.setHtml(f"{custom_css}<html><body>{description_html}</body></html>")
+            self.cig_result_browser.setMaximumHeight(400)  
+        else:
+            self.cig_result_browser.setPlainText("Please compute CIG before describing it.")
+
+
+    def generate_heatmap(self):
+        """
+        Generates and displays a heatmap of the CIG (Categorical Information Gain) DataFrame.
+
+        This method performs the following actions:
+        1. Checks if the 'cigs_df' attribute exists and is not empty.
+        2. Excludes the 'RIG' column from the DataFrame for heatmap generation.
+        3. Creates a heatmap using seaborn with a custom color map and saves it as an image file ('heatmap.png').
+        4. Displays the generated heatmap image in the user interface.
+        5. Ensures that the heatmap label and close button are visible.
+
+        If the 'cigs_df' attribute is not present or is empty, the method displays a message in 
+        'cig_result_browser' prompting the user to compute CIG before generating the heatmap.
+
+        Parameters:
+        ----------
+        None
+
+        Notes:
+        -----
+        - The heatmap is saved as 'heatmap.png' in the current working directory.
+        - A custom color map from seaborn's "RdYlGn" palette is used for the heatmap.
+        - The method checks for and manages the presence of 'heatmap_label' to display the heatmap 
+          and ensures the 'close_heatmap_button' is visible.
+
+        Raises:
+        -------
+        Missing CIG computation: "Please compute CIG before generating the heatmap."
+
+        Returns:
+        -------
+        Matplotlib plot (Heatmap)
+        """
+
+        if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
+            cigs_df_no_rig = self.cigs_df.drop(columns=['RIG'])
+            color_map = mcolors.ListedColormap(sns.color_palette("RdYlGn", 256).as_hex()[::-1])
+      
+            heatmap_filename = "heatmap.png"
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
+            plt.title("CIG Heatmap")
+            plt.xticks(fontsize=10)
+            plt.yticks(fontsize=10)
+            plt.savefig(heatmap_filename, bbox_inches='tight', pad_inches=0.1)  # Save the heatmap image
+            plt.close()  # Close the plot to free up memory
+
+
+            if not hasattr(self, 'heatmap_label'):
+                self.heatmap_label = QLabel()
+                self.privacy_info_layout.addWidget(self.heatmap_label)
+
+          
+            self.heatmap_label.setPixmap(QPixmap(heatmap_filename))
+            self.heatmap_label.show()
+            self.close_heatmap_button.show()  # Ensure the close button is visible
+        else:
+            self.cig_result_browser.setPlainText("Please compute CIG before generating the heatmap.")
+
+
+
+    def hide_heatmap(self):
+        """
+        Hides the heatmap and its associated controls from the user interface.
+
+        This method checks if the heatmap label and the close heatmap button exist as attributes. 
+        If they are present, it hides both the heatmap label and the close heatmap button from view.
+
+
+        Parameters:
+        ----------
+        None
+
+        Notes:
+        -----
+        None 
+
+        Raises:
+        -------
+        None 
+
+        Returns:
+        -------
+        None
+        """
+
+        if hasattr(self, 'heatmap_label'):
+            self.heatmap_label.hide()
+        if hasattr(self, 'close_heatmap_button'):
+            self.close_heatmap_button.hide()
+
+
+
+
+
+
     def show_privacy_info(self):
         self.stacked_widget.setCurrentWidget(self.privacy_info_page)
 
+
     def add_buttons(self, layout):
+
+        """
+        Add a row of buttons to the specified layout.
+
+        This method creates a horizontal layout containing a set of buttons, each
+        associated with a specific functionality of the application. It then adds
+        this horizontal layout to the provided `layout`. Each button is styled with
+        a unique background color and connected to its corresponding event handler.
+
+        Args:
+            layout (QVBoxLayout): The layout to which the buttons will be added.
+        
+        Buttons:
+            - "Load CSV/TSV File": Opens a dialog to load a CSV/TSV file.
+            - "Privacy Calculation": Calculates unique rows for privacy analysis.
+            - "Variable Optimization": Finds the lowest unique columns for optimization.
+            - "Preview Data": Shows a preview of the loaded data.
+            - "Compute SUDA": Computes SUDA (Statistical Disclosure Control).
+            - "Privacy Information Factor": Displays privacy information.
+        """
+
         button_layout = QHBoxLayout()
         layout.addLayout(button_layout)
 
@@ -803,31 +831,32 @@ class FileAnalyzer(QMainWindow):
         Computes the Sample Uniques Detection Algorithm (SUDA) metrics for the selected columns of data.
 
         This method performs the following steps:
-        1. Checks if data is loaded; if not, it shows an error message and returns.
-        2. Prompts the user to input values for `max_msu` and `dis`:
-           - `max_msu`: The maximum number of minimum sample uniques (MSUs) to consider.
-           - `dis`: The data intrusion simulation value for the SUDA calculation.
+        1. Checks if data is loaded; if not, it shows an error message.
+        2. Prompts the user to input values for 'max_msu' and 'DIS':
+           - 'max_msu': The maximum number of minimum sample uniques (MSUs) to consider.
+           - 'DIS': The data intrusion simulation value for the SUDA calculation.
         3. Copies the original data and selects the columns specified by the user.
         4. Performs the SUDA computation, a sample uniques detection algorithm, using the provided parameters.
         5. Computes the Median Absolute Deviation (MAD) of the SUDA results.
         6. Displays the results in a dialog, including the MAD value.
 
         Parameters:
-        ----------
+        -----------
         None
 
         Notes:
-        -----
-        - The `suda_calculation` function is used to perform the SUDA computation.
-        - The `show_results_dialog` method is used to display the results to the user.
+        ------
+        - The 'suda_calculation' import function is used to perform the SUDA computation.
+        - The 'show_results_dialog' method is used to display the results to the user.
+        - Default value for DIS is 0.2 
 
         Raises:
         -------
         QMessageBox: If no data is loaded or no columns are selected.
 
         Returns:
-        -------
-        None
+        --------
+        SUDA Scores.
         """
 
         if self.data is None:
@@ -875,21 +904,20 @@ class FileAnalyzer(QMainWindow):
         
 
 
-
     def compute_combined_column_contribution(self):
         """
         Computes and evaluates the contribution of various column combinations to unique row counts in the dataset.
 
         This method performs the following steps:
-        1. Checks if data is loaded; if not, it displays a warning and returns.
+        1. Checks if data is loaded; if not, it displays a warning.
         2. Prompts the user to input minimum and maximum combination sizes for column combinations.
-        3. Iterates over all column combinations of sizes ranging from `min_size` to `max_size`.
+        3. Iterates over all column combinations of sizes ranging from 'min_size' to 'max_size'.
         4. For each combination:
            - Calculates the number of unique rows (rows with unique values) in the dataset for the selected columns.
            - Calculates the number of unique rows excluding the selected columns.
            - Stores the combination, the number of unique rows, and the number of unique rows excluding columns.
         5. Computes a score for each combination based on the total unique rows and the unique rows excluding columns.
-        6. Displays the results in a dialog.
+        6. Displays the results in a Qdialog.
 
         Parameters:
         ----------
@@ -898,7 +926,7 @@ class FileAnalyzer(QMainWindow):
         Notes:
         -----
         - The results include the combination of columns, the count of unique rows, and a score based on the contribution to unique row counts.
-        - The `show_results_dialog` method is used to display the results to the user.
+        - The 'show_results_dialog' method is used to display the results to the user.
 
         Raises:
         -------
@@ -906,7 +934,7 @@ class FileAnalyzer(QMainWindow):
 
         Returns:
         -------
-        None
+        Combined Column Contribution calculation.
         """
 
         if self.data is None:
@@ -973,7 +1001,35 @@ class FileAnalyzer(QMainWindow):
 
 
     def show_results_dialog(self, results_df, result_type="combined", mad_value=None):
-    
+        """
+        Display a dialog with calculation results in a table format.
+
+        Shows the results of Combined Column Contributions or SUDA calculations in a modal dialog. 
+        The dialog includes an optional Median Absolute Deviation (MAD) value and allows saving the results as a CSV file.
+
+        Parameters:
+        ----------
+        results_df : pandas.DataFrame
+            DataFrame containing the results to display.
+        result_type : str, optional
+            Type of results ("combined" or "suda") for setting the dialog title and default filename.
+        mad_value : float, optional
+            MAD value to display, if applicable.
+
+        Returns:
+        --------
+        QMessageBox / QDialog. 
+
+        Raises:
+        -------
+        FileNotFoundError
+            If the file path for saving the CSV is invalid.
+
+        Exception:
+        ----------
+            For unexpected errors during the save process.
+        """
+
         dialog = QDialog(self)
 
         if result_type == "suda":
@@ -1010,7 +1066,23 @@ class FileAnalyzer(QMainWindow):
         save_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
         layout.addWidget(save_button)
 
+
+
+
         def save_as_csv():
+            """
+            Save the displayed results as a CSV file.
+
+            Opens a file dialog to specify the save location and filename. The default
+            filename is set based on the result type: "sudaresult" or "combinedresult",
+            appended with a timestamp. Saves the DataFrame as a CSV file at the specified
+            location and displays a success message upon completion.
+
+            Returns:
+            --------
+            str
+                The file path where the CSV file was saved, or None if the save was canceled.
+            """
       
             timestamp = QDateTime.currentDateTime().toString("yyyyMMdd_HHmmss")
        
@@ -1032,7 +1104,20 @@ class FileAnalyzer(QMainWindow):
         dialog.exec()
 
 
+
+
     def update_value_list(self):
+        """
+        Update the column selection dropdown with the current data's columns.
+
+        Clears the existing items in the column combobox and repopulates it with
+        the columns from the loaded dataset. If no data is loaded, only the default 
+        "Select Column" option is available.
+
+        Returns:
+        --------
+        None
+        """
         self.column_combobox.clear()
         self.column_combobox.addItem("Select Column")
 
@@ -1040,13 +1125,47 @@ class FileAnalyzer(QMainWindow):
             for column in self.data.columns:
                 self.column_combobox.addItem(column)
 
+
+
     def get_categorical_columns(self):
+        """
+        Retrieve a list of categorical columns from the model.
+
+        Iterates through the rows of `columns_model` to find columns marked as "Categorical".
+        Returns a list of the names of these columns.
+
+        Returns:
+        --------
+        list of str
+            A list containing the names of columns identified as categorical.
+        """
         return [self.columns_model.item(row, 0).text() for row in range(self.columns_model.rowCount())
                 if self.columns_model.item(row, 2).text() == "Categorical"]
 
 
 
+
     def add_frames(self, layout):
+
+        """
+        Add frames to the provided layout for displaying various sections of the UI.
+
+        This method creates two frames ('load_results_frame' and 'variable_optimization_frame') 
+        and adds them to the specified layout. Both frames are styled with a white border. 
+        It then calls methods to populate these frames with their respective layouts. 
+        Additionally, a 'QLabel' ('result_label') is created and added to the layout 
+        for displaying result messages.
+
+        Parameters:
+        -----------
+        layout : QVBoxLayout
+            The layout to which the frames and the result label will be added.
+
+        Returns:
+        --------
+        QWidget
+        """
+
         self.load_results_frame, self.variable_optimization_frame = QFrame(), QFrame()
         for frame in (self.load_results_frame, self.variable_optimization_frame):
             frame.setStyleSheet("border: 0.5px solid #FFFFFF;")
@@ -1057,7 +1176,28 @@ class FileAnalyzer(QMainWindow):
         self.result_label.setStyleSheet("color: #FFFFFF;")
         layout.addWidget(self.result_label)
 
+
+
+
+
+
+
     def add_load_results_layout(self):
+
+        """
+        Add a layout to the 'load_results_frame' for managing column selection and configuration.
+
+        This method sets up a vertical layout within 'load_results_frame'. It creates a 'QTreeView' to 
+        display columns with various attributes such as unique values and types. The tree view uses a 
+        'QStandardItemModel' to manage the data, with headers: "Select Columns", "Unique Value", "Type", 
+        and "Select Sensitive Attribute". A custom 'ComboBoxDelegate' is set for the "Type" column to 
+        allow users to select a data type from a dropdown. The 'setup_treeview' method is called to 
+        configure the tree view, and the view is added to the layout.
+
+        Returns:
+        --------
+        QWidget
+        """
         load_results_layout = QVBoxLayout(self.load_results_frame)
         self.columns_view = QTreeView()
         self.columns_model = QStandardItemModel()
@@ -1071,6 +1211,9 @@ class FileAnalyzer(QMainWindow):
         self.setup_treeview(self.columns_view)
         load_results_layout.addWidget(self.columns_view)
 
+
+
+
     def add_variable_optimization_layout(self):
         variable_optimization_layout = QVBoxLayout(self.variable_optimization_frame)
         self.results_view = QTreeView()
@@ -1079,6 +1222,12 @@ class FileAnalyzer(QMainWindow):
         self.results_view.setModel(self.results_model)
         self.setup_treeview(self.results_view)
         variable_optimization_layout.addWidget(self.results_view)
+
+
+
+
+
+
 
     def add_preview_page_widgets(self, layout):
 
@@ -1633,7 +1782,7 @@ class FileAnalyzer(QMainWindow):
         """
         Switches the displayed widget to the main page.
 
-        Sets the `stacked_widget` to show the `main_page`. This method is used to navigate back to the main interface of the application.
+        Sets the 'stacked_widget' to show the `main_page`. This method is used to navigate back to the main interface of the application.
         """
 
         self.stacked_widget.setCurrentWidget(self.main_page)
@@ -1645,15 +1794,12 @@ class FileAnalyzer(QMainWindow):
         """
         Switches the displayed widget to the preview page.
 
-        Sets the `stacked_widget` to show the `preview_page`. This method is used to navigate to the preview interface of the application.
+        Sets the 'stacked_widget' to show the 'preview_page'. 
+        This function is used to navigate to the preview interface of the application.
         """
         self.stacked_widget.setCurrentWidget(self.preview_page)
 
 
-
-
-    def show_hierarchical_page(self):
-        self.stacked_widget.setCurrentWidget(self.hierarchical_page)
 
 
 
