@@ -55,15 +55,15 @@ def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
     # --- MSU calculation ---
     df_copy = dataframe.copy()
     
-    # Prepare to store updates
+ 
     df_updates = []
     
-    # Iterate through each group (subset of columns)
+ 
     for nple in groups:
         nple = list(nple)
         cols = nple.copy()
         
-        # Calculate the unique value counts (fK)
+   
         cols.append('fK')
         value_counts = df_copy[nple].groupby(nple, sort=False).size()
 
@@ -83,7 +83,7 @@ def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
             df_update = pd.merge(df_copy, df_value_counts, on=nple, how='left')
             df_updates.append(df_update)
 
-    # Return the concatenated result
+
     if len(df_updates) > 0:
         df_updates = pd.concat(df_updates)
     
@@ -103,13 +103,13 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     logger = logging.getLogger("suda")
     logging.basicConfig()
 
-    # Get the set of columns
+ 
     if columns is None:
         columns = dataframe.columns
 
     for col in columns:
         if dataframe[col].nunique() < 600:
-            # Use .loc to avoid SettingWithCopyWarning
+  
             dataframe.loc[:, col] = dataframe[col].astype(pd.CategoricalDtype(ordered=True))
 
     att = len(columns)
@@ -117,7 +117,7 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
         logger.warning("More than 20 columns presented; setting ATT to max of 20")
         att = 20
 
-    # Construct the aggregation array
+ 
     aggregations = {'msu': 'min', 'suda': 'sum', 'fK': 'min', 'fM': 'sum'}
     for column in dataframe.columns:
         aggregations[column] = 'max'
@@ -125,7 +125,7 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     # Use multiprocessing to parallelize the processing of combinations
     results = []
     with Pool(processes=cpu_count()) as pool:
-        # Pass all necessary arguments to the process_combinations function
+     
         results = pool.map(process_combinations, [(dataframe, columns, i, aggregations, att) for i in range(1, max_msu + 1)])
 
     # Filter out empty results
@@ -139,7 +139,7 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
         dataframe['fM'] = None
         return dataframe
 
-    # Domain completion
+
     for result in results:
         if 'fM' not in result.columns:
             result['fM'] = 0
@@ -147,7 +147,7 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     dataframe.loc[:, 'fM'] = 0
     dataframe['suda'] = 0
 
-    # Concatenate all results
+ 
     results.append(dataframe)
     results = pd.concat(results).groupby(level=0).agg(aggregations)
 
