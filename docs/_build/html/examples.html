@@ -114,8 +114,13 @@
         "Step 1: The Load button prompts the user with the option to load in the dataset for analysis.",
 
         "Step 2: After loading the dataset, the user can then manually select columns (quasi-identifiers) by clicking on the field in the Select Column field (highlighting them in blue).<br>" +
-        "The field Unique Value indicates how many unique values can be found in the column. The Type field shows whether or not a column is continuous or categorical, " +
-        "and the Sensitive Attribute field is an optional column for the user to select a sensitive attribute.",
+        "<p style='margin-top: 16px;'> The field 'Unique Value' indicates how many unique values can be found in the column. The 'Type' field shows whether or not a column is continuous or categorical, " +
+        "and the 'Sensitive Attribute' field is an optional column for the user to select a sensitive attribute." +
+
+        "<p style='margin-top: 16px;'> Sensitive attributes typically include information that could lead to discrimination, stigma, or other forms of harm if disclosed, such as medical conditions, sexual orientation," +
+        " religious beliefs, or financial status. Hence for our example Disease is set as a sensitive attribute." +
+
+        "<p style='margin-top: 16px;'> We have excluded 'exercise_weekly_hours' from our analysis because quasi-identifiers are required to possess a temporally static characteristic.",
 
         "Step 3: The Privacy Calculation button returns the user metrics for the chosen quasi-identifiers, including the number of unique rows, k-Anonymity & L-Diversity.<br>" +
         "From the data example we see that K = 1, L = 1, and the number of unique rows is 190 out of the total row count of 200. Indicating a high privacy risk.",
@@ -137,7 +142,7 @@
         "2) the greater the number of MSUs contained in the record, the higher its risk." +
 
         "<p style='margin-top: 16px;'> The user will be asked to fill out both the specificed max size of attribute to consider this can be a minimum of 1 field and max of max number of fields available.<br>" +
-        " The Data Intrusion Simulation (DIS) metrics this has to be between 0 to 1 default is set to: 0.2. The higher the DIS the more background knowledge we assume an adversary have.",
+        " The Data Intrusion Simulation (DIS) metric has to be between 0 to 1, the default is set to: 0.2. The higher the DIS the more background knowledge we assume an adversary have.",
 
         "Step 6: To see a preview of the data the user can push the Preview Data Button.",
 
@@ -159,7 +164,8 @@
 
 
 
-        "<p style='margin-top: 16px;'>  Example thresholds for different Data Safe levels:" +
+        "<p style='margin-top: 16px;'>  Example thresholds for different Data Safe levels <a href='https://www.infogovanz.com/wp-content/uploads/2020/01/191202-ACS-Privacy-eReport.pdf'>[ACS Privacy Impact Assessment eReport]</a>:<br>" +
+
         " Safe Level 1: 1.00 ≤ PIF <br>" +
         " Safe Level 2: 0.33 ≤ PIF < 1.00 <br>" +
         " Safe Level 3: 0.11 ≤ PIF < 0.33 <br>" +
@@ -172,7 +178,7 @@
         "Step 13: To access the data privacy risk on a field level we can use the Genrate CIG Heatpmap button.<br>" +
         " This gives the user the opportunity to directly view which quasi identfiers contribute the most to the overall risk in the dataset." +
 
-        "<p style='margin-top: 16px;'> For example here we see that Age has a very high contribution to the risk factor. Whereas Sex and Marital-Status contribute less.",
+        "<p style='margin-top: 16px;'> For example here we see that Age has a very high contribution to the risk factor. Whereas Sex and Salary-slass contribute less.",
 
         "Step 14: After having performed some of the anonymising techniques from the preview page we can see a big improvement to our over Privacy information Factor." +
         "<p style='margin-top: 16px;'> The user is adviced to keep track of the trade-off between utility and privacy hence there is not a one solution fit all, in regards to which anonymisation techniques to use but rather a suggestion to what could be done, to improve the avaliable risk privacy measures from the metaprivBIDS platform." ,
