@@ -16,7 +16,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Install Graphviz system dependencies
+  
     - name: Install Graphviz system dependencies
       run: |
         sudo apt-get update
@@ -33,7 +33,7 @@ jobs:
         pip install setuptools wheel
         pip install .
 
-    # Set the PYTHONPATH to ensure the inner metaprivBIDS folder is recognized
+ 
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/metaprivBIDS" >> $GITHUB_ENV
 
