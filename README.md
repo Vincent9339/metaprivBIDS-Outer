@@ -3,16 +3,17 @@
 This Python build tool enables a given user to calculate a variety of different data privacy metrics on tabular data from a user interface. 
 
 # Methods
- 
-- K-anonymity [1]_
-- ℓ-diversity [2]_
-- Sample Unique Detection Algorithm (SUDA) [3]_
-- Privacy Information Factor (PIF) [4]_
 
-.. [1] Sweeney, L. (2002). k-Anonymity: A Model for Protecting Privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, 10(05), 557-570.
-.. [2] Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M. (2007). ℓ-Diversity: Privacy Beyond k-Anonymity. *ACM Transactions on Knowledge Discovery from Data (TKDD)*, 1(1), 3-es.
-.. [3] Elliott, M. J., & Skinner, C. J. (2000). Identifying population uniques using limited information. *Proceedings of the Annual Meeting of the American Statistical Association*.
-.. [4] Information Governance ANZ. (2019). *Privacy Impact Assessment eReport.* https://www.infogovanz.com/wp-content/uploads/2020/01/191202-ACS-Privacy-eReport.pdf
+- K-anonymity [^1]
+- ℓ-diversity [^2]
+- Sample Unique Detection Algorithm (SUDA) [^3]
+- Privacy Information Factor (PIF) [^4]
+
+[^1]: Sweeney, L. (2002). k-Anonymity: A Model for Protecting Privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, 10(05), 557-570.
+[^2]: Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M. (2007). ℓ-Diversity: Privacy Beyond k-Anonymity. *ACM Transactions on Knowledge Discovery from Data (TKDD)*, 1(1), 3-es.
+[^3]: Elliott, M. J., & Skinner, C. J. (2000). Identifying population uniques using limited information. *Proceedings of the Annual Meeting of the American Statistical Association*.
+[^4]: Information Governance ANZ. (2019). *Privacy Impact Assessment eReport.* [Link](https://www.infogovanz.com/wp-content/uploads/2020/01/191202-ACS-Privacy-eReport.pdf)
+
 
 # Input data format
 
