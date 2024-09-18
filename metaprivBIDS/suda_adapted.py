@@ -7,7 +7,7 @@ from math import factorial
 from multiprocessing import Pool, cpu_count
 pd.options.mode.chained_assignment = None
 
-# Helper function moved to the top level
+
 def process_combinations(args):
     dataframe, columns, i, aggregations, att = args
     groups = list(combinations(columns, i))
