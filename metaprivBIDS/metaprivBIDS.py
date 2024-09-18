@@ -1416,7 +1416,7 @@ class metaprivBIDS(QMainWindow):
 
         Notes:
         ------
-        - The file extension determines the delimiter used: tab (`\t`) for TSV files and comma (`,`) for CSV files.
+      
         - Column names are stripped of leading and trailing whitespace.
         - Columns are classified as "Continuous" if they have more than 45 unique values; otherwise, they are classified as "Categorical".
         - The method stores a copy of the original data and updates the tree view with the column types and options for selecting columns.
