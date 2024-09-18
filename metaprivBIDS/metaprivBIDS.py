@@ -362,7 +362,7 @@ class metaprivBIDS(QMainWindow):
         """
 
         if self.data is not None:
-            # Get categorical columns
+         
             categorical_columns = self.get_categorical_columns()
 
             if not categorical_columns:
@@ -379,10 +379,10 @@ class metaprivBIDS(QMainWindow):
                     QMessageBox.warning(self, "Not Enough Values", "The selected column does not have enough unique values to combine.")
                     return
 
-                # Convert all unique values to string
+               
                 unique_values = list(map(str, unique_values))
 
-                # Create a dialog to select unique values
+               
                 dialog = QDialog(self)
                 dialog.setWindowTitle("Select Values to Combine")
                 dialog.setStyleSheet("background-color: #121212; color: #FFFFFF;")  
@@ -392,7 +392,7 @@ class metaprivBIDS(QMainWindow):
                 list_widget.setSelectionMode(QListWidget.MultiSelection)
                 list_widget.addItems(unique_values)
 
-                # Style the list widget to ensure text visibility
+             
                 list_widget.setStyleSheet("""
                     QListWidget {
                         background-color: #2E2E2E;  /* Dark background */
@@ -468,11 +468,11 @@ class metaprivBIDS(QMainWindow):
         replacement_value, ok = QInputDialog.getText(self, "Combine Values", "Enter the new value for the selected items:")
         
         if ok and replacement_value:  # Check if the user clicked OK and provided a value
-            # Convert both the selected values and the replacement value to string
+           
             selected_values = list(map(str, selected_values))
             replacement_value = str(replacement_value)
             
-            # Add the combination history
+            
             if column_name not in self.combined_values_history:
                 self.combined_values_history[column_name] = []
             self.combined_values_history[column_name].append((selected_values, replacement_value))
@@ -532,16 +532,15 @@ class metaprivBIDS(QMainWindow):
             self.cig_result_browser.setPlainText("Data not available.")
             return
 
-        # Convert NaN values in the DataFrame to the string 'NaN'
+      
         df = df.astype(object).where(pd.notnull(df), 'NaN')
 
-        # Prompt user to input mask value
         mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or type "NaN" for missing values):')
 
         if ok and mask_value != '':
             try:
                 if mask_value.lower() == 'nan':
-                    # If user inputs "NaN", create a mask for the string 'NaN' values
+                  
                     mask = df == 'NaN'
                 else:
                     # Otherwise, convert input to float and create mask for that value
@@ -551,36 +550,36 @@ class metaprivBIDS(QMainWindow):
                 self.cig_result_browser.setPlainText("Invalid mask value. Please enter a number or 'NaN'.")
                 return
 
-            # Compute CIGs and apply the mask
+
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
             cigs_df[mask] = 0
         else:
-            # Compute CIGs without masking
+          
             cigs = pif.compute_cigs(df)
             cigs_df = pd.DataFrame(cigs)
 
-        # Add RIG column
+
         cigs_df['RIG'] = cigs_df.sum(axis=1)
 
-        # Prompt for percentile input
+     
         percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
 
         if not ok:
             self.cig_result_browser.setPlainText("Percentile input canceled.")
             return
 
-        # Calculate the PIF value
+      
         pif_value = np.percentile(cigs_df['RIG'], percentile)
 
-        # Display the results
+     
         self.cigs_df = cigs_df
         cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)
 
-        # Format CIG DataFrame for display
+     
         cigs_df_display = cigs_df_display.applymap(lambda x: f"{x:.2f}")
 
-        # Generate HTML for display
+     
         cigs_html = cigs_df_display.to_html(classes='dataframe', index=True, border=0)
         custom_css = """
         <style>
