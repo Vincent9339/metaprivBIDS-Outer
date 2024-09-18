@@ -91,33 +91,32 @@ def find_msu(dataframe, groups, aggregations, att, wildcard_value=-999):
 
 pd.set_option('display.float_format', '{:.6f}'.format)
 
-def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
-    """
-    Special Uniqueness Detection Algorithm (SUDA)
-    :param dataframe:
-    :param max_msu:
-    :param dis:
-    :param columns: the set of columns to apply SUDA to. Defaults to None (all columns)
-    :return:
-    """
+def suda_calculation(dataframe, max_msu=2, sample_fraction=0.30, columns=None):
     logger = logging.getLogger("suda")
     logging.basicConfig()
 
-    # Get the set of columns
     if columns is None:
-        columns = dataframe.columns
+        columns = dataframe.columns.tolist()
+
+    logger.info(f"Dataframe columns: {list(dataframe.columns)}")
+    logger.info(f"Columns to group by: {columns}")
+
+    missing_columns = [col for col in columns if col not in dataframe.columns]
+    if missing_columns:
+        logger.error(f"Columns not found in dataframe: {missing_columns}")
+        raise ValueError(f"Columns not found in dataframe: {missing_columns}")
+
+    dataframe = dataframe.dropna(subset=columns)
 
     for col in columns:
         if dataframe[col].nunique() < 600:
-            # Use .loc to avoid SettingWithCopyWarning
-            dataframe.loc[:, col] = dataframe[col].astype(pd.CategoricalDtype(ordered=True))
+            dataframe[col] = dataframe[col].astype(pd.CategoricalDtype(ordered=True))
 
     att = len(columns)
     if att > 20:
         logger.warning("More than 20 columns presented; setting ATT to max of 20")
         att = 20
 
-    # Construct the aggregation array
     aggregations = {'msu': 'min', 'suda': 'sum', 'fK': 'min', 'fM': 'sum'}
     for column in dataframe.columns:
         aggregations[column] = 'max'
@@ -125,10 +124,8 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
     # Use multiprocessing to parallelize the processing of combinations
     results = []
     with Pool(processes=cpu_count()) as pool:
-        # Pass all necessary arguments to the process_combinations function
         results = pool.map(process_combinations, [(dataframe, columns, i, aggregations, att) for i in range(1, max_msu + 1)])
 
-    # Filter out empty results
     results = [result for result in results if len(result) != 0]
 
     if len(results) == 0:
@@ -139,23 +136,35 @@ def suda_calculation(dataframe, max_msu=2, dis=0.1, columns=None):
         dataframe['fM'] = None
         return dataframe
 
-    # Domain completion
     for result in results:
         if 'fM' not in result.columns:
             result['fM'] = 0
             result['suda'] = 0
-    dataframe.loc[:, 'fM'] = 0
+
+    dataframe['fM'] = 0
     dataframe['suda'] = 0
 
-    # Concatenate all results
+    # Combine results and compute aggregations
     results.append(dataframe)
     results = pd.concat(results).groupby(level=0).agg(aggregations)
 
-    results['dis-suda'] = 0
-    dis_value = dis / results.suda.sum()
+    # Calculate DIS using the formula provided
+    value_counts = dataframe.groupby(columns, dropna=False).size()
+    num_unique_rows = len(value_counts[value_counts == 1])
+    U = num_unique_rows
 
-    results.loc[dataframe['suda'] > 0, 'dis-suda'] = results.suda * dis_value
-    results['dis-suda'] = results.suda * dis_value
-    
-   
+    duplicates = dataframe.duplicated(keep=False)
+    P = dataframe[duplicates].shape[0]
+
+    # Calculate the DIS metric using the formula
+    DIS = (U * sample_fraction) / (U * sample_fraction + P * (1 - sample_fraction))
+
+    # Update the results with the calculated DIS
+    results['dis-suda'] = 0
+    dis_value = DIS / results.suda.sum()
+
+    # Fix: Correctly align and use .loc[] for setting values
+    suda_positive_index = results['suda'] > 0
+    results.loc[suda_positive_index, 'dis-suda'] = results.loc[suda_positive_index, 'suda'] * dis_value
+
     return results

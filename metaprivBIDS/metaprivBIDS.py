@@ -791,53 +791,26 @@ class metaprivBIDS(QMainWindow):
             button_layout.addWidget(btn)
 
 
-
     def compute_suda(self):
         """
         Computes the Sample Uniques Detection Algorithm (SUDA) metrics for the selected columns of data.
-
-        This method performs the following steps:
-        1. Checks if data is loaded; if not, it shows an error message.
-        2. Prompts the user to input values for 'max_msu' and 'DIS':
-        - 'max_msu': The maximum number of minimum sample uniques (MSUs) to consider.
-        - 'DIS': The data intrusion simulation value for the SUDA calculation.
-        3. Copies the original data and selects the columns specified by the user.
-        4. Performs the SUDA computation, a sample uniques detection algorithm, using the provided parameters.
-        5. Computes the Median Absolute Deviation (MAD) of the SUDA results.
-        6. Displays the results in a dialog, including the MAD value.
-
-        Notes:
-        ------
-        - The 'suda_calculation' import function is used to perform the SUDA computation.
-        - The 'show_results_dialog' method is used to display the results to the user.
-        - Default value for DIS is 0.2 
-
-        Raises:
-        -------
-        QMessageBox: If no data is loaded or no columns are selected.
-
-        Returns:
-        --------
-        SUDA Scores.
         """
 
         if self.data is None:
             QMessageBox.warning(self, 'Error', 'No data loaded.')
             return
 
-
         max_msu, ok = QInputDialog.getInt(self, "Input", "Enter the max_msu value:", 2, 1, 10, 1)
         if not ok:
             return  # User cancelled or input is invalid
 
-        dis, ok = QInputDialog.getDouble(self, "Input", "Enter the dis value:", 0.2, 0.0, 10.0, 4)
+        # Prompt the user for the sample fraction S instead of dis
+        sample_fraction, ok = QInputDialog.getDouble(self, "Input", "Enter the sample fraction (S) value:", 0.30, 0.0, 1.0, 4)
         if not ok:
             return  # User cancelled or input is invalid
 
- 
         self.data = self.original_data.copy()
 
- 
         selected_columns = self.get_selected_columns()
         original_index = self.data.index
 
@@ -847,8 +820,8 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.warning(self, 'Error', 'No columns selected.')
             return
 
-  
-        suda_result = suda_calculation(filtered_data, max_msu=max_msu, dis=dis)
+        # Pass the sample fraction instead of dis to suda_calculation
+        suda_result = suda_calculation(filtered_data, max_msu=max_msu, sample_fraction=sample_fraction)
         suda_result['original_index'] = original_index
         columns = ['original_index'] + [col for col in suda_result.columns if col != 'original_index']
 
@@ -861,6 +834,7 @@ class metaprivBIDS(QMainWindow):
         mad_formatted = f"{mad:.5f}"
         
         self.show_results_dialog(suda_result, result_type="suda", mad_value=mad_formatted)
+
 
 
         
