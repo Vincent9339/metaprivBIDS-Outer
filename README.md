@@ -1,6 +1,6 @@
 # metaprivBIDS
 
-[![Documentation Status](https://readthedocs.org/projects/metaprivbids/badge/?version=stable)](https://metaprivbids.readthedocs.io/en/stable/?badge=stable)
+[![Documentation Status](https://readthedocs.org/projects/metaprivBIDS/badge/?version=stable)](https://metaprivBIDS.readthedocs.io/en/stable/?badge=stable)
 
 
 
