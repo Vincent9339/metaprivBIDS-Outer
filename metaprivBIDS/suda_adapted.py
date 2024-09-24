@@ -125,7 +125,7 @@ def suda_calculation(dataframe, max_msu=2, sample_fraction=0.30, columns=None):
     for column in dataframe.columns:
         aggregations[column] = 'max'
 
-    # Use multiprocessing to parallelize the processing of combinations
+
     results = []
     with Pool(processes=cpu_count()) as pool:
         results = pool.map(process_combinations, [(dataframe, columns, i, aggregations, att) for i in range(1, max_msu + 1)])
