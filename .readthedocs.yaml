@@ -8,7 +8,8 @@ build:
 
 python:
   install:
-    - requirements: requirements.txt
-
-sphinx:
-  configuration: docs/conf.py  # Update this to point to your conf.py file
+    - method: pip
+      path: .
+      # Read the dependencies from pyproject.toml
+      extra_requirements:
+        - docs  # If you have a `[project.optional-dependencies.docs]` section in pyproject.toml

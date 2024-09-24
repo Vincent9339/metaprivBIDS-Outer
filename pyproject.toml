@@ -34,3 +34,10 @@ repository = "https://github.com/cpernet/metaprivBIDS"
 
 [tool.setuptools]
 packages = ["metaprivBIDS"]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=4.0",
+    "sphinx_rtd_theme>=1.0",
+    "myst-parser>=0.13"  # If using Markdown with Sphinx
+]
