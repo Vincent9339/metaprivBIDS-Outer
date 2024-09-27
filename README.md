@@ -1,5 +1,10 @@
 # metaprivBIDS
 
+[![Documentation Status](https://readthedocs.org/projects/metaprivbids/badge/?version=latest)](https://metaprivbids.readthedocs.io/en/latest/?badge=latest)
+
+
+
+
 This Python build tool enables a given user to calculate a variety of different data privacy metrics on tabular data from a user interface. 
 
 # Methods
