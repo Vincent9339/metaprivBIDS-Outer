@@ -11,9 +11,16 @@ This documentation provides an overview of the metaprivBIDS Graphical User Inter
 metaprivBIDS provides tool for data risk assesment, including methods:
 
 - K-anonymity [1]_
+   - Searching each record in the dataset to see if they are indistinguishable from at least k − 1 other records with respect to a set of quasi-identifiers.
+
 - ℓ-diversity [2]_
+   - Looking at the diversity of the sensitive attribute. A dataset satisfies l-diversity if each group of indistinguishable records has at least l diverse values for the sensitive attribute(s), preventing easy inference of sensitive information.
+
 - Sample Unique Detection Algorithm (SUDA) [3]_
+   - The SUDA (Sample Unique Detection Algorithm) identifies records in a dataset that are unique based on a combination of quasi-identifiers. It works by flagging records with rare attribute combinations, indicating a higher risk of re-identification.
+
 - Privacy Information Factor (PIF) [4]_
+   - The Privacy Information Factor (PIF) measures the risk of re-identification by analyzing how a record's quasi-identifiers deviate from the overall distribution in the dataset. A higher PIF suggests that the record's combination of attributes is rare, making it more likely to be uniquely identifiable within the population.
 
 .. [1] Sweeney, L. (2002). k-Anonymity: A Model for Protecting Privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, 10(05), 557-570.
 .. [2] Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M. (2007). ℓ-Diversity: Privacy Beyond k-Anonymity. *ACM Transactions on Knowledge Discovery from Data (TKDD)*, 1(1), 3-es.
