@@ -18,7 +18,7 @@ Recruitment: Online advertisement.
 
 Top 10 SUDA scores. 
 
-2 participants specially stands out, due to their combination of height & weigh. 
+2 participants specially stands out, due to their combination of height & weight. 
 
 <img width="747" alt="Screenshot 2024-09-27 at 12 27 57" src="https://github.com/user-attachments/assets/f3c25ea1-552f-4548-b95f-2ee8ff8f2899">
 
