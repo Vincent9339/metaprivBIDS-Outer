@@ -215,7 +215,7 @@ class metaprivBIDS(QMainWindow):
             file_path, _ = QFileDialog.getSaveFileName(self, "Save CIG to CSV", "", "CSV Files (*.csv)", options=options)
 
             if file_path:
-                # Save the DataFrame to the specified CSV file
+              
                 try:
                     self.cigs_df_display.to_csv(file_path, index=True)
                     QMessageBox.information(self, "Success", f"CIG data successfully saved to {file_path}")
