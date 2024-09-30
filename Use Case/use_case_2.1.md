@@ -36,3 +36,5 @@ Taking a look at the heatmap for the field information gain, it is shown that we
 <img width="749" alt="Screenshot 2024-09-30 at 16 03 04" src="https://github.com/user-attachments/assets/e26467de-a0c3-4d62-96ea-cfe39775b36c"><br>
 
 
+Looking at the data risk in isolation in can seem as though this would be of risk publish. However taking into consideration the overall population being 32.05M individuals living in the city of which this study takes place it is highly undoubtful that the limited amount of quasi-identifers would consitute a risk to release. 
+
