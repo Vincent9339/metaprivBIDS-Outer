@@ -497,31 +497,6 @@ ValueError: If the percentile input is not within the range 0-100.</p>
 <dt class="sig sig-object py" id="metaprivBIDS.metaprivBIDS.metaprivBIDS.compute_suda">
 <span class="sig-name descname"><span class="pre">compute_suda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.compute_suda" title="Permalink to this definition"></a></dt>
 <dd><p>Computes the Sample Uniques Detection Algorithm (SUDA) metrics for the selected columns of data.</p>
-<p>This method performs the following steps:
-1. Checks if data is loaded; if not, it shows an error message.
-2. Prompts the user to input values for ‘max_msu’ and ‘DIS’:
-- ‘max_msu’: The maximum number of minimum sample uniques (MSUs) to consider.
-- ‘DIS’: The data intrusion simulation value for the SUDA calculation.
-3. Copies the original data and selects the columns specified by the user.
-4. Performs the SUDA computation, a sample uniques detection algorithm, using the provided parameters.
-5. Computes the Median Absolute Deviation (MAD) of the SUDA results.
-6. Displays the results in a dialog, including the MAD value.</p>
-<div class="section" id="id26">
-<h3>Notes:<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
-<ul class="simple">
-<li><p>The ‘suda_calculation’ import function is used to perform the SUDA computation.</p></li>
-<li><p>The ‘show_results_dialog’ method is used to display the results to the user.</p></li>
-<li><p>Default value for DIS is 0.2</p></li>
-</ul>
-</div>
-<div class="section" id="id27">
-<h3>Raises:<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
-<p>QMessageBox: If no data is loaded or no columns are selected.</p>
-</div>
-<div class="section" id="id28">
-<h3>Returns:<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h3>
-<p>SUDA Scores.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -531,8 +506,8 @@ ValueError: If the percentile input is not within the range 0-100.</p>
 <p>This method creates a QMenu with actions for adding Laplacian and Gaussian noise 
 to the data. Each action is connected to the <cite>add_noise</cite> method with the respective 
 noise type as a parameter.</p>
-<div class="section" id="id29">
-<h3>Returns:<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h3>
+<div class="section" id="id26">
+<h3>Returns:<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMenu:</dt><dd><p>The menu containing noise addition actions.</p>
 </dd>
@@ -552,19 +527,19 @@ descriptive statistics and formatting the output as an HTML table. The following
 4. Formats the statistics to two decimal places and converts them to an HTML table.
 5. Applies custom CSS styles to the HTML table for better readability and displays it in the ‘cig_result_browser’.</p>
 <p>If ‘cigs_df’ is not available or is empty, a message prompting the user to compute CIG is shown instead.</p>
-<div class="section" id="id30">
-<h3>Notes:<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h3>
+<div class="section" id="id27">
+<h3>Notes:<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>The method requires that the ‘cigs_df’ attribute is present and contains data.</p></li>
 <li><p>Custom CSS is used to enhance the visual appearance of the HTML table.</p></li>
 </ul>
 </div>
-<div class="section" id="id31">
-<h3>Raises:<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h3>
+<div class="section" id="id28">
+<h3>Raises:<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h3>
 <p>Missing CIG calculation: “Please compute CIG before describing it.”</p>
 </div>
-<div class="section" id="id32">
-<h3>Returns:<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h3>
+<div class="section" id="id29">
+<h3>Returns:<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h3>
 <p>CIG statistical description.</p>
 </div>
 </dd></dl>
@@ -600,8 +575,8 @@ to the uniqueness of rows in the dataset. It performs the following steps:
 5. Ensures that the heatmap label and close button are visible.</p>
 <p>If the ‘cigs_df’ attribute is not present or is empty, the method displays a message in 
 ‘cig_result_browser’ prompting the user to compute CIG before generating the heatmap.</p>
-<div class="section" id="id33">
-<h3>Notes:<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h3>
+<div class="section" id="id30">
+<h3>Notes:<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>The heatmap is saved as ‘heatmap.png’ in the current working directory.</p></li>
 <li><p>A custom color map from seaborn’s “RdYlGn” palette is used for the heatmap.</p></li>
@@ -609,12 +584,12 @@ to the uniqueness of rows in the dataset. It performs the following steps:
 and ensures the ‘close_heatmap_button’ is visible.</p></li>
 </ul>
 </div>
-<div class="section" id="id34">
-<h3>Raises:<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h3>
+<div class="section" id="id31">
+<h3>Raises:<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h3>
 <p>Missing CIG computation: “Please compute CIG before generating the heatmap.”</p>
 </div>
-<div class="section" id="id35">
-<h3>Returns:<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h3>
+<div class="section" id="id32">
+<h3>Returns:<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h3>
 <p>Matplotlib plot (Heatmap)</p>
 </div>
 </dd></dl>
@@ -625,8 +600,8 @@ and ensures the ‘close_heatmap_button’ is visible.</p></li>
 <dd><p>Retrieve a list of categorical columns from the model.</p>
 <p>Iterates through the rows of <cite>columns_model</cite> to find columns marked as “Categorical”.
 Returns a list of the names of these columns.</p>
-<div class="section" id="id36">
-<h3>Returns:<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h3>
+<div class="section" id="id33">
+<h3>Returns:<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>list of str</dt><dd><p>A list containing the names of columns identified as categorical.</p>
 </dd>
@@ -640,8 +615,8 @@ Returns a list of the names of these columns.</p>
 <dd><p>Retrieve the names of the selected columns in the columns view.</p>
 <p>Collects and returns the names of columns currently selected in ‘columns_view’. 
 If no columns are selected, displays a message on ‘result_label’.</p>
-<div class="section" id="id37">
-<h3>Returns:<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h3>
+<div class="section" id="id34">
+<h3>Returns:<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>list of str</dt><dd><p>The list of selected column names.</p>
 </dd>
@@ -656,8 +631,8 @@ If no columns are selected, displays a message on ‘result_label’.</p>
 <p>Iterates through the rows of <cite>columns_model</cite> to find the column marked 
 as the sensitive attribute (checked in the fourth column). Returns the 
 name of the first checked sensitive attribute or None if none are found.</p>
-<div class="section" id="id38">
-<h3>Returns:<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h3>
+<div class="section" id="id35">
+<h3>Returns:<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>str or None</dt><dd><p>The name of the sensitive attribute if one is selected, otherwise None.</p>
 </dd>
@@ -692,15 +667,15 @@ user interaction.</p>
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.load_data" title="Permalink to this definition"></a></dt>
 <dd><p>Loads data from a specified file into the application’s data structure.</p>
 <p>This method reads a CSV or TSV file from the provided file path and processes the data. It distinguishes between continuous and categorical columns based on the number of unique values and updates the internal data structures accordingly.</p>
-<div class="section" id="id39">
-<h3>Parameters:<a class="headerlink" href="#id39" title="Permalink to this heading"></a></h3>
+<div class="section" id="id36">
+<h3>Parameters:<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>file_path<span class="classifier">str</span></dt><dd><p>The path to the file to be loaded. The file extension should be either ‘.csv’ or ‘.tsv’.</p>
 </dd>
 </dl>
 </div>
-<div class="section" id="id40">
-<h3>Raises:<a class="headerlink" href="#id40" title="Permalink to this heading"></a></h3>
+<div class="section" id="id37">
+<h3>Raises:<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>FileNotFoundError</dt><dd><p>If the specified file does not exist or cannot be found.</p>
 </dd>
@@ -710,17 +685,16 @@ user interaction.</p>
 </dd>
 </dl>
 </div>
-<div class="section" id="id41">
-<h3>Notes:<a class="headerlink" href="#id41" title="Permalink to this heading"></a></h3>
+<div class="section" id="id38">
+<h3>Notes:<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p>The file extension determines the delimiter used: tab (`      <cite>) for TSV files and comma (</cite>,`) for CSV files.</p></li>
 <li><p>Column names are stripped of leading and trailing whitespace.</p></li>
 <li><p>Columns are classified as “Continuous” if they have more than 45 unique values; otherwise, they are classified as “Categorical”.</p></li>
 <li><p>The method stores a copy of the original data and updates the tree view with the column types and options for selecting columns.</p></li>
 </ul>
 </div>
-<div class="section" id="id42">
-<h3>Returns:<a class="headerlink" href="#id42" title="Permalink to this heading"></a></h3>
+<div class="section" id="id39">
+<h3>Returns:<a class="headerlink" href="#id39" title="Permalink to this heading"></a></h3>
 <p>Loaded Data</p>
 </div>
 </dd></dl>
@@ -742,8 +716,8 @@ If a file is selected, it calls <cite>load_data</cite> to load the file’s cont
 <h3>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
 <p>Opens a file dialog to select a JSON file, loads the file’s content, and updates UI elements.</p>
 </div>
-<div class="section" id="id43">
-<h3>Raises:<a class="headerlink" href="#id43" title="Permalink to this heading"></a></h3>
+<div class="section" id="id40">
+<h3>Raises:<a class="headerlink" href="#id40" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMessageBox</dt><dd><p>If an error occurs while loading the file.</p>
 </dd>
@@ -767,23 +741,23 @@ values are combined into a replacement node. The graph is visualized using Matpl
 4. Removes edges related to combined values to prevent overlap.
 5. Uses Graphviz layout for proper positioning of nodes.
 6. Draws and displays the graph using Matplotlib and NetworkX.</p>
-<div class="section" id="id44">
-<h3>Parameters:<a class="headerlink" href="#id44" title="Permalink to this heading"></a></h3>
+<div class="section" id="id41">
+<h3>Parameters:<a class="headerlink" href="#id41" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>column_name<span class="classifier">str</span></dt><dd><p>The name of the categorical column from the dataset to plot.</p>
 </dd>
 </dl>
 </div>
-<div class="section" id="id45">
-<h3>Notes:<a class="headerlink" href="#id45" title="Permalink to this heading"></a></h3>
+<div class="section" id="id42">
+<h3>Notes:<a class="headerlink" href="#id42" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>The graph will include nodes for individual values, and if any values were combined 
 into a single entity, the relationship will be reflected in the graph.</p></li>
 <li><p>Uses Graphviz for positioning (<cite>prog=’dot’</cite>) to ensure a hierarchical tree layout.</p></li>
 </ul>
 </div>
-<div class="section" id="id46">
-<h3>Returns:<a class="headerlink" href="#id46" title="Permalink to this heading"></a></h3>
+<div class="section" id="id43">
+<h3>Returns:<a class="headerlink" href="#id43" title="Permalink to this heading"></a></h3>
 <p>nx.drawing.nx_agraph</p>
 </div>
 </dd></dl>
@@ -793,8 +767,8 @@ into a single entity, the relationship will be reflected in the graph.</p></li>
 <span class="sig-name descname"><span class="pre">revert_to_original</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.revert_to_original" title="Permalink to this definition"></a></dt>
 <dd><p>Reverts the values in a selected column to their original state.</p>
 <p>Updates the preview to reflect the reverted column. If no original data is available for the selected column, shows a warning message.</p>
-<div class="section" id="id47">
-<h3>Raises:<a class="headerlink" href="#id47" title="Permalink to this heading"></a></h3>
+<div class="section" id="id44">
+<h3>Raises:<a class="headerlink" href="#id44" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMessageBox</dt><dd><p>If an error occurs while reverting the column or if no original data is available.</p>
 </dd>
@@ -807,8 +781,8 @@ into a single entity, the relationship will be reflected in the graph.</p></li>
 <span class="sig-name descname"><span class="pre">round_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.round_values" title="Permalink to this definition"></a></dt>
 <dd><p>Rounds values in a selected continuous column to a specified precision.</p>
 <p>Rounds the values in the selected column according to the chosen precision. Stores the original data if not already stored and updates the preview.</p>
-<div class="section" id="id48">
-<h3>Raises:<a class="headerlink" href="#id48" title="Permalink to this heading"></a></h3>
+<div class="section" id="id45">
+<h3>Raises:<a class="headerlink" href="#id45" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMessageBox</dt><dd><p>If no continuous columns are available or if an error occurs during rounding.</p>
 </dd>
@@ -822,8 +796,8 @@ into a single entity, the relationship will be reflected in the graph.</p></li>
 <dd><p>Configure the appearance and behavior of the given QTreeView.</p>
 <p>Sets the selection mode, background color, font, and sorting behavior for the provided
 QTreeView. Adjusts settings based on whether the view is the columns view.</p>
-<div class="section" id="id49">
-<h3>Parameters<a class="headerlink" href="#id49" title="Permalink to this heading"></a></h3>
+<div class="section" id="id46">
+<h3>Parameters<a class="headerlink" href="#id46" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>view<span class="classifier">QTreeView</span></dt><dd><p>The tree view to be configured.</p>
 </dd>
@@ -848,19 +822,19 @@ the selection by clicking a button, which triggers the combination of selected v
 4. Checks if the selected column has at least two unique values.
 5. Opens another dialog to select and combine unique values from the column.
 6. Applies styling to the dialog and its components for better visibility and usability.</p>
-<div class="section" id="id50">
-<h3>Notes:<a class="headerlink" href="#id50" title="Permalink to this heading"></a></h3>
+<div class="section" id="id47">
+<h3>Notes:<a class="headerlink" href="#id47" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>The method uses a ‘QDialog’ to allow the user to select values to combine.</p></li>
 <li><p>If no categorical columns are available or if the dataset is not loaded, appropriate warnings are shown.</p></li>
 </ul>
 </div>
-<div class="section" id="id51">
-<h3>Raises:<a class="headerlink" href="#id51" title="Permalink to this heading"></a></h3>
+<div class="section" id="id48">
+<h3>Raises:<a class="headerlink" href="#id48" title="Permalink to this heading"></a></h3>
 <p>QMessageBox.Warning: If no data is loaded, no categorical columns are available, or not enough unique values are present.</p>
 </div>
-<div class="section" id="id52">
-<h3>Returns:<a class="headerlink" href="#id52" title="Permalink to this heading"></a></h3>
+<div class="section" id="id49">
+<h3>Returns:<a class="headerlink" href="#id49" title="Permalink to this heading"></a></h3>
 <p>QDialog Window</p>
 </div>
 </dd></dl>
@@ -874,20 +848,20 @@ the selection by clicking a button, which triggers the combination of selected v
 2. Retrieves the categorical columns from the dataset.
 3. Opens a dialog for the user to select a categorical column.
 4. Plots a tree graph for the selected column using combined values, if available.</p>
-<div class="section" id="id53">
-<h3>Raises:<a class="headerlink" href="#id53" title="Permalink to this heading"></a></h3>
+<div class="section" id="id50">
+<h3>Raises:<a class="headerlink" href="#id50" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>QMessageBox.Warning: If no data is loaded or no categorical columns are available.</p>
 </div></blockquote>
 </div>
-<div class="section" id="id54">
-<h3>Parameters:<a class="headerlink" href="#id54" title="Permalink to this heading"></a></h3>
+<div class="section" id="id51">
+<h3>Parameters:<a class="headerlink" href="#id51" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>Column</p>
 </div></blockquote>
 </div>
-<div class="section" id="id55">
-<h3>Returns:<a class="headerlink" href="#id55" title="Permalink to this heading"></a></h3>
+<div class="section" id="id52">
+<h3>Returns:<a class="headerlink" href="#id52" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>Visual display of graph</p>
 </div></blockquote>
@@ -906,12 +880,12 @@ the selection by clicking a button, which triggers the combination of selected v
 <span class="sig-name descname"><span class="pre">show_metadata_for_column</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.show_metadata_for_column" title="Permalink to this definition"></a></dt>
 <dd><p>Displays metadata for the currently selected column in the dropdown.</p>
 <p>Retrieves metadata for the selected column from <cite>self.metadata</cite> and displays it in <cite>self.metadata_display</cite>. Shows a warning if no metadata is available for the selected column.</p>
-<div class="section" id="id56">
-<h3>Example:<a class="headerlink" href="#id56" title="Permalink to this heading"></a></h3>
+<div class="section" id="id53">
+<h3>Example:<a class="headerlink" href="#id53" title="Permalink to this heading"></a></h3>
 <p>Displays metadata information for the column selected in the dropdown menu.</p>
 </div>
-<div class="section" id="id57">
-<h3>Raises:<a class="headerlink" href="#id57" title="Permalink to this heading"></a></h3>
+<div class="section" id="id54">
+<h3>Raises:<a class="headerlink" href="#id54" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMessageBox</dt><dd><p>If no metadata is available for the selected column.</p>
 </dd>
@@ -923,19 +897,19 @@ the selection by clicking a button, which triggers the combination of selected v
 <dt class="sig sig-object py" id="metaprivBIDS.metaprivBIDS.metaprivBIDS.show_preview">
 <span class="sig-name descname"><span class="pre">show_preview</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.metaprivBIDS.metaprivBIDS.show_preview" title="Permalink to this definition"></a></dt>
 <dd><p>Displays the first 10 rows of the loaded dataset in a preview table.</p>
-<div class="section" id="id58">
-<h3>Raises:<a class="headerlink" href="#id58" title="Permalink to this heading"></a></h3>
+<div class="section" id="id55">
+<h3>Raises:<a class="headerlink" href="#id55" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>QMessageBox</dt><dd><p>If no data is loaded.</p>
 </dd>
 </dl>
 </div>
-<div class="section" id="id59">
-<h3>Example:<a class="headerlink" href="#id59" title="Permalink to this heading"></a></h3>
+<div class="section" id="id56">
+<h3>Example:<a class="headerlink" href="#id56" title="Permalink to this heading"></a></h3>
 <p>Shows the first 10 rows of the dataset with column headers in a table view.</p>
 </div>
-<div class="section" id="id60">
-<h3>Notes:<a class="headerlink" href="#id60" title="Permalink to this heading"></a></h3>
+<div class="section" id="id57">
+<h3>Notes:<a class="headerlink" href="#id57" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Table height is set to a maximum of 200 pixels.</p></li>
 <li><p>Dropdown menu for columns is updated accordingly.</p></li>
@@ -962,19 +936,19 @@ Function is used to navigate to the preview interface of the application.</p>
 <dd><p>Display a dialog with calculation results in a table format.</p>
 <p>Shows the results of Combined Column Contributions or SUDA calculations in a modal dialog. 
 The dialog includes an optional Median Absolute Deviation (MAD) value and allows saving the results as a CSV file.</p>
-<div class="section" id="id61">
-<h3>Parameters:<a class="headerlink" href="#id61" title="Permalink to this heading"></a></h3>
+<div class="section" id="id58">
+<h3>Parameters:<a class="headerlink" href="#id58" title="Permalink to this heading"></a></h3>
 <p>results_df : pandas.DataFrame
 result_type : str, optional
 Type of results (“combined” or “suda”) for setting the dialog title and default filename.
 mad_value : float.</p>
 </div>
-<div class="section" id="id62">
-<h3>Returns:<a class="headerlink" href="#id62" title="Permalink to this heading"></a></h3>
+<div class="section" id="id59">
+<h3>Returns:<a class="headerlink" href="#id59" title="Permalink to this heading"></a></h3>
 <p>QMessageBox / QDialog.</p>
 </div>
-<div class="section" id="id63">
-<h3>Raises:<a class="headerlink" href="#id63" title="Permalink to this heading"></a></h3>
+<div class="section" id="id60">
+<h3>Raises:<a class="headerlink" href="#id60" title="Permalink to this heading"></a></h3>
 <p>FileNotFoundError
 If the file path for saving the CSV is invalid.</p>
 </div>
@@ -1003,8 +977,8 @@ from the metadata. Adds a default “Select Column” option at the top.</p>
 <dd><p>Populate the given model with data and optionally add checkboxes.</p>
 <p>Clears the model and populates it with items from ‘data_list’. 
 Optionally adds a checkable item to each row if ‘add_checkbox’ is True.</p>
-<div class="section" id="id64">
-<h3>Parameters<a class="headerlink" href="#id64" title="Permalink to this heading"></a></h3>
+<div class="section" id="id61">
+<h3>Parameters<a class="headerlink" href="#id61" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>model<span class="classifier">QStandardItemModel</span></dt><dd><p>The model to update with the new data.</p>
 </dd>
@@ -1068,14 +1042,8 @@ copies or substantial portions of the Software.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="metaprivBIDS.suda_adapted.suda_calculation">
-<span class="sig-prename descclassname"><span class="pre">metaprivBIDS.suda_adapted.</span></span><span class="sig-name descname"><span class="pre">suda_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_msu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.suda_adapted.suda_calculation" title="Permalink to this definition"></a></dt>
-<dd><p>Special Uniqueness Detection Algorithm (SUDA)
-:param dataframe:
-:param max_msu:
-:param dis:
-:param columns: the set of columns to apply SUDA to. Defaults to None (all columns)
-:return:</p>
-</dd></dl>
+<span class="sig-prename descclassname"><span class="pre">metaprivBIDS.suda_adapted.</span></span><span class="sig-name descname"><span class="pre">suda_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_msu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#metaprivBIDS.suda_adapted.suda_calculation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-metaprivBIDS">
