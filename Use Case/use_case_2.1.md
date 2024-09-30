@@ -22,3 +22,5 @@ Top 10 SUDA scores.
 
 <img width="747" alt="Screenshot 2024-09-27 at 12 27 57" src="https://github.com/user-attachments/assets/f3c25ea1-552f-4548-b95f-2ee8ff8f2899">
 
+The Privacy Information factor reflect the suda score 
+<img width="310" alt="Screenshot 2024-09-30 at 16 00 16" src="https://github.com/user-attachments/assets/0b41cc7f-81d4-4d7d-b0d9-1e95ec67b802">
