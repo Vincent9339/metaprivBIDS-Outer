@@ -132,6 +132,12 @@ class metaprivBIDS(QMainWindow):
         self.heatmap_button.clicked.connect(self.generate_heatmap)
         button_layout.addWidget(self.heatmap_button)
 
+        # Add the Save CIG to CSV button here:
+        self.save_cig_button = QPushButton('Save CIG to CSV')  # NEW BUTTON
+        self.save_cig_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
+        self.save_cig_button.clicked.connect(self.save_cig_to_csv)
+        button_layout.addWidget(self.save_cig_button)  # Add to button layout
+
         # Create the close heatmap button
         self.close_heatmap_button = QPushButton('Close Heatmap')
         self.close_heatmap_button.setStyleSheet("background-color: #00c3ff; color: #FFFFFF;")
@@ -194,6 +200,33 @@ class metaprivBIDS(QMainWindow):
 
         self.preview_layout.addLayout(back_button_layout)
         self.stacked_widget.addWidget(self.preview_page)
+
+
+
+
+
+    def save_cig_to_csv(self):
+        """
+        Saves the computed CIG DataFrame to a CSV file.
+        Prompts the user to specify a file location and then saves the DataFrame.
+        """
+        if hasattr(self, 'cigs_df_display') and not self.cigs_df_display.empty:
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save CIG to CSV", "", "CSV Files (*.csv)", options=options)
+
+            if file_path:
+                # Save the DataFrame to the specified CSV file
+                try:
+                    self.cigs_df_display.to_csv(file_path, index=True)
+                    QMessageBox.information(self, "Success", f"CIG data successfully saved to {file_path}")
+                except Exception as e:
+                    QMessageBox.warning(self, "Error", f"An error occurred while saving the file: {str(e)}")
+            else:
+                QMessageBox.information(self, "Canceled", "Save operation canceled.")
+        else:
+            QMessageBox.warning(self, "Error", "No CIG data to save. Please compute CIG first.")
+
+
 
     def show_graph_categorical_dialog(self):
 
@@ -576,6 +609,7 @@ class metaprivBIDS(QMainWindow):
         self.cigs_df = cigs_df
         cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)
 
+        self.cigs_df_display = cigs_df_display 
      
         cigs_df_display = cigs_df_display.applymap(lambda x: f"{x:.2f}")
 
