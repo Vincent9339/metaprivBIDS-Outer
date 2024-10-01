@@ -1,3 +1,4 @@
 *.pchce
 .DS_Store
-
+metaprivBIDS.egg-info/
+__pycache__/
