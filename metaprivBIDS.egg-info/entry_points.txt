@@ -1,0 +1,2 @@
+[console_scripts]
+metaprivBIDS = metaprivBIDS.metaprivBIDS:main
