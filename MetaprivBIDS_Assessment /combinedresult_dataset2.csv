@@ -1,0 +1,220 @@
+Combination,Unique Rows,Unique Rows Excluding Columns,Score
+"AgeCog_W1, Height_W1, EduYrsEstCap",438,125,0.7648401826484018
+"AgeCog_W1, Height_W1, EduComp",432,150,0.7175925925925926
+"AgeCog_W1, Height_W1, HandednessScore",436,45,0.9518348623853211
+"AgeCog_W1, Height_W1, Race",330,122,1.0242424242424242
+"AgeCog_W1, Height_W1, Ethnicity",300,151,1.03
+"AgeCog_W1, Height_W1, Sex",313,110,1.1182108626198084
+"AgeCog_W1, EduYrsEstCap, EduComp",199,178,1.4170854271356783
+"AgeCog_W1, EduYrsEstCap, HandednessScore",383,119,0.8903394255874674
+"AgeCog_W1, EduYrsEstCap, Race",216,292,0.7777777777777778
+"AgeCog_W1, EduYrsEstCap, Ethnicity",196,302,0.8061224489795918
+"AgeCog_W1, EduYrsEstCap, Sex",247,291,0.6842105263157895
+"AgeCog_W1, EduComp, HandednessScore",359,152,0.8579387186629527
+"AgeCog_W1, EduComp, Race",172,314,0.8488372093023255
+"AgeCog_W1, EduComp, Ethnicity",155,329,0.8451612903225807
+"AgeCog_W1, EduComp, Sex",210,320,0.6666666666666666
+"AgeCog_W1, HandednessScore, Race",252,127,1.3214285714285714
+"AgeCog_W1, HandednessScore, Ethnicity",233,165,1.2660944206008584
+"AgeCog_W1, HandednessScore, Sex",287,151,1.0766550522648084
+"AgeCog_W1, Race, Ethnicity",55,324,2.4727272727272727
+"AgeCog_W1, Race, Sex",74,313,1.9864864864864864
+"AgeCog_W1, Ethnicity, Sex",45,328,2.933333333333333
+"Height_W1, EduYrsEstCap, EduComp",88,328,1.5
+"Height_W1, EduYrsEstCap, HandednessScore",283,259,0.7102473498233216
+"Height_W1, EduYrsEstCap, Race",122,395,0.5327868852459017
+"Height_W1, EduYrsEstCap, Ethnicity",86,402,0.6744186046511628
+"Height_W1, EduYrsEstCap, Sex",87,387,0.8390804597701149
+"Height_W1, EduComp, HandednessScore",252,287,0.6865079365079365
+"Height_W1, EduComp, Race",90,412,0.5333333333333333
+"Height_W1, EduComp, Ethnicity",48,412,1.0
+"Height_W1, EduComp, Sex",54,398,1.1481481481481481
+"Height_W1, HandednessScore, Race",140,285,1.25
+"Height_W1, HandednessScore, Ethnicity",113,293,1.4778761061946903
+"Height_W1, HandednessScore, Sex",123,244,1.7560975609756098
+"Height_W1, Race, Ethnicity",49,412,0.9795918367346939
+"Height_W1, Race, Sex",48,398,1.2916666666666667
+"Height_W1, Ethnicity, Sex",17,399,3.588235294117647
+"EduYrsEstCap, EduComp, HandednessScore",60,350,1.8333333333333333
+"EduYrsEstCap, EduComp, Race",29,441,0.6551724137931034
+"EduYrsEstCap, EduComp, Ethnicity",13,444,1.2307692307692308
+"EduYrsEstCap, EduComp, Sex",8,443,2.125
+"EduYrsEstCap, HandednessScore, Race",90,444,0.17777777777777778
+"EduYrsEstCap, HandednessScore, Ethnicity",61,444,0.26229508196721313
+"EduYrsEstCap, HandednessScore, Sex",88,446,0.1590909090909091
+"EduYrsEstCap, Race, Ethnicity",31,460,0.0
+"EduYrsEstCap, Race, Sex",37,460,0.0
+"EduYrsEstCap, Ethnicity, Sex",12,460,0.0
+"EduComp, HandednessScore, Race",79,444,0.20253164556962025
+"EduComp, HandednessScore, Ethnicity",51,448,0.23529411764705882
+"EduComp, HandednessScore, Sex",61,448,0.19672131147540983
+"EduComp, Race, Ethnicity",18,460,0.0
+"EduComp, Race, Sex",22,460,0.0
+"EduComp, Ethnicity, Sex",5,460,0.0
+"HandednessScore, Race, Ethnicity",36,448,0.3333333333333333
+"HandednessScore, Race, Sex",49,446,0.2857142857142857
+"HandednessScore, Ethnicity, Sex",24,450,0.4166666666666667
+"Race, Ethnicity, Sex",3,460,0.0
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp",444,59,0.9031531531531531
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore",460,27,0.941304347826087
+"AgeCog_W1, Height_W1, EduYrsEstCap, Race",446,84,0.8430493273542601
+"AgeCog_W1, Height_W1, EduYrsEstCap, Ethnicity",440,113,0.7886363636363637
+"AgeCog_W1, Height_W1, EduYrsEstCap, Sex",442,90,0.8371040723981901
+"AgeCog_W1, Height_W1, EduComp, HandednessScore",460,41,0.9108695652173913
+"AgeCog_W1, Height_W1, EduComp, Race",442,108,0.7963800904977375
+"AgeCog_W1, Height_W1, EduComp, Ethnicity",440,143,0.7204545454545455
+"AgeCog_W1, Height_W1, EduComp, Sex",438,100,0.821917808219178
+"AgeCog_W1, Height_W1, HandednessScore, Race",442,18,1.0
+"AgeCog_W1, Height_W1, HandednessScore, Ethnicity",437,39,0.9633867276887872
+"AgeCog_W1, Height_W1, HandednessScore, Sex",440,32,0.9727272727272728
+"AgeCog_W1, Height_W1, Race, Ethnicity",337,101,1.0652818991097923
+"AgeCog_W1, Height_W1, Race, Sex",343,78,1.1137026239067056
+"AgeCog_W1, Height_W1, Ethnicity, Sex",323,101,1.111455108359133
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore",390,54,1.041025641025641
+"AgeCog_W1, EduYrsEstCap, EduComp, Race",236,141,1.3516949152542372
+"AgeCog_W1, EduYrsEstCap, EduComp, Ethnicity",218,168,1.3394495412844036
+"AgeCog_W1, EduYrsEstCap, EduComp, Sex",269,152,1.1449814126394051
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Race",394,72,0.9847715736040609
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Ethnicity",391,110,0.8951406649616368
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Sex",408,98,0.8872549019607843
+"AgeCog_W1, EduYrsEstCap, Race, Ethnicity",225,278,0.8088888888888889
+"AgeCog_W1, EduYrsEstCap, Race, Sex",275,265,0.7090909090909091
+"AgeCog_W1, EduYrsEstCap, Ethnicity, Sex",267,282,0.6666666666666666
+"AgeCog_W1, EduComp, HandednessScore, Race",381,108,0.9238845144356955
+"AgeCog_W1, EduComp, HandednessScore, Ethnicity",371,143,0.8544474393530997
+"AgeCog_W1, EduComp, HandednessScore, Sex",387,133,0.8449612403100775
+"AgeCog_W1, EduComp, Race, Ethnicity",185,305,0.8378378378378378
+"AgeCog_W1, EduComp, Race, Sex",247,293,0.6761133603238867
+"AgeCog_W1, EduComp, Ethnicity, Sex",231,310,0.6493506493506493
+"AgeCog_W1, HandednessScore, Race, Ethnicity",262,108,1.3435114503816794
+"AgeCog_W1, HandednessScore, Race, Sex",318,103,1.1226415094339623
+"AgeCog_W1, HandednessScore, Ethnicity, Sex",307,144,1.0293159609120521
+"AgeCog_W1, Race, Ethnicity, Sex",86,305,1.802325581395349
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore",305,86,1.2262295081967214
+"Height_W1, EduYrsEstCap, EduComp, Race",144,307,1.0625
+"Height_W1, EduYrsEstCap, EduComp, Ethnicity",103,318,1.3786407766990292
+"Height_W1, EduYrsEstCap, EduComp, Sex",108,262,1.8333333333333333
+"Height_W1, EduYrsEstCap, HandednessScore, Race",310,231,0.7387096774193549
+"Height_W1, EduYrsEstCap, HandednessScore, Ethnicity",293,247,0.726962457337884
+"Height_W1, EduYrsEstCap, HandednessScore, Sex",305,185,0.9016393442622951
+"Height_W1, EduYrsEstCap, Race, Ethnicity",133,387,0.5488721804511278
+"Height_W1, EduYrsEstCap, Race, Sex",143,371,0.6223776223776224
+"Height_W1, EduYrsEstCap, Ethnicity, Sex",108,381,0.7314814814814815
+"Height_W1, EduComp, HandednessScore, Race",282,267,0.6843971631205674
+"Height_W1, EduComp, HandednessScore, Ethnicity",265,275,0.6981132075471698
+"Height_W1, EduComp, HandednessScore, Sex",278,225,0.8453237410071942
+"Height_W1, EduComp, Race, Ethnicity",98,408,0.5306122448979592
+"Height_W1, EduComp, Race, Sex",110,391,0.6272727272727273
+"Height_W1, EduComp, Ethnicity, Sex",72,394,0.9166666666666666
+"Height_W1, HandednessScore, Race, Ethnicity",152,269,1.256578947368421
+"Height_W1, HandednessScore, Race, Sex",168,218,1.4404761904761905
+"Height_W1, HandednessScore, Ethnicity, Sex",141,236,1.5886524822695036
+"Height_W1, Race, Ethnicity, Sex",54,390,1.2962962962962963
+"EduYrsEstCap, EduComp, HandednessScore, Race",101,323,1.3564356435643565
+"EduYrsEstCap, EduComp, HandednessScore, Ethnicity",78,343,1.5
+"EduYrsEstCap, EduComp, HandednessScore, Sex",101,337,1.2178217821782178
+"EduYrsEstCap, EduComp, Race, Ethnicity",32,440,0.625
+"EduYrsEstCap, EduComp, Race, Sex",39,437,0.5897435897435898
+"EduYrsEstCap, EduComp, Ethnicity, Sex",18,442,1.0
+"EduYrsEstCap, HandednessScore, Race, Ethnicity",100,438,0.22
+"EduYrsEstCap, HandednessScore, Race, Sex",143,440,0.13986013986013987
+"EduYrsEstCap, HandednessScore, Ethnicity, Sex",108,442,0.16666666666666666
+"EduYrsEstCap, Race, Ethnicity, Sex",41,460,0.0
+"EduComp, HandednessScore, Race, Ethnicity",90,442,0.2
+"EduComp, HandednessScore, Race, Sex",113,440,0.17699115044247787
+"EduComp, HandednessScore, Ethnicity, Sex",84,446,0.16666666666666666
+"EduComp, Race, Ethnicity, Sex",27,460,0.0
+"HandednessScore, Race, Ethnicity, Sex",59,444,0.2711864406779661
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore",460,3,0.9934782608695653
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race",450,24,0.9688888888888889
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Ethnicity",446,49,0.92152466367713
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Sex",448,36,0.9464285714285714
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race",460,5,0.9891304347826086
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Ethnicity",460,22,0.9521739130434783
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Sex",460,18,0.9608695652173913
+"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Ethnicity",448,61,0.890625
+"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Sex",448,51,0.9129464285714286
+"AgeCog_W1, Height_W1, EduYrsEstCap, Ethnicity, Sex",444,79,0.8581081081081081
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race",460,12,0.9739130434782609
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Ethnicity",460,37,0.9195652173913044
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Sex",460,31,0.9326086956521739
+"AgeCog_W1, Height_W1, EduComp, Race, Ethnicity",446,88,0.8340807174887892
+"AgeCog_W1, Height_W1, EduComp, Race, Sex",444,61,0.8986486486486487
+"AgeCog_W1, Height_W1, EduComp, Ethnicity, Sex",444,90,0.8333333333333334
+"AgeCog_W1, Height_W1, HandednessScore, Race, Ethnicity",443,8,1.020316027088036
+"AgeCog_W1, Height_W1, HandednessScore, Race, Sex",444,13,1.0067567567567568
+"AgeCog_W1, Height_W1, HandednessScore, Ethnicity, Sex",441,29,0.9773242630385488
+"AgeCog_W1, Height_W1, Race, Ethnicity, Sex",350,60,1.1428571428571428
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race",399,17,1.1102756892230576
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",398,48,1.035175879396985
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",412,49,0.9975728155339806
+"AgeCog_W1, EduYrsEstCap, EduComp, Race, Ethnicity",244,123,1.3811475409836065
+"AgeCog_W1, EduYrsEstCap, EduComp, Race, Sex",293,113,1.1843003412969284
+"AgeCog_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",285,140,1.1228070175438596
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",398,54,1.020100502512563
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Sex",412,48,1.0
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",412,90,0.8980582524271845
+"AgeCog_W1, EduYrsEstCap, Race, Ethnicity, Sex",287,252,0.7247386759581882
+"AgeCog_W1, EduComp, HandednessScore, Race, Ethnicity",387,87,0.9638242894056848
+"AgeCog_W1, EduComp, HandednessScore, Race, Sex",402,86,0.9303482587064676
+"AgeCog_W1, EduComp, HandednessScore, Ethnicity, Sex",395,122,0.8556962025316456
+"AgeCog_W1, EduComp, Race, Ethnicity, Sex",259,283,0.6833976833976834
+"AgeCog_W1, HandednessScore, Race, Ethnicity, Sex",328,88,1.1341463414634145
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race",328,45,1.2652439024390243
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",313,74,1.233226837060703
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",324,55,1.25
+"Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity",151,287,1.1456953642384107
+"Height_W1, EduYrsEstCap, EduComp, Race, Sex",165,233,1.3757575757575757
+"Height_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",127,252,1.6377952755905512
+"Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",320,210,0.78125
+"Height_W1, EduYrsEstCap, HandednessScore, Race, Sex",329,155,0.9270516717325228
+"Height_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",314,172,0.9171974522292994
+"Height_W1, EduYrsEstCap, Race, Ethnicity, Sex",152,359,0.6644736842105263
+"Height_W1, EduComp, HandednessScore, Race, Ethnicity",291,247,0.7319587628865979
+"Height_W1, EduComp, HandednessScore, Race, Sex",302,196,0.8741721854304636
+"Height_W1, EduComp, HandednessScore, Ethnicity, Sex",292,216,0.8356164383561644
+"Height_W1, EduComp, Race, Ethnicity, Sex",119,383,0.6470588235294118
+"Height_W1, HandednessScore, Race, Ethnicity, Sex",178,199,1.4662921348314606
+"EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",110,313,1.3363636363636364
+"EduYrsEstCap, EduComp, HandednessScore, Race, Sex",151,300,1.0596026490066226
+"EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",122,330,1.0655737704918034
+"EduYrsEstCap, EduComp, Race, Ethnicity, Sex",45,436,0.5333333333333333
+"EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",150,432,0.18666666666666668
+"EduComp, HandednessScore, Race, Ethnicity, Sex",125,438,0.176
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race",460,0,1.0
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",460,2,0.9956521739130435
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",460,1,0.9978260869565218
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity",452,9,0.9977876106194691
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Sex",452,17,0.9800884955752213
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",450,28,0.96
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",460,1,0.9978260869565218
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Sex",460,4,0.991304347826087
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",460,11,0.9760869565217392
+"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Ethnicity, Sex",450,32,0.9511111111111111
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Ethnicity",460,7,0.9847826086956522
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Sex",460,9,0.9804347826086957
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Ethnicity, Sex",460,28,0.9391304347826087
+"AgeCog_W1, Height_W1, EduComp, Race, Ethnicity, Sex",448,46,0.9241071428571429
+"AgeCog_W1, Height_W1, HandednessScore, Race, Ethnicity, Sex",445,5,1.0224719101123596
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",403,11,1.1141439205955335
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",416,10,1.0817307692307692
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",416,41,1.0072115384615385
+"AgeCog_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",304,96,1.1973684210526316
+"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",416,35,1.0216346153846154
+"AgeCog_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",408,69,0.9583333333333334
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",334,24,1.3053892215568863
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",344,19,1.2819767441860466
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",333,46,1.2432432432432432
+"Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",172,212,1.441860465116279
+"Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",337,130,0.9792284866468842
+"Height_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",311,173,0.9228295819935691
+"EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",159,289,1.0754716981132075
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",460,0,1.0
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",460,0,1.0
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",460,0,1.0
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",454,3,1.0066079295154184
+"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",460,1,0.9978260869565218
+"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",460,5,0.9891304347826086
+"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",420,7,1.0785714285714285
+"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",350,1,1.3114285714285714
+"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",460,0,1.0
