@@ -12,8 +12,8 @@ It is recommended (but not required) to first create a virtual environment.
 
 .. code-block:: bash
 
-    python -m venv venv
-    source venv/bin/activate
+    python -m venv metapriv
+    source metapriv/bin/activate
 
 You can then install metaprivBIDS by cloning the git respository.
 
@@ -27,6 +27,7 @@ This can be done by running
 
 .. code-block:: bash
 
+    cd metaprivBIDS
     pip install -e . 
 
 
