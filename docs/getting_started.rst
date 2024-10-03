@@ -27,6 +27,7 @@ This can be done by running
 
 .. code-block:: bash
 
+    cd metaprivBIDS
     pip install -e . 
 
 
