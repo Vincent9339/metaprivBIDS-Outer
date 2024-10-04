@@ -53,7 +53,7 @@ git clone https://github.com/CPernet/metaprivBIDS.git
 
 ### Option 2 
 
- In the vent of permission issues for system dependent files, you might want to set the pkgs_dirs option in Conda's configuration to use a directory that is writable by you.
+ In the event of permission issues for system dependent files, you might want to set the pkgs_dirs option in Conda's configuration to use a directory that is writable by you.
  
 ```console 
 conda config --add pkgs_dirs ~/conda_pkgs
