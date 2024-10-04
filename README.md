@@ -36,6 +36,7 @@ For meta information an option of load of json file is possible.
 
 # Software installation
 
+### Option 1 
 The metaprivBIDS software runs on multiple platforms (e.g. Linux, MacOS, Windows) that have a Python 3 installation.
 It is recommended (but not required) to first create a virtual environment.
 
@@ -49,6 +50,32 @@ You can then install metaprivBIDS by cloning the git respository.
 ```console
 git clone https://github.com/CPernet/metaprivBIDS.git
 ```
+
+### Option 2 
+
+ In the vent of permission issues for system dependent files, you might want to set the pkgs_dirs option in Conda's configuration to use a directory that is writable by you.
+ 
+```console 
+conda config --add pkgs_dirs ~/conda_pkgs
+```
+Creates the enviroment. 
+
+```console 
+conda create --name venv
+```
+
+Activates the enviroment. 
+
+```console
+conda activate venv
+```
+
+You can then install metaprivBIDS by cloning the git respository.
+
+```console
+git clone https://github.com/CPernet/metaprivBIDS.git
+```
+
 
 # Dependencies
 
