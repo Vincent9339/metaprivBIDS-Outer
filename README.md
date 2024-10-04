@@ -61,14 +61,22 @@ conda config --add pkgs_dirs ~/conda_pkgs
 Creates the enviroment. 
 
 ```console 
-conda create --name venv
+conda create --name venv python=3.x.x
 ```
 
 Activates the enviroment. 
 
 ```console
-conda activate venv
+conda activate venv 
 ```
+
+Graphviz requires system level dependencies and might need to be installed with 
+
+```console
+conda install graphviz pygraphviz
+```
+
+if not avaliable. 
 
 You can then install metaprivBIDS by cloning the git respository.
 
