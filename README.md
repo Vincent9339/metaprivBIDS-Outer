@@ -64,7 +64,7 @@ Creates the enviroment.
 conda create --name venv python=3.x.x
 ```
 
-Activates the enviroment. 
+Activates the environment. 
 
 ```console
 conda activate venv 
