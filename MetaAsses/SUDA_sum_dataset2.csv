@@ -1,0 +1,220 @@
+,Combination,SUDA_Sum
+0,"AgeCog_W1, Height_W1, EduYrsEstCap",989
+1,"AgeCog_W1, Height_W1, EduComp",898
+2,"AgeCog_W1, Height_W1, HandednessScore",1046
+3,"AgeCog_W1, Height_W1, Race",722
+4,"AgeCog_W1, Height_W1, Ethnicity",628
+5,"AgeCog_W1, Height_W1, Sex",653
+6,"AgeCog_W1, EduYrsEstCap, EduComp",513
+7,"AgeCog_W1, EduYrsEstCap, HandednessScore",826
+8,"AgeCog_W1, EduYrsEstCap, Race",475
+9,"AgeCog_W1, EduYrsEstCap, Ethnicity",409
+10,"AgeCog_W1, EduYrsEstCap, Sex",463
+11,"AgeCog_W1, EduComp, HandednessScore",737
+12,"AgeCog_W1, EduComp, Race",363
+13,"AgeCog_W1, EduComp, Ethnicity",312
+14,"AgeCog_W1, EduComp, Sex",369
+15,"AgeCog_W1, HandednessScore, Race",546
+16,"AgeCog_W1, HandednessScore, Ethnicity",489
+17,"AgeCog_W1, HandednessScore, Sex",540
+18,"AgeCog_W1, Race, Ethnicity",123
+19,"AgeCog_W1, Race, Sex",148
+20,"AgeCog_W1, Ethnicity, Sex",90
+21,"Height_W1, EduYrsEstCap, EduComp",215
+22,"Height_W1, EduYrsEstCap, HandednessScore",515
+23,"Height_W1, EduYrsEstCap, Race",278
+24,"Height_W1, EduYrsEstCap, Ethnicity",194
+25,"Height_W1, EduYrsEstCap, Sex",193
+26,"Height_W1, EduComp, HandednessScore",433
+27,"Height_W1, EduComp, Race",187
+28,"Height_W1, EduComp, Ethnicity",109
+29,"Height_W1, EduComp, Sex",112
+30,"Height_W1, HandednessScore, Race",324
+31,"Height_W1, HandednessScore, Ethnicity",249
+32,"Height_W1, HandednessScore, Sex",260
+33,"Height_W1, Race, Ethnicity",117
+34,"Height_W1, Race, Sex",116
+35,"Height_W1, Ethnicity, Sex",52
+36,"EduYrsEstCap, EduComp, HandednessScore",153
+37,"EduYrsEstCap, EduComp, Race",77
+38,"EduYrsEstCap, EduComp, Ethnicity",35
+39,"EduYrsEstCap, EduComp, Sex",25
+40,"EduYrsEstCap, HandednessScore, Race",203
+41,"EduYrsEstCap, HandednessScore, Ethnicity",144
+42,"EduYrsEstCap, HandednessScore, Sex",161
+43,"EduYrsEstCap, Race, Ethnicity",79
+44,"EduYrsEstCap, Race, Sex",84
+45,"EduYrsEstCap, Ethnicity, Sex",38
+46,"EduComp, HandednessScore, Race",153
+47,"EduComp, HandednessScore, Ethnicity",107
+48,"EduComp, HandednessScore, Sex",106
+49,"EduComp, Race, Ethnicity",36
+50,"EduComp, Race, Sex",38
+51,"EduComp, Ethnicity, Sex",12
+52,"HandednessScore, Race, Ethnicity",88
+53,"HandednessScore, Race, Sex",94
+54,"HandednessScore, Ethnicity, Sex",56
+55,"Race, Ethnicity, Sex",6
+56,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp",3058
+57,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore",3845
+58,"AgeCog_W1, Height_W1, EduYrsEstCap, Race",2922
+59,"AgeCog_W1, Height_W1, EduYrsEstCap, Ethnicity",2676
+60,"AgeCog_W1, Height_W1, EduYrsEstCap, Sex",2751
+61,"AgeCog_W1, Height_W1, EduComp, HandednessScore",3578
+62,"AgeCog_W1, Height_W1, EduComp, Race",2624
+63,"AgeCog_W1, Height_W1, EduComp, Ethnicity",2403
+64,"AgeCog_W1, Height_W1, EduComp, Sex",2481
+65,"AgeCog_W1, Height_W1, HandednessScore, Race",3090
+66,"AgeCog_W1, Height_W1, HandednessScore, Ethnicity",2871
+67,"AgeCog_W1, Height_W1, HandednessScore, Sex",2947
+68,"AgeCog_W1, Height_W1, Race, Ethnicity",1931
+69,"AgeCog_W1, Height_W1, Race, Sex",1982
+70,"AgeCog_W1, Height_W1, Ethnicity, Sex",1752
+71,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore",2618
+72,"AgeCog_W1, EduYrsEstCap, EduComp, Race",1680
+73,"AgeCog_W1, EduYrsEstCap, EduComp, Ethnicity",1503
+74,"AgeCog_W1, EduYrsEstCap, EduComp, Sex",1655
+75,"AgeCog_W1, EduYrsEstCap, HandednessScore, Race",2455
+76,"AgeCog_W1, EduYrsEstCap, HandednessScore, Ethnicity",2270
+77,"AgeCog_W1, EduYrsEstCap, HandednessScore, Sex",2409
+78,"AgeCog_W1, EduYrsEstCap, Race, Ethnicity",1311
+79,"AgeCog_W1, EduYrsEstCap, Race, Sex",1445
+80,"AgeCog_W1, EduYrsEstCap, Ethnicity, Sex",1267
+81,"AgeCog_W1, EduComp, HandednessScore, Race",2191
+82,"AgeCog_W1, EduComp, HandednessScore, Ethnicity",2027
+83,"AgeCog_W1, EduComp, HandednessScore, Sex",2150
+84,"AgeCog_W1, EduComp, Race, Ethnicity",1019
+85,"AgeCog_W1, EduComp, Race, Sex",1165
+86,"AgeCog_W1, EduComp, Ethnicity, Sex",1014
+87,"AgeCog_W1, HandednessScore, Race, Ethnicity",1508
+88,"AgeCog_W1, HandednessScore, Race, Sex",1646
+89,"AgeCog_W1, HandednessScore, Ethnicity, Sex",1482
+90,"AgeCog_W1, Race, Ethnicity, Sex",453
+91,"Height_W1, EduYrsEstCap, EduComp, HandednessScore",1623
+92,"Height_W1, EduYrsEstCap, EduComp, Race",900
+93,"Height_W1, EduYrsEstCap, EduComp, Ethnicity",653
+94,"Height_W1, EduYrsEstCap, EduComp, Sex",652
+95,"Height_W1, EduYrsEstCap, HandednessScore, Race",1632
+96,"Height_W1, EduYrsEstCap, HandednessScore, Ethnicity",1405
+97,"Height_W1, EduYrsEstCap, HandednessScore, Sex",1436
+98,"Height_W1, EduYrsEstCap, Race, Ethnicity",809
+99,"Height_W1, EduYrsEstCap, Race, Sex",825
+100,"Height_W1, EduYrsEstCap, Ethnicity, Sex",594
+101,"Height_W1, EduComp, HandednessScore, Race",1376
+102,"Height_W1, EduComp, HandednessScore, Ethnicity",1168
+103,"Height_W1, EduComp, HandednessScore, Sex",1186
+104,"Height_W1, EduComp, Race, Ethnicity",555
+105,"Height_W1, EduComp, Race, Sex",574
+106,"Height_W1, EduComp, Ethnicity, Sex",366
+107,"Height_W1, HandednessScore, Race, Ethnicity",936
+108,"Height_W1, HandednessScore, Race, Sex",962
+109,"Height_W1, HandednessScore, Ethnicity, Sex",764
+110,"Height_W1, Race, Ethnicity, Sex",343
+111,"EduYrsEstCap, EduComp, HandednessScore, Race",686
+112,"EduYrsEstCap, EduComp, HandednessScore, Ethnicity",516
+113,"EduYrsEstCap, EduComp, HandednessScore, Sex",545
+114,"EduYrsEstCap, EduComp, Race, Ethnicity",275
+115,"EduYrsEstCap, EduComp, Race, Sex",279
+116,"EduYrsEstCap, EduComp, Ethnicity, Sex",144
+117,"EduYrsEstCap, HandednessScore, Race, Ethnicity",624
+118,"EduYrsEstCap, HandednessScore, Race, Sex",695
+119,"EduYrsEstCap, HandednessScore, Ethnicity, Sex",517
+120,"EduYrsEstCap, Race, Ethnicity, Sex",248
+121,"EduComp, HandednessScore, Race, Ethnicity",484
+122,"EduComp, HandednessScore, Race, Sex",514
+123,"EduComp, HandednessScore, Ethnicity, Sex",375
+124,"EduComp, Race, Ethnicity, Sex",119
+125,"HandednessScore, Race, Ethnicity, Sex",303
+126,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore",15181
+127,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race",11570
+128,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Ethnicity",10673
+129,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Sex",10979
+130,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race",14358
+131,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Ethnicity",13481
+132,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Sex",13801
+133,"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Ethnicity",10097
+134,"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Sex",10373
+135,"AgeCog_W1, Height_W1, EduYrsEstCap, Ethnicity, Sex",9484
+136,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race",13273
+137,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Ethnicity",12461
+138,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Sex",12755
+139,"AgeCog_W1, Height_W1, EduComp, Race, Ethnicity",8978
+140,"AgeCog_W1, Height_W1, EduComp, Race, Sex",9270
+141,"AgeCog_W1, Height_W1, EduComp, Ethnicity, Sex",8460
+142,"AgeCog_W1, Height_W1, HandednessScore, Race, Ethnicity",10779
+143,"AgeCog_W1, Height_W1, HandednessScore, Race, Sex",11071
+144,"AgeCog_W1, Height_W1, HandednessScore, Ethnicity, Sex",10257
+145,"AgeCog_W1, Height_W1, Race, Ethnicity, Sex",6811
+146,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race",9969
+147,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",9266
+148,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",9723
+149,"AgeCog_W1, EduYrsEstCap, EduComp, Race, Ethnicity",6032
+150,"AgeCog_W1, EduYrsEstCap, EduComp, Race, Sex",6517
+151,"AgeCog_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",5868
+152,"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",8566
+153,"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Sex",9062
+154,"AgeCog_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",8357
+155,"AgeCog_W1, EduYrsEstCap, Race, Ethnicity, Sex",5011
+156,"AgeCog_W1, EduComp, HandednessScore, Race, Ethnicity",7616
+157,"AgeCog_W1, EduComp, HandednessScore, Race, Sex",8068
+158,"AgeCog_W1, EduComp, HandednessScore, Ethnicity, Sex",7443
+159,"AgeCog_W1, EduComp, Race, Ethnicity, Sex",4029
+160,"AgeCog_W1, HandednessScore, Race, Ethnicity, Sex",5720
+161,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race",6544
+162,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",5677
+163,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",5765
+164,"Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity",3277
+165,"Height_W1, EduYrsEstCap, EduComp, Race, Sex",3329
+166,"Height_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",2476
+167,"Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",5686
+168,"Height_W1, EduYrsEstCap, HandednessScore, Race, Sex",5840
+169,"Height_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",4999
+170,"Height_W1, EduYrsEstCap, Race, Ethnicity, Sex",2971
+171,"Height_W1, EduComp, HandednessScore, Race, Ethnicity",4770
+172,"Height_W1, EduComp, HandednessScore, Race, Sex",4875
+173,"Height_W1, EduComp, HandednessScore, Ethnicity, Sex",4120
+174,"Height_W1, EduComp, Race, Ethnicity, Sex",2076
+175,"Height_W1, HandednessScore, Race, Ethnicity, Sex",3486
+176,"EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",2635
+177,"EduYrsEstCap, EduComp, HandednessScore, Race, Sex",2812
+178,"EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",2159
+179,"EduYrsEstCap, EduComp, Race, Ethnicity, Sex",1110
+180,"EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",2537
+181,"EduComp, HandednessScore, Race, Ethnicity, Sex",1920
+182,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race",70895
+183,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity",66739
+184,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Sex",68204
+185,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity",50993
+186,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Sex",52404
+187,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Ethnicity, Sex",48298
+188,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity",63209
+189,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Sex",64749
+190,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Ethnicity, Sex",60607
+191,"AgeCog_W1, Height_W1, EduYrsEstCap, Race, Ethnicity, Sex",44747
+192,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Ethnicity",58119
+193,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Sex",59556
+194,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Ethnicity, Sex",55724
+195,"AgeCog_W1, Height_W1, EduComp, Race, Ethnicity, Sex",39624
+196,"AgeCog_W1, Height_W1, HandednessScore, Race, Ethnicity, Sex",48124
+197,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",44436
+198,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",46501
+199,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",43174
+200,"AgeCog_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",28567
+201,"AgeCog_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",39253
+202,"AgeCog_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",34796
+203,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",28589
+204,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",29165
+205,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",25196
+206,"Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",15597
+207,"Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",25729
+208,"Height_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",21457
+209,"EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",13513
+210,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity",380934
+211,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Sex",389434
+212,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Ethnicity, Sex",365886
+213,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, Race, Ethnicity, Sex",280230
+214,"AgeCog_W1, Height_W1, EduYrsEstCap, HandednessScore, Race, Ethnicity, Sex",346418
+215,"AgeCog_W1, Height_W1, EduComp, HandednessScore, Race, Ethnicity, Sex",317400
+216,"AgeCog_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",250240
+217,"Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",157328
+218,"AgeCog_W1, Height_W1, EduYrsEstCap, EduComp, HandednessScore, Race, Ethnicity, Sex",2503482
