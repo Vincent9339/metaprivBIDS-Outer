@@ -834,7 +834,7 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.warning(self, 'Error', 'No data loaded.')
             return
 
-        max_msu, ok = QInputDialog.getInt(self, "Input", "Enter the max_msu value:", 2, 1, 10, 1)
+        max_msu, ok = QInputDialog.getInt(self, "Input", "Enter the max_msu value:", 2, 1, 100, 1)
         if not ok:
             return  # User cancelled or input is invalid
 
