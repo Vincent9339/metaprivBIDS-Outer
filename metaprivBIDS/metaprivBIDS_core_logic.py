@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from metaprivBIDS.suda_adapted import suda_calculation, find_msu
 import matplotlib.colors as mcolors
 import seaborn as sns
 from itertools import combinations
@@ -153,9 +152,6 @@ class metaprivBIDS_core_logic:
         data[column_name] += noise
         return data
 
-    def compute_suda(self, data, selected_columns, max_msu=2, dis=0.2):
-        suda_result = suda_calculation(data, max_msu=max_msu, dis=dis)
-        return suda_result
 
     def combine_values(self, data, column_name):
         combined_values = ['New York', 'Los Angeles']
