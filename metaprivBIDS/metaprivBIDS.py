@@ -1,21 +1,38 @@
+
+from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QHBoxLayout,
+                               QPushButton, QFileDialog, QMessageBox, QTreeView, QHeaderView, QLabel,
+                               QFrame, QTableView, QStackedWidget, QComboBox, QInputDialog, QGridLayout, QSizePolicy,
+                               QStyledItemDelegate, QMenu, QListWidget, QDialog, QTextBrowser,QScrollArea,QSplashScreen,QTableView, QScrollArea, QTableWidget, QTableWidgetItem) 
+
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction, QPixmap,QColor, QIcon,QPainter, QColor, QPixmap,QBrush 
+from PySide6.QtCore import Qt, QDir, QDateTime, QTimer,  QSize
+from PySide6.QtSvg import QSvgRenderer
+
+
 import sys
 import json
+from scipy.stats import median_abs_deviation
 import numpy as np
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                               QPushButton, QFileDialog, QMessageBox, QTreeView, QHeaderView, QLabel,
-                               QFrame, QTableView, QStackedWidget, QComboBox, QInputDialog, QSizePolicy,
-                               QStyledItemDelegate, QMenu, QListWidget, QDialog, QTextBrowser) 
-
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction, QPixmap
-from PySide6.QtCore import Qt, QDir, QDateTime
 import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
-from .suda_adapted import suda_calculation, find_msu
 import piflib.pif_calculator as pif
 import seaborn as sns
 import matplotlib.colors as mcolors
+import io
+
+
+from rpy2 import robjects
+from rpy2.robjects.packages import importr
+from rpy2.robjects import pandas2ri
+
+
+# Activate pandas <-> R DataFrame conversion
+pandas2ri.activate()
+
+# Import the sdcMicro package
+sdcMicro = importr('sdcMicro')
 
 
 
@@ -50,6 +67,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
         model.setData(index, editor.currentText(), Qt.EditRole)
 
 class metaprivBIDS(QMainWindow):
+
     def __init__(self):
         super().__init__()
         self.file_path, self.data, self.column_unique_counts, self.metadata, self.sensitive_attr = None, None, {}, {}, None
@@ -57,149 +75,548 @@ class metaprivBIDS(QMainWindow):
         self.original_columns = {}  
         self.combined_values = {} 
         self.combined_values_history = {}  
+        
         self.initUI()
 
+          
+
+    def show_splash_screen(self):
+        splash_pix = QPixmap("hacker_8334462.png")  # Change to your splash image path
+        self.splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+        self.splash.setMask(splash_pix.mask())
+        self.splash.setAutoFillBackground(True)
+
+        # Center the splash screen relative to the main window
+        self.splash.move(self.x() + (self.width() - splash_pix.width()) // 2,
+                         self.y() + (self.height() - splash_pix.height()) // 2)
+
+        # Display the splash screen
+        self.splash.show()
+
+        # Timer to close the splash screen and show the main window
+        QTimer.singleShot(2000, self.close_splash)
+
+
+    def close_splash(self):
+        self.splash.close()
+        self.show() 
      
     def initUI(self):
 
         """
         Initialize the user interface of the File Analyzer application.
-        This method sets up the main window with its title, dimensions, and style. It
-        creates a central widget containing a stacked widget to hold multiple pages:
-        the main page, a privacy information page, and a preview page. Each page contains
-        various UI components such as buttons, layouts, and text display elements to interact
-        with different functionalities like computing column contributions, generating CIG
-        heatmaps, and previewing data.
-
-        The method also connects buttons to their respective event handlers to facilitate
-        user interaction.
+        Sets up the main window, styles it, and initializes the pages using dedicated methods.
         """
-
-        self.setWindowTitle('File Analyzer')
+        self.setWindowTitle('MetaprivBIDS')
         self.setGeometry(100, 100, 1000, 800)
         self.setStyleSheet("background-color: #121212; color: #FFFFFF;")
 
+        self.setupCentralWidget()
+        self.initializePages()
+
+        self.show_splash_screen()
+
+    def setupCentralWidget(self):
+        """
+        Setup the central widget and the main layout.
+        """
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-
-        # Initialize stacked widget
+        self.layout = QVBoxLayout(central_widget)
         self.stacked_widget = QStackedWidget()
-        layout.addWidget(self.stacked_widget)
+        self.layout.addWidget(self.stacked_widget)
 
-        # Initialize main page
+    def initializePages(self):
+        """
+        Initialize all pages and add them to the stacked widget.
+        """
+        self.setupMainPage()
+        self.setupPrivacyInfoPage()
+        self.setupPreviewPage()
+        self.setupSudaInfoPage()
+
+    def setupMainPage(self):
+        """
+        Setup the main page with buttons and frames.
+        """
         self.main_page = QWidget()
-        self.main_page_layout = QVBoxLayout(self.main_page)
-        self.add_buttons(self.main_page_layout)
-        self.add_frames(self.main_page_layout)
+        main_layout = QVBoxLayout(self.main_page)
+        self.add_buttons(main_layout)
+        self.add_frames(main_layout)
 
-  
-        combine_button_layout = QHBoxLayout()
-        combine_button_layout.addStretch(1)  # Pushes the button to the right
-
-        # Create the "Combine Column Contribution" button
-        self.combine_column_button = QPushButton('Combined Column Contribution')
-        self.combine_column_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
-        self.combine_column_button.clicked.connect(self.compute_combined_column_contribution)
-
-
-        combine_button_layout.addWidget(self.combine_column_button)
-
-        # Add the horizontal layout to the main page layout
-        self.main_page_layout.addLayout(combine_button_layout)
-
-        # Add the main page to the stacked widget
+        # Additional buttons or components specific to the main page
+        self.setupMainPageSpecificComponents(main_layout)
+        
         self.stacked_widget.addWidget(self.main_page)
 
-        # Initialize privacy information page
-        self.privacy_info_page = QWidget()
-        self.privacy_info_layout = QVBoxLayout(self.privacy_info_page)
-        self.privacy_info_layout.setContentsMargins(10, 10, 10, 10)
-        self.privacy_info_layout.setSpacing(10)
+    def setupMainPageSpecificComponents(self, layout):
+        """
+        Setup components specific to the main page such as custom buttons.
+        """
+        combine_button_layout = QHBoxLayout()
+        combine_button_layout.addStretch(1)
+        combine_button_layout.setContentsMargins(0, -5, 0, 0)  # Adjust -5 to move the button upwards
 
-        # Create a horizontal layout for the buttons in privacy info page
+        combine_column_button = QPushButton('Compute K-Combined')
+        combine_column_button.setFixedSize(200, 20)  # Set the button size to 50x20
+        combine_column_button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: #94127e; 
+                        color: white; 
+                        font-family: 'Roboto'; /* Set font family */
+                        font-weight: bold; 
+                        font-size: 14px;
+                        border-radius: 2px; 
+                        padding: 5px;
+                        min-height: 20px;
+
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #808080; /* Change color when pressed */
+                        border-radius: 8px; /* Optional: slightly decrease border radius */
+                    }}
+                    QPushButton:hover {{
+                        background-color: #b0529c; /* Change to a matte or darker color on hover */
+                        color: white; /* Keep text color white */
+                    }}
+                """)
+
+
+
+        combine_column_button.clicked.connect(self.compute_combined_column_contribution)
+        combine_button_layout.addWidget(combine_column_button)
+        layout.addLayout(combine_button_layout)
+
+
+
+
+
+
+
+
+
+    def handle_descrip_icon(self):
+        # Hide the icon when Compute CIG is pressed
+        self.icon_label_descrip.hide()  # Assuming self.icon_label is the QLabel for the icon
+
+        # Call the original action (e.g., compute CIG)
+        self.describe_cig()
+
+    def addPrivacyButtons(self, layout):
+        """
+        Add buttons related to privacy calculations on the privacy info page.
+        """
         button_layout = QHBoxLayout()
+        buttons = [
+            ('Compute CIG', self.handle_compute_cig, '#94127e'),
+            ('Summary Statistics CIG', self.handle_descrip_icon, '#94127e'),
+            ('Generate Heatmap', self.generate_heatmap, '#94127e'),
+            ('Save CSV', self.save_cig_to_csv, '#94127e'),
+            ('Back to Main', self.show_main_page, '#94127e')  # Including the Describe CIG button here
+        ]
+        
+        # Load the icon for the 'Back to Main Menu' button
+        arrow_icon = QIcon("output-onlinepngtools copy 2.png")  # Make sure 'logo.png' exists in the correct path
 
-        # Create the "Compute CIG" button
-        self.cig_button = QPushButton('Compute CIG')
-        self.cig_button.setStyleSheet("background-color: #FF9800; color: #FFFFFF;")
-        self.cig_button.clicked.connect(self.compute_cig)
-        button_layout.addWidget(self.cig_button)
+        for text, action, color in buttons:
+            button = QPushButton(text)
+            
+            # Special style for 'Back to Main Menu' button
+            if text == 'Back to Main':
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {color}; 
+                        color: white;  /* Change text color to red */
+                        font-family: 'Roboto'; /* Set font family */
+                        font-weight: bold; 
+                        font-size: 14px;
+                        border-radius: 2px; 
+                        padding: 5px;
+                        min-height: 20px;
+                    }}
+                    QPushButton::icon {{
+                        margin-right: 20px;  /* Adds space between the text and the icon */
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #808080; /* Change color when pressed */
+                        border-radius: 8px; /* Optional: slightly decrease border radius */
+                    }}
+                    QPushButton:hover {{
+                        background-color: #b0529c; /* Change to a matte or darker color on hover */
+                        color: white; /* Keep text color white */
+                    }}
+                """)
 
-        # Create the heatmap button
-        self.heatmap_button = QPushButton('Generate CIG Heatmap')
-        self.heatmap_button.setStyleSheet("background-color: #ff0066; color: #FFFFFF;")
-        self.heatmap_button.clicked.connect(self.generate_heatmap)
-        button_layout.addWidget(self.heatmap_button)
+                # Set the icon for the button
+                button.setIcon(arrow_icon)
+                button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                button.setLayoutDirection(Qt.RightToLeft)
 
-        # Add the Save CIG to CSV button here:
-        self.save_cig_button = QPushButton('Save CIG to CSV')  # NEW BUTTON
-        self.save_cig_button.setStyleSheet("background-color: #4CAF50; color: #FFFFFF;")
-        self.save_cig_button.clicked.connect(self.save_cig_to_csv)
-        button_layout.addWidget(self.save_cig_button)  # Add to button layout
+            else:
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {color}; 
+                        color: white; 
+                        font-family: 'Roboto'; /* Set font family */
+                        font-weight: bold; 
+                        font-size: 14px;
+                        border-radius: 2px; 
+                        padding: 5px;
+                        min-height: 20px;
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #808080; /* Change color when pressed */
+                        border-radius: 8px; /* Optional: slightly decrease border radius */
+                    }}
+                    QPushButton:hover {{
+                        background-color: #b0529c; /* Change to a matte or darker color on hover */
+                        color: white; /* Keep text color white */
+                    }}
+                """)
+            # Connect button to action
+            button.clicked.connect(action)
+            button_layout.addWidget(button)
 
-        # Create the close heatmap button
-        self.close_heatmap_button = QPushButton('Close Heatmap')
-        self.close_heatmap_button.setStyleSheet("background-color: #00c3ff; color: #FFFFFF;")
-        self.close_heatmap_button.clicked.connect(self.hide_heatmap)
-        button_layout.addWidget(self.close_heatmap_button)
+        # Add the final layout
+        layout.addLayout(button_layout)
 
-        # Add the horizontal layout to the privacy info layout
-        self.privacy_info_layout.addLayout(button_layout)
+    def handle_compute_cig(self):
+        # Hide the icon when Compute CIG is pressed
+        self.icon_label.hide()  # Assuming self.icon_label is the QLabel for the icon
 
-        # Create a QTextBrowser to display the CIG result
-        self.cig_result_browser = QTextBrowser()
+        # Call the original action (e.g., compute CIG)
+        self.compute_cig()
+
+    def addCigResultDisplay(self, layout):
+        """
+        Add a QTextBrowser inside the CIG result frame to display CIG results on the privacy info page.
+        """
+        # Create a QTextBrowser for CIG results
+        self.cig_result_browser = QTextBrowser(self.cig_result_frame)  # Place it inside the frame
         self.cig_result_browser.setOpenExternalLinks(True)
-        self.privacy_info_layout.addWidget(self.cig_result_browser)
+        self.cig_result_browser.setStyleSheet("border: none;")  # Remove border to blend into the frame
+        layout.addWidget(self.cig_result_browser)
 
-        # Create a horizontal layout for the back button and add it at the bottom
-        privacy_back_button_layout = QHBoxLayout()
-        self.privacy_back_button = QPushButton('Back to Main')
-        self.privacy_back_button.setStyleSheet("background-color: #F44336; color: #FFFFFF;")
-        self.privacy_back_button.clicked.connect(self.show_main_page)
-        privacy_back_button_layout.addWidget(self.privacy_back_button)
-        self.privacy_info_layout.addLayout(privacy_back_button_layout)
+    def setupPrivacyInfoPage(self):
+        """
+        Setup the privacy information page with buttons and static placeholder frames for CIG results and description.
+        """
+        self.privacy_info_page = QWidget()
+        privacy_layout = QVBoxLayout(self.privacy_info_page)
+        privacy_layout.setContentsMargins(10, 10, 10, 10)
+        privacy_layout.setSpacing(10)
 
-        # Create the "Describe CIG" button
-        self.describe_cig_button = QPushButton('Describe CIG')
-        self.describe_cig_button.setStyleSheet("background-color: #009688; color: #FFFFFF;")
-        self.describe_cig_button.clicked.connect(self.describe_cig)
-        button_layout.addWidget(self.describe_cig_button)
+        # Add the buttons
+        self.addPrivacyButtons(privacy_layout)
 
+        # Create a horizontal layout to hold the results and the boxplot
+        results_layout = QHBoxLayout()
 
-        # Add the privacy info page to the stacked widget
-        self.stacked_widget.addWidget(self.privacy_info_page)
-
-        # Initialize preview page
-        self.preview_page = QWidget()
-        self.preview_layout = QVBoxLayout(self.preview_page)
-        self.preview_layout.setContentsMargins(10, 10, 10, 10)
-        self.preview_layout.setSpacing(10)
-
-        # Create a vertical layout for the preview table and buttons
-        preview_and_buttons_layout = QVBoxLayout()
-        preview_and_buttons_layout.setSpacing(10)
-
-        self.preview_table = QTableView()
-        self.preview_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        preview_and_buttons_layout.addWidget(self.preview_table)
-
-        # Add the preview table and buttons layout to the main preview layout
-        self.preview_layout.addLayout(preview_and_buttons_layout)
+        # Create a label for the CIG results section
+        self.cig_results_label = QLabel("Cell Information Gain")
+        self.cig_results_label.setAlignment(Qt.AlignLeft)
+        self.cig_results_label.setStyleSheet("""
+            color: white; 
+            background-color: #121212; 
+            padding: 5px; 
+            font-size: 16px;  /* Set the font size */
+            font-weight: bold; /* Make the font bold */
+            """)  # Set text color and background
+        privacy_layout.addWidget(self.cig_results_label)  # Add the label to the main layout
         
 
-        # Add preview page widgets including buttons right below the preview data
-        self.add_preview_page_widgets(preview_and_buttons_layout)
 
-        # Create a horizontal layout for the back button and add it at the bottom
-        back_button_layout = QHBoxLayout()
-        self.back_button = QPushButton('Back to Main')
-        self.back_button.setStyleSheet("background-color: #F44336; color: #FFFFFF;")
-        self.back_button.clicked.connect(self.show_main_page)
-        back_button_layout.addWidget(self.back_button)
+        temp_icon_path = "colorkit.svg"  # Change to your actual path
+        
 
-        self.preview_layout.addLayout(back_button_layout)
-        self.stacked_widget.addWidget(self.preview_page)
+        # Add a placeholder frame for the CIG results
+        self.cig_result_frame = QFrame()
+        self.cig_result_frame.setFrameShape(QFrame.StyledPanel)
+        self.cig_result_frame.setStyleSheet("background-color: #121212; border: 0.2px solid #FFFFFF;")  
+        self.cig_result_frame.setMinimumHeight(400)  # Set a minimum height for the frame
+        self.cig_result_frame.setMaximumHeight(400)  # Set a maximum height for the frame
+
+        # Add the CIG result frame to the horizontal layout
+        results_layout.addWidget(self.cig_result_frame)
+
+
+
+        # Create a placeholder frame for the boxplot
+        self.boxplot_frame = QFrame()
+        self.boxplot_frame.setFrameShape(QFrame.StyledPanel)
+        self.boxplot_frame.setStyleSheet("background-color: #121212; border: 0.5px solid #FFFFFF;")  
+        self.boxplot_frame.setMinimumHeight(400)  # Match the height
+        self.boxplot_frame.setFixedWidth(400)  # Set a fixed width for the boxplot frame
+
+        # Add the boxplot frame to the horizontal layout
+        results_layout.addWidget(self.boxplot_frame)
+
+        # Create a QLabel for displaying the boxplot
+        self.boxplot_label = QLabel(self.boxplot_frame)
+        self.boxplot_label.setMinimumHeight(400)  # Match the height
+        self.boxplot_label.setFixedWidth(400)  # Set a fixed width for the boxplot display
+        self.boxplot_label.setScaledContents(True)  # Allow the contents to scale
+
+        # Load the temporary PNG icon and scale it to 32x32 pixels
+        
+        description_layout = QVBoxLayout(self.boxplot_frame)
+        # Create a separate QLabel for the small PNG icon
+        self.icon_label = QLabel(self.boxplot_frame)
+        self.icon_label.setFixedSize(40, 40)  # Set a fixed size for the icon label
+        self.icon_label.setStyleSheet("background: transparent; border: none;")
+        icon_pixmap = QPixmap(temp_icon_path).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.icon_label.setPixmap(icon_pixmap)  # Set the scaled pixmap into the icon QLabel
+        description_layout.addWidget(self.icon_label, alignment=Qt.AlignCenter)
+
+
+        # Add the horizontal layout to the main privacy layout
+        privacy_layout.addLayout(results_layout)
+
+        # Create a label for the section between the CIG results and the boxplot
+        self.section_label = QLabel("Statistics Summary of Cell Information gain")
+        self.section_label.setAlignment(Qt.AlignLeft)
+        self.section_label.setStyleSheet("""
+            color: white; 
+            background-color: #121212; 
+            padding: 5px; 
+            font-size: 16px;  /* Set the font size */
+            font-weight: bold; /* Make the font bold */
+            """)
+        
+        privacy_layout.addWidget(self.section_label)  # Add the section label to the main layout
+
+        # Create a QTableWidget for displaying CIG results
+        self.cig_table_widget = QTableWidget(self.cig_result_frame)  # Create the table widget
+        self.cig_table_widget.setRowCount(0)  # Initially set row count to 0
+        self.cig_table_widget.setColumnCount(0)  # Initially set column count to 0
+
+        # Set the style of the QTableWidget
+        self.cig_table_widget.setStyleSheet("""
+            QTableWidget {
+                background-color: #121212; 
+                color: white;
+            }
+            QHeaderView::section {
+                background-color: #121212;  
+                color: white;  
+                font-weight: bold;  /* Optional: make header text bold */
+            }
+        """)
+
+
+        # Create a scroll area for the QTableWidget
+        self.cig_result_scroll_area = QScrollArea(self.cig_result_frame)
+        self.cig_result_scroll_area.setWidgetResizable(True)
+        self.cig_result_scroll_area.setWidget(self.cig_table_widget)  # Set the QTableWidget as the widget of the scroll area
+
+        # Add the scroll area to the results frame
+        cig_result_layout = QVBoxLayout(self.cig_result_frame)
+        cig_result_layout.addWidget(self.cig_result_scroll_area)
+
+
+
+
+
+        # Add a placeholder frame for the CIG description
+        self.cig_description_frame = QFrame()
+        self.cig_description_frame.setFrameShape(QFrame.StyledPanel)
+        self.cig_description_frame.setStyleSheet("background-color: #121212; border: 0.5px solid #94127e;")  # Background for description
+        self.cig_description_frame.setMinimumHeight(250)  # Increased height for better visibility
+        self.cig_description_frame.setMaximumHeight(250)  # Set a maximum height for the frame
+
+        privacy_layout.addWidget(self.cig_description_frame)
+        
+        description_layout = QVBoxLayout(self.cig_description_frame)
+        self.icon_label_descrip = QLabel(self.cig_description_frame)
+        self.icon_label_descrip.setFixedSize(40, 40)  # Set a fixed size for the icon label
+        self.icon_label_descrip.setStyleSheet("background: transparent; border: none;")
+        icon_pixmap = QPixmap(temp_icon_path).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.icon_label_descrip.setPixmap(icon_pixmap)  
+        description_layout.addWidget(self.icon_label_descrip, alignment=Qt.AlignCenter)
+
+
+        # Create a QLabel for displaying CIG description
+        self.cig_description_label = QLabel("PIF Percentile: To be computed.")
+        self.cig_description_label.setAlignment(Qt.AlignCenter)
+        self.cig_description_label.setStyleSheet("color: white;")  # Set text color to white
+        privacy_layout.addWidget(self.cig_description_label)
+
+
+
+        # Set up the stacked widget
+        self.stacked_widget.addWidget(self.privacy_info_page)
+
+    def save_boxplot_rig_values(self):
+        # Check if 'RIG' column exists in cigs_df_display
+        if 'RIG' in self.cigs_df_display.columns:
+            # Extract the RIG data
+            rig_data = self.cigs_df_display['RIG'].values
+            
+            # Check if there's enough data to create a meaningful boxplot
+            if len(rig_data) < 5:
+                print("Not enough data to generate a boxplot.")
+                return None
+
+            # Calculate median and MAD
+            median_value = np.median(rig_data)
+            mad = median_abs_deviation(rig_data)
+
+            # Set the box bounds: 1.5 MADs above and below the median
+            lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
+            upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
+
+            # Set the whiskers: 3 MADs above and below the median
+            whisker_low = median_value - 3 * mad  # 3 MAD below the median
+            whisker_high = median_value + 3 * mad  # 3 MAD above the median
+
+            # Identify outliers: values outside the whiskers
+            outliers = rig_data[(rig_data < whisker_low) | (rig_data > whisker_high)]
+
+            # Create a figure and axis
+            fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
+
+            # Create custom boxplot with the median in the middle and MAD-based whiskers
+            ax.bxp([{
+                'med': median_value,      # Center on the median
+                'q1': lower_bound,        # 1.5 MAD below the median
+                'q3': upper_bound,        # 1.5 MAD above the median
+                'whislo': whisker_low,    # 3 MAD below the median
+                'whishi': whisker_high,   # 3 MAD above the median
+                'fliers': outliers        # Outliers
+            }], showfliers=True)
+
+            # Set title and labels
+            ax.set_title(f'Custom Boxplot of RIG Values (MAD Spread = 3) / MAD = {mad:.2f}')
+
+            # Customize the boxplot style (remove spines)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+            ax.spines['bottom'].set_visible(False)
+
+            # Render the figure to a byte array in PNG format
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight')
+            buf.seek(0)
+            plt.close(fig)  # Close the figure to free memory
+
+            # Load the image data from the buffer and convert it to a QPixmap
+            image = QPixmap()
+            image.loadFromData(buf.getvalue())
+            
+            return image
+
+    def display_boxplot(self):
+        # Get the QPixmap with the boxplot
+        pixmap = self.save_boxplot_rig_values()
+
+        # Set the pixmap directly to the QLabel
+        self.boxplot_label.setPixmap(pixmap)
+
+        # Optionally, adjust the size and layout
+        self.boxplot_label.setScaledContents(True)  # Scale the contents to fit the label
+        self.boxplot_label.show()
+
+    def compute_cig(self):
+        """
+        Computes and displays the Categorical Information Gain (CIG) for selected columns in the DataFrame.
+        """
+        selected_columns = self.get_selected_columns()
+
+        if not selected_columns:
+            self.cig_table_widget.clear()  # Clear previous data
+            self.cig_description_label.setText("No columns selected.")  # Inform user
+            return
+
+        df = self.data[selected_columns]
+
+        # Debug: Print the selected DataFrame
+        print("Selected DataFrame for CIG computation:")
+
+        if df.empty:
+            self.cig_table_widget.clear()  # Clear previous data
+            self.cig_description_label.setText("DataFrame is empty.")  # Inform user
+            return
+
+        df = df.astype(object).where(pd.notnull(df), 'NaN')
+
+        mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or type "NaN" for missing values):')
+
+        if ok and mask_value != '':
+            try:
+                if mask_value.lower() == 'nan':
+                    mask = df == 'NaN'
+                else:
+                    mask_value = float(mask_value)
+                    mask = df == mask_value
+            except ValueError:
+                self.cig_table_widget.clear()  # Clear previous data
+                self.cig_description_label.setText("Invalid mask value entered.")  # Inform user
+                return
+
+            cigs = pif.compute_cigs(df)
+            # Use the original index when creating the DataFrame
+            cigs_df = pd.DataFrame(cigs, index=df.index)  # Retain original index
+            cigs_df[mask] = 0
+        else:
+            cigs = pif.compute_cigs(df)
+            cigs_df = pd.DataFrame(cigs, index=df.index)  # Retain original index
+
+        cigs_df['RIG'] = cigs_df.sum(axis=1)
+
+        # Debug: Print the computed CIG DataFrame
+        print("Computed CIG DataFrame:")
+
+        percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
+
+        if not ok:
+            self.cig_table_widget.clear()  # Clear previous data
+            self.cig_description_label.setText("Percentile input canceled.")  # Inform user
+            return
+
+        pif_value = np.percentile(cigs_df['RIG'], percentile)
+
+        self.cigs_df = cigs_df
+        self.cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)  # Ensure you set this correctly
+
+        # Set up the QTableWidget
+        self.cig_table_widget.setRowCount(len(self.cigs_df_display))  # Set the number of rows
+        self.cig_table_widget.setColumnCount(len(self.cigs_df_display.columns))  # Set the number of columns
+        self.cig_table_widget.setHorizontalHeaderLabels(self.cigs_df_display.columns.tolist())  # Set header labels
+        self.cig_table_widget.horizontalHeader().setStretchLastSection(True)  # Allow the last section to stretch
+        self.cig_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # Stretch all columns
+
+
+     
+
+        # Populate the QTableWidget with data from the DataFrame
+        for row in range(len(self.cigs_df_display)):
+            for col in range(len(self.cigs_df_display.columns)):
+                value = self.cigs_df_display.iat[row, col]
+                # Format to 2 decimal places if numeric
+                if isinstance(value, (int, float)):
+                    value = f"{value:.2f}"
+                item = QTableWidgetItem(str(value))  # Create a QTableWidgetItem
+                self.cig_table_widget.setItem(row, col, item)  # Add item to the table
+                
+                # Make the RIG column bold and set background color
+                if self.cigs_df_display.columns[col] == 'RIG':
+                    font = item.font()
+                    font.setBold(True)  # Set the font to bold
+                    item.setFont(font)  # Apply the bold font to the item
+                    item.setBackground(QColor(169, 169, 169))  # Set background color to light grey
+
+
+        self.display_boxplot()
+
+        # Resize columns to fit content
+        for i in range(len(self.cigs_df_display.columns)):
+            self.cig_table_widget.resizeColumnToContents(i)
+
+        # Display the PIF value and percentile in the labels
+        self.cig_description_label.setText(f"PIF at {percentile}th percentile: {pif_value:.2f}") 
+        self.cig_description_label.setStyleSheet("color: white;")
+
 
 
 
@@ -215,7 +632,6 @@ class metaprivBIDS(QMainWindow):
             file_path, _ = QFileDialog.getSaveFileName(self, "Save CIG to CSV", "", "CSV Files (*.csv)", options=options)
 
             if file_path:
-              
                 try:
                     self.cigs_df_display.to_csv(file_path, index=True)
                     QMessageBox.information(self, "Success", f"CIG data successfully saved to {file_path}")
@@ -226,6 +642,890 @@ class metaprivBIDS(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "No CIG data to save. Please compute CIG first.")
 
+    def setupSudaInfoPage(self):
+        """
+        Setup the SUDA information page with smaller buttons at the top and two side-by-side frames.
+        """
+        self.suda_info_page = QWidget()
+        suda_layout = QVBoxLayout(self.suda_info_page)
+        suda_layout.setContentsMargins(10, 10, 10, 10)  # Outer margins for the main layout
+        suda_layout.setSpacing(10)  # Set spacing between widgets in the layout
+
+        # Create a horizontal layout for the buttons
+        button_layout = QHBoxLayout()
+
+        # Align buttons to the left
+        button_layout.setAlignment(Qt.AlignLeft)
+
+        # Create the 'SU' button (smaller button)
+        su_button = QPushButton('SUDA2 Computation')
+        su_button.setFixedSize(200, 20)  # Set the button size to 50x20
+        su_button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: #94127e; 
+                        color: white; 
+                        font-family: 'Roboto'; /* Set font family */
+                        font-weight: bold; 
+                        font-size: 14px;
+                        border-radius: 2px; 
+                        padding: 5px;
+                        min-height: 20px;
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #808080; /* Change color when pressed */
+                        border-radius: 8px; /* Optional: slightly decrease border radius */
+                    }}
+                    QPushButton:hover {{
+                        background-color: #b0529c; /* Change to a matte or darker color on hover */
+                        color: white; /* Keep text color white */
+                    }}
+                """)
+        su_button.clicked.connect(self.compute_and_display_suda2_results)
+
+        # Create the 'Back to Main' button (smaller button)
+        back_button = QPushButton('Back to Main')
+        back_button.setFixedSize(200, 20)  # Set the button size to 100x20
+
+
+        back_icon = QIcon("output-onlinepngtools copy 2.png")
+        back_button.setIcon(back_icon)
+        back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+
+
+        back_button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: #94127e; 
+                        color: white; 
+                        font-family: 'Roboto'; /* Set font family */
+                        font-weight: bold; 
+                        font-size: 14px;
+                        border-radius: 2px; 
+                        padding: 5px;
+                        min-height: 20px;
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #808080; /* Change color when pressed */
+                        border-radius: 8px; /* Optional: slightly decrease border radius */
+                    }}
+                    QPushButton:hover {{
+                        background-color: #b0529c; /* Change to a matte or darker color on hover */
+                        color: white; /* Keep text color white */
+                    }}
+                """)
+
+        back_button.clicked.connect(self.show_main_page)
+
+        # Remove the space between the buttons
+        button_layout.setSpacing(10)
+
+
+                # Add Save CSV SUDA button
+        save_csv_button = QPushButton('Save CSV')
+        save_csv_button.setFixedSize(200, 20)
+        save_csv_button.setStyleSheet(f"""
+                        QPushButton {{
+                            background-color: #94127e; 
+                            color: white; 
+                            font-family: 'Roboto'; 
+                            font-weight: bold; 
+                            font-size: 14px;
+                            border-radius: 2px; 
+                            padding: 5px;
+                            min-height: 20px;
+                        }}
+                        QPushButton:pressed {{
+                            background-color: #808080; 
+                            border-radius: 8px; 
+                        }}
+                        QPushButton:hover {{
+                            background-color: #b0529c; 
+                            color: white; 
+                        }}
+                    """)
+        save_csv_button.clicked.connect(self.save_suda_dataframe_to_csv)  # Connect to the save function
+
+
+
+        # Add buttons to the button layout (side by side, aligned to the left)
+        button_layout.addWidget(su_button)
+        button_layout.addWidget(save_csv_button)  # Add the Save CSV button to the layout
+        button_layout.addWidget(back_button)
+
+
+        # Add button layout at the top of the main layout
+        suda_layout.addLayout(button_layout)
+        suda_layout.addSpacing(10)
+
+        # Create and add QLabel at the top below the buttons
+        title_label = QLabel("SUDA Calculation DIS-Score & Individual Attribution Score")
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #FFFFFF;")  # Set font size and weight
+        title_label.setAlignment(Qt.AlignLeft)  # Align the label text
+        suda_layout.addWidget(title_label)  # Add the title label to the layout
+
+        # Use a QGridLayout to control the layout of info_frame, att_frame, and indi_frame
+        frames_layout = QGridLayout()
+        frames_layout.setContentsMargins(5, 5, 5, 5)  # 5px margins around the grid layout
+        frames_layout.setSpacing(10)  # 5px spacing between frames
+
+        # Create the info_frame
+        self.info_frame = QFrame()
+        self.info_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
+        self.info_frame.setFixedHeight(350)  # Set a fixed height for the info_frame
+        self.info_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Expand width, fixed height
+
+        # Create a layout for the info_frame
+        info_frame_layout = QVBoxLayout(self.info_frame)
+        info_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the info_frame
+        info_label = QLabel("SUDA Information (No Initialized Computation)")
+        info_label.setStyleSheet("color: #FFFFFF;")
+        info_frame_layout.addWidget(info_label)
+
+        # Add info_frame to the grid layout spanning columns 0 and 1
+        frames_layout.addWidget(self.info_frame, 0, 0, 1, 2, Qt.AlignTop)  # Span across column 0 and 1
+
+        # Ensure that the second and third columns do not stretch unnecessarily
+        frames_layout.setColumnStretch(2, 0)  # Set the att_frame column not to stretch
+
+
+
+
+
+        # Create the att_frame (to the right of info_frame)
+        self.att_frame = QFrame()
+        self.att_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
+        self.att_frame.setFixedHeight(710)  # Set a fixed height for att_frame
+        self.att_frame.setMinimumWidth(400)  # Set minimum width for att_frame
+        self.att_frame.setMaximumWidth(400)  # Set maximum width for att_frame
+        self.att_frame.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        # Create a layout for the att_frame
+        att_frame_layout = QVBoxLayout(self.att_frame)
+        att_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the att_frame
+        att_label = QLabel("Individual Attribute Information (No Initialized Computation)")
+        att_label.setStyleSheet("color: #FFFFFF;")
+        att_frame_layout.addWidget(att_label)
+
+        # Add att_frame to the grid layout (first row, second column)
+        frames_layout.addWidget(self.att_frame, 0, 2, 2, 1, Qt.AlignTop)  # Span over two rows to keep it aligned with indi_frame
+
+        # Create the indi_frame below the info_frame and aligned closely
+        self.indi_frame = QFrame()
+        self.indi_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
+        self.indi_frame.setMaximumWidth(400)  # Set maximum width for indi_frame
+        self.indi_frame.setFixedHeight(350)  # Set a fixed height for indi_frame
+        self.indi_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        # Create a layout for indi_frame
+        indi_frame_layout = QVBoxLayout(self.indi_frame)
+        indi_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the indi_frame
+        indi_label = QLabel("Individual Frame Information (No Initialized Computation)")
+        indi_label.setStyleSheet("color: #FFFFFF;")
+        indi_frame_layout.addWidget(indi_label)
+
+        # Create the new_frame (same size as indi_frame)
+        self.new_frame = QFrame()
+        self.new_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
+        self.new_frame.setFixedHeight(350)  # Set a fixed height for indi_frame
+        self.new_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+
+        # Create a layout for new_frame
+        self.new_frame_layout = QVBoxLayout(self.new_frame)
+        self.new_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the new_frame
+        new_label = QLabel("New Frame Information")
+        new_label.setStyleSheet("color: #FFFFFF;")
+        self.new_frame_layout.addWidget(new_label)
+
+        # Add new_frame to the grid layout (row 1, column 0)
+        frames_layout.addWidget(self.new_frame, 1, 0, Qt.AlignTop)
+
+        # Add a spacer item between new_frame and indi_frame to create space between the frames
+        spacer_between_frames = QSpacerItem(10, 0, QSizePolicy.Fixed, QSizePolicy.Minimum)  # 100px wide spacer
+
+        # Add the spacer (row 1, column 1) to push indi_frame to the right
+        frames_layout.addItem(spacer_between_frames, 1, 1)
+
+        # Add indi_frame directly after the spacer (row 1, column 2)
+        frames_layout.addWidget(self.indi_frame, 1, 1, Qt.AlignTop)
+
+
+        # Add the frames_layout (containing all frames) to the main vertical layout (suda_layout)
+        suda_layout.addLayout(frames_layout)
+
+        # Add stretch to push the layout content down if needed
+        suda_layout.addStretch()
+
+        # Add the complete SUDA info page to the stacked widget
+        self.stacked_widget.addWidget(self.suda_info_page)
+
+        # Optionally, force the layout to update
+        suda_layout.update()
+
+    def save_suda_dataframe_to_csv(self):
+        """
+        This function saves the SUDA DataFrame (df) to a CSV file.
+        """
+        if hasattr(self, 'df') and not self.df.empty:
+            # Show a file dialog to choose where to save the CSV
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            file_name, _ = QFileDialog.getSaveFileName(self, "Save SUDA DataFrame as CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
+            
+            if file_name:
+                try:
+                    # Save the DataFrame (df) to the chosen CSV file
+                    self.df.to_csv(file_name, index=False)
+                    QMessageBox.information(self, "Success", f"SUDA DataFrame saved successfully to {file_name}")
+                except Exception as e:
+                    QMessageBox.warning(self, "Error", f"An error occurred while saving the CSV file: {e}")
+            else:
+                QMessageBox.information(self, "Cancelled", "Saving SUDA DataFrame as CSV was cancelled.")
+        else:
+            QMessageBox.warning(self, "No Data", "The SUDA DataFrame is empty or not available.")
+
+    def save_and_display_boxplot_in_frame(self):
+        # Clear any previous widgets in the layout to avoid duplication
+        while self.new_frame_layout.count():
+            child = self.new_frame_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        # Check if 'dis-score' column exists in df_copy
+        if 'dis-score' in self.df_copy.columns:
+            # Extract the dis-score data
+            dis_data = self.df_copy['dis-score'].values
+
+            # Check if there's enough data to create a meaningful boxplot
+            if len(dis_data) < 5:
+                print("Not enough data to generate a boxplot.")
+                return None
+
+            # Calculate median and MAD
+            median_value = np.mean(dis_data)
+            mad = median_abs_deviation(dis_data)
+
+            # Set the box bounds: 1.5 MADs above and below the median
+            lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
+            upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
+
+            # Set the whiskers: 3 MADs above and below the median
+            whisker_low = median_value - 3 * mad  # 3 MAD below the median
+            whisker_high = median_value + 3 * mad  # 3 MAD above the median
+
+            # Identify outliers: values outside the whiskers
+            outliers = dis_data[(dis_data < whisker_low) | (dis_data > whisker_high)]
+
+            # Create a figure and axis for the boxplot
+            fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
+
+            # Create custom boxplot with the median in the middle and MAD-based whiskers
+            ax.bxp([{
+                'med': median_value,      # Center on the median
+                'q1': lower_bound,        # 1.5 MAD below the median
+                'q3': upper_bound,        # 1.5 MAD above the median
+                'whislo': whisker_low,    # 3 MAD below the median
+                'whishi': whisker_high,   # 3 MAD above the median
+                'fliers': outliers        # Outliers
+            }], showfliers=True)
+
+            # Set title and labels
+            ax.set_title(f'Custom Boxplot of DIS-Score (MAD Spread = 3) / MAD = {mad:.2f}')
+
+            # Customize the boxplot style (remove spines)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+            ax.spines['bottom'].set_visible(False)
+
+            # Save the plot to a byte buffer
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight')
+            buf.seek(0)
+            plt.close(fig)  # Close the figure to free memory
+
+            # Load the image from the buffer into a QPixmap
+            pixmap = QPixmap()
+            pixmap.loadFromData(buf.getvalue())
+
+            # Create QLabel to display the boxplot
+            self.boxplot_label_su = QLabel(self.new_frame)
+            self.boxplot_label_su.setAlignment(Qt.AlignCenter)
+            self.boxplot_label_su.setPixmap(pixmap)
+            self.boxplot_label_su.setScaledContents(True)  # Scale the contents to fit the label
+
+            # Add the QLabel with the boxplot to the new_frame layout
+            self.new_frame_layout.addWidget(self.boxplot_label_su)
+
+    def display_dis_score_boxplot(self):
+        # Get the QPixmap with the boxplot for the dis-score
+        pixmap = self.save_boxplot_dis_score()
+
+        # Set the pixmap directly to the QLabel
+        self.boxplot_label.setPixmap(pixmap)
+
+        # Optionally, adjust the size and layout
+        self.boxplot_label.setScaledContents(True)  # Scale the contents to fit the label
+
+    def compute_and_display_suda2_results(self):
+        """
+        This function computes the SUDA2 metrics, converts object-type columns to numeric codes,
+        and updates the frames with the results. The user is asked for the 'missing' value
+        and 'DisFraction' in pop-up dialogs.
+        """
+        # Get selected columns from the DataFrame
+        selected_columns = self.get_selected_columns()
+        df = self.data[selected_columns]
+
+        if df.empty:
+            print("Error: The DataFrame is empty.")
+            return
+
+        try:
+            # Step 1: Ask user for the 'missing' value (with a default of -999)
+            missing_value, ok = QInputDialog.getText(self, "Input Missing Value", 
+                                                     "Enter missing value (default: -999):", text="-999")
+            if not ok:  # If user cancels the dialog
+                return
+            missing_value = float(missing_value)  # Convert input to float
+
+            # Step 2: Ask user for the 'DisFraction' (with a default of 0.30)
+            dis_fraction, ok = QInputDialog.getDouble(self, "Input DisFraction", 
+                                                      "Enter DisFraction (default: 0.30):", 0.30, 0.0, 1.0, 2)
+            if not ok:  # If user cancels the dialog
+                return
+
+            # Step 3: Convert object-type columns to numeric codes
+            for col in df.select_dtypes(include=['object']).columns:
+                df[col] = df[col].astype('category').cat.codes
+
+            # Step 4: Convert pandas DataFrame to an R DataFrame (ensure columns are floats)
+            r_df = robjects.DataFrame({
+                name: robjects.FloatVector(df[name].astype(float)) for name in df.columns
+            })
+
+            # Step 5: Call the suda2 function from the sdcMicro package using the user input
+            suda_result = sdcMicro.suda2(r_df, missing=missing_value, DisFraction=dis_fraction)
+
+            # Step 6: Extract the relevant components from the suda2 result
+            contribution_percent = list(suda_result.rx2('contributionPercent'))
+            score = list(suda_result.rx2('score'))
+            dis_score = list(suda_result.rx2('disScore'))
+
+            dis_score = [round(x, 4) for x in dis_score]
+
+            
+
+            # Extract attribute_contributions
+            attribute_contributions = pd.DataFrame({
+                'variable': list(suda_result.rx2('attribute_contributions').rx2('variable')),
+                'contribution': list(suda_result.rx2('attribute_contributions').rx2('contribution'))
+            })
+
+            # Extract attribute_level_contributions
+            attribute_level_contributions = pd.DataFrame({
+                'variable': list(suda_result.rx2('attribute_level_contributions').rx2('variable')),
+                'attribute': list(suda_result.rx2('attribute_level_contributions').rx2('attribute')),
+                'contribution': list(suda_result.rx2('attribute_level_contributions').rx2('contribution'))
+            })
+
+
+            # Extract attribute_level_contributions
+            attribute_contributions = pd.DataFrame({
+                'variable': list(suda_result.rx2('attribute_contributions').rx2('variable')),
+                'contribution': list(suda_result.rx2('attribute_contributions').rx2('contribution'))
+            })
+
+
+
+
+            # Round contribution values to 2 decimal places
+            attribute_level_contributions['contribution'] = attribute_level_contributions['contribution'].round(2)
+            attribute_contributions['contribution'] = attribute_contributions['contribution'].round(2)
+
+            # Sort by 'variable' and 'contribution'
+            attribute_level_contributions = attribute_level_contributions.sort_values(by=['variable', 'contribution'], ascending=[True, False])
+
+            # Step 7: Update the info_frame with df_copy (including the dis_score column)
+            df_copy = df.copy()
+            df_copy['dis-score'] = dis_score
+            df_copy = df_copy.sort_values(by='dis-score', ascending=False)
+
+            self.df_copy = df.copy()  # Set df_copy as a class-level attribute
+            self.df_copy['dis-score'] = dis_score
+
+            df['dis-score'] = dis_score
+            df['score'] = score
+
+            self.df = df
+
+
+            self.save_and_display_boxplot_in_frame()
+
+
+
+            attribute_contributions = attribute_contributions.sort_values(by='contribution', ascending=False)
+
+
+            self.update_frame_with_dataframe(self.info_frame, df_copy)
+
+            # Step 8: Update the att_frame with attribute_level_contributions
+            self.update_frame_with_dataframe(self.att_frame, attribute_level_contributions)
+
+            self.update_frame_with_dataframe(self.indi_frame, attribute_contributions)
+
+        except Exception as e:
+            print(f"Error in SUDA2 computation: {e}")
+
+    def update_frame_with_dataframe(self, frame, dataframe):
+        """
+        This function updates a frame with the contents of a DataFrame, displayed as a table.
+        It dynamically applies colors to the 'variable' column if it exists, and adjusts the width
+        of the indi_frame based on the size of the column names and the content of each column.
+        """
+        layout = frame.layout()
+
+        # Clear existing widgets in the frame
+        for i in reversed(range(layout.count())):
+            widget = layout.itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        # Create QTableWidget to display the DataFrame
+        table = QTableWidget()
+        table.setRowCount(dataframe.shape[0])  # Set number of rows based on DataFrame
+        table.setColumnCount(dataframe.shape[1])  # Set number of columns based on DataFrame
+        table.setHorizontalHeaderLabels(dataframe.columns)  # Set column headers
+
+        # Check if 'variable' column exists for coloring
+        if 'variable' in dataframe.columns:
+            # Get unique variables from the 'variable' column
+            unique_variables = dataframe['variable'].unique()
+            num_unique_variables = len(unique_variables)
+
+            # Generate colors using a colormap from matplotlib
+            cmap = plt.get_cmap('tab20')  # You can try other colormaps like 'viridis', 'plasma', etc.
+            variable_colors = {}
+
+            # Assign colors for each unique variable
+            for i, variable in enumerate(unique_variables):
+                # Normalize color generation based on the number of unique variables
+                rgba_color = cmap(i / num_unique_variables)
+                # Convert to QColor and store in the variable_colors dictionary
+                variable_colors[variable] = QColor(int(rgba_color[0] * 255), int(rgba_color[1] * 255), int(rgba_color[2] * 255))
+
+        # Populate the table with DataFrame contents
+        for row in range(dataframe.shape[0]):
+            for col in range(dataframe.shape[1]):
+                item = QTableWidgetItem(str(dataframe.iat[row, col]))
+
+                # Apply color to the 'variable' column if it exists
+                if 'variable' in dataframe.columns and dataframe.columns[col] == 'variable':
+                    # Set text color based on the variable value
+                    variable_value = dataframe.iat[row, col]
+                    item.setForeground(variable_colors[variable_value])
+
+                table.setItem(row, col, item)
+
+        # Add the QTableWidget to the layout of the frame
+        layout.addWidget(table)
+
+        # --- Adjust the width of the `indi_frame` based on both column name size and content ---
+        if frame == self.indi_frame:  # Ensure this adjustment is ONLY for indi_frame
+            # Iterate through each column to calculate the required width based on both the column name and the content
+            for col in range(dataframe.shape[1]):
+                # Calculate the width needed for the column name
+                column_name = dataframe.columns[col]
+                column_name_width = table.fontMetrics().horizontalAdvance(column_name)
+
+                # Calculate the width needed for the content in the column (longest cell content)
+                max_content_width = max([table.fontMetrics().horizontalAdvance(str(dataframe.iat[row, col])) for row in range(dataframe.shape[0])])
+
+                # Set the column width to the larger of the column name width or content width
+                column_width = max(column_name_width, max_content_width) + 40  # Add some padding to the width
+                table.setColumnWidth(col, column_width)
+
+            # Calculate the total width of the table based on the column widths
+            total_column_width = sum([table.columnWidth(i) for i in range(table.columnCount())])
+
+            # Set the frame width to accommodate both the column names and content
+            frame.setFixedWidth(total_column_width + table.verticalHeader().width() + 40)  # Add padding for the vertical header
+            frame.adjustSize()  # Force layout to update the size
+
+
+
+    def setupPreviewPage(self):
+        """
+        Setup the preview page with a table view and navigation buttons including a 'Back to Main' button.
+        """
+        self.preview_page = QWidget()
+        preview_layout = QVBoxLayout(self.preview_page)
+        preview_layout.setContentsMargins(0, 0, 0, 0)  # No outer margins
+        preview_layout.setSpacing(10)  # Adjust spacing between widgets
+
+
+
+        # Create the 'Back to Main' button and place it at the top of the layout
+        back_button = QPushButton('Back to Main')
+        back_button.setFixedSize(180, 30)  # Set the size for the back button
+
+        back_icon = QIcon("output-onlinepngtools copy 2.png")
+        back_button.setIcon(back_icon)
+        back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+        back_button.setStyleSheet("""
+            QPushButton {
+                background-color: #94127e; 
+                color: #FFFFFF;
+                font-weight: bold; 
+                font-size: 14px;
+                border-radius: 1px; 
+                padding: 5px;
+                min-height: 20px;
+                width: 180px;
+            }
+            QPushButton:hover {
+                background-color: #b0529c;  /* Change to a lighter shade or different color */
+                color: #FFFFFF;  /* Keep text color white */
+            }
+        """)
+        back_button.clicked.connect(self.show_main_page)  # Ensure show_main_page is defined to handle the navigation
+        preview_layout.addWidget(back_button, alignment=Qt.AlignLeft)
+
+        # Add QLabel at the top
+        label = QLabel("Preview of Loaded Data & Optinal Json File Load")
+        label.setAlignment(Qt.AlignLeft)  # Center the label text
+        label.setFixedHeight(30)  # Set a fixed height for the label
+        label.setStyleSheet("font-size: 18px; font-weight: bold; padding: 0px; margin: 0px;")  # No padding or margins
+        preview_layout.addWidget(label)
+
+        # Create a horizontal layout for the table and frame
+        table_frame_layout = QHBoxLayout()
+
+        # Initialize and add the preview table to the layout
+        self.preview_table = QTableView()
+        self.preview_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.preview_table.setStyleSheet("margin-top: 5px; margin-bottom: 0px;")  # Set margin for the table
+        table_frame_layout.addWidget(self.preview_table)
+
+        # Create an empty QFrame with the same dimensions as the preview table
+        self.empty_frame = QFrame()
+        self.empty_frame.setStyleSheet("background-color: #121212; border: 0.2px solid #FFFFFF;")  # Background color and border
+        self.empty_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.empty_frame.setMaximumWidth(1000)
+        self.empty_frame.setMinimumWidth(100)  # Adjust as needed
+        self.empty_frame.setMaximumHeight(300)  # Set the same height as the table
+
+        # Create a vertical layout for the empty frame
+        empty_frame_layout = QVBoxLayout(self.empty_frame)
+
+        # Create the inner frame that will act as a rectangular bar
+        self.inner_frame = QFrame()
+        self.inner_frame.setStyleSheet("background-color: #3E3E3E;border: 0.2px solid #FFFFFF;")  # Optional: set a different background color for the bar
+        self.inner_frame.setFixedHeight(60)  # Set a fixed height for the inner frame
+        self.inner_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Keep expanding width but allow flexible height
+
+        # Add the inner frame to the layout of the empty frame
+        empty_frame_layout.addWidget(self.inner_frame)  # Add the inner frame at the top
+
+        # Create a QLabel for displaying metadata output
+        self.metadata_output_label = QLabel("")  # Initialize the label with empty text
+        self.metadata_output_label.setStyleSheet("color: #FFFFFF; padding: 5px; 0.2px solid #FFFFFF; border: none;")  # Set the style for the label
+        empty_frame_layout.addWidget(self.metadata_output_label)  # Add the label to the empty frame layout
+
+        # Ensure that the empty frame's layout also expands the table to fill the rest of the space
+        empty_frame_layout.addStretch()  # This will push the rest of the empty frame content down
+
+        # Add the empty frame to the main horizontal layout
+        table_frame_layout.addWidget(self.empty_frame)
+
+        # Add the horizontal layout to the main preview layout
+        preview_layout.addLayout(table_frame_layout)
+
+        # Add additional widgets like buttons through a separate method
+        self.add_preview_page_widgets(preview_layout)
+
+
+        # Add the complete preview page to the stacked widget
+        self.stacked_widget.addWidget(self.preview_page)
+
+    def add_preview_page_widgets(self, layout):
+        """
+        Add preview page widgets to the specified layout.
+
+        This method creates and adds various widgets to the given layout, including:
+        - A horizontal layout of buttons for rounding values, adding noise, reverting data, and combining values.
+        - A 'Graph Categorical' button to display graphs for categorical data.
+        - A label for metadata display and a dropdown for selecting columns.
+        - A 'Load JSON Metadata' button for loading and displaying metadata.
+
+        Parameters:
+        -----------
+        layout : QVBoxLayout
+            The layout to which the widgets will be added.
+        """
+
+        button_layout = QHBoxLayout()
+
+        button_data = [
+            ('Round Continuous Values', '94127e', self.round_values),
+            ('Add Laplacian Noise', '94127e', lambda: self.add_noise('laplacian')),
+            ('Add Gaussian Noise', '94127e', lambda: self.add_noise('gaussian')),
+            ('Combine Values', '94127e', self.show_combine_values_dialog),
+            ('Revert to Original', '94127e', self.revert_to_original),  # Add Combine Values button
+        ]
+
+        for text, color, func in button_data:
+            button = QPushButton(text)
+
+            # Define normal and hover styles
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #{color}; 
+                    color: #FFFFFF;
+                    font-weight: bold; 
+                    font-size: 14px;
+                    border-radius: 1px; 
+                    padding: 5px;
+                    min-height: 20px;
+                    width: 180px;      /* Set a fixed width */
+                }}
+                QPushButton:hover {{
+                    background-color: #b0529c;  /* Change to a lighter shade or different color */
+                    color: #FFFFFF;  /* You can also change the text color on hover */
+                }}
+            """)
+            
+            button.clicked.connect(func)
+            button_layout.addWidget(button)
+
+            if text == 'Revert to Original':
+                revert_icon = QIcon("output-onlinepngtools-5.png")  # Replace with your icon file path
+                button.setIcon(revert_icon)
+                button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                button.setLayoutDirection(Qt.RightToLeft)
+
+        self.graph_button = QPushButton('Graph Display')
+
+        graph_icon = QIcon("output-onlinepngtools-5 copy.png")
+        self.graph_button.setIcon(graph_icon)
+        self.graph_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
+        self.graph_button.setLayoutDirection(Qt.RightToLeft)
+        self.graph_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #{color}; 
+                    color: #FFFFFF;
+                    font-weight: bold; 
+                    font-size: 14px;
+                    border-radius: 1px; 
+                    padding: 5px;
+                    min-height: 20px;
+                    width: 180px;      /* Set a fixed width */
+                }}
+                QPushButton:hover {{
+                    background-color: #b0529c;  /* Change to a lighter shade or different color */
+                    color: #FFFFFF;  /* You can also change the text color on hover */
+                }}
+            """)
+        self.graph_button.clicked.connect(self.show_graph_categorical_dialog)
+        button_layout.addWidget(self.graph_button)
+
+        # Create a new layout for the inner frame to hold the Load Metadata button and dropdown
+        inner_frame_layout = QVBoxLayout(self.inner_frame)  # Assuming self.inner_frame is defined in setupPreviewPage
+
+        layout.addLayout(button_layout)
+
+        self.metadata_display = QLabel('')
+        self.metadata_display.setStyleSheet("color: #FFFFFF;")
+        layout.addWidget(self.metadata_display)
+
+        # Create a horizontal layout inside the inner frame for button and dropdown
+        dropdown_button_layout = QHBoxLayout()
+
+        self.column_dropdown = QComboBox()
+        self.column_dropdown.addItem("Select Column")
+        self.column_dropdown.currentIndexChanged.connect(self.show_metadata_for_column)
+        self.column_dropdown.setStyleSheet("""
+            QComboBox {
+                border: 2px solid #FFFFFF;
+                border-radius: 5px;
+                padding: 2px 2px;
+                background-color: #121212;
+                color: #FFFFFF;
+            }
+            QComboBox::drop-down {
+                border-left: 2px solid #FFFFFF;
+            }
+        """)
+        
+        # Add the dropdown and button to the horizontal layout
+        dropdown_button_layout.addWidget(self.column_dropdown)
+        
+        # Move the Load JSON Metadata button to the inner frame's layout
+        self.load_metadata_button = QPushButton('Load JSON Metadata')
+
+        metadata_icon = QIcon("output-onlinepngtools.png")
+        self.load_metadata_button.setIcon(metadata_icon)
+        self.load_metadata_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
+
+
+        self.load_metadata_button.setStyleSheet("""
+            QPushButton {
+                background-color: #94127e; 
+                color: #FFFFFF; 
+                font-weight: bold; 
+                font-size: 13px; 
+                border-radius: 5px; 
+                padding: 30px 20px; /* Increase padding for more height */
+                min-width: 200px; /* Set a minimum width for the button */
+            }
+            QPushButton:hover {
+                background-color: #b0529c;  /* Change to a lighter shade or different color */
+                color: #FFFFFF;  /* You can also change the text color on hover */
+            }
+        """)
+
+        #self.load_metadata_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Allow button to expand
+        self.load_metadata_button.clicked.connect(self.load_metadata)
+        dropdown_button_layout.addWidget(self.load_metadata_button)  # Add to the horizontal layout
+
+        # Add the horizontal layout to the inner frame
+        inner_frame_layout.addLayout(dropdown_button_layout)  # Add the button and dropdown layout to inner frame
+
+        # No need to add metadata_layout, remove that line
+
+    def show_preview(self):
+        """
+        Displays the first 10 rows of the loaded dataset in a preview table.
+
+        Raises:
+        -------
+        QMessageBox
+            If no data is loaded.
+
+        Example:
+        --------
+        Shows the first 10 rows of the dataset with column headers in a table view.
+
+        Notes:
+        ------
+        - Table height is set to a maximum of 200 pixels.
+        - Dropdown menu for columns is updated accordingly.
+        """
+        if self.data is not None:
+            preview_data = self.data.head(10)
+            model = QStandardItemModel()
+            model.setHorizontalHeaderLabels(preview_data.columns)
+            for row in preview_data.itertuples(index=False):
+                items = [NumericStandardItem(str(item)) if isinstance(item, (int, float)) else QStandardItem(str(item)) for item in row]
+                model.appendRow(items)
+            
+            self.preview_table.setModel(model)
+            self.preview_table.setMaximumHeight(300)
+            self.preview_table.setMaximumWidth(700)
+            self.preview_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        
+            self.preview_table.horizontalScrollBar().setVisible(True)
+            self.update_column_dropdown()
+            self.stacked_widget.setCurrentWidget(self.preview_page)
+
+
+        else:
+            QMessageBox.warning(self, "Warning", "No data loaded. Please load a file first.")
+
+
+
+
+
+
+
+
+    def show_privacy_info(self):
+        self.stacked_widget.setCurrentWidget(self.privacy_info_page)
+
+    def show_suda_info(self):
+        self.stacked_widget.setCurrentWidget(self.suda_info_page)
+
+
+
+
+    def add_buttons(self, layout):
+        """
+        Add a row of buttons to the specified layout.
+
+        This method creates a horizontal layout containing a set of buttons, each
+        associated with a specific functionality of the application. It then adds
+        this horizontal layout to the provided `layout`. Each button is styled with
+        a unique background color and connected to its corresponding event handler.
+
+        Args:
+            layout (QVBoxLayout): The layout to which the buttons will be added.
+        
+        Buttons:
+            - "Load CSV/TSV File": Opens a dialog to load a CSV/TSV file.
+            - "Privacy Calculation": Calculates unique rows for privacy analysis.
+            - "Variable Optimization": Finds the lowest unique columns for optimization.
+            - "Preview Data": Shows a preview of the loaded data.
+            - "Compute SUDA": Computes SUDA (Statistical Disclosure Control).
+            - "Privacy Information Factor": Displays privacy information.
+        """
+
+        button_layout = QHBoxLayout()
+        layout.addLayout(button_layout)
+
+        buttons = [
+            ("Load CSV/TSV File", self.load_file, "#94127e"),
+            ("Preview Data", self.show_preview, "#94127e"),
+            ("Privacy Calculation", self.calculate_unique_rows, "#94127e"),
+            ("Variable Optimization", self.find_lowest_unique_columns, "#94127e"),
+            #("Compute SUDA", self.compute_suda, "#94127e"),
+            ("Privacy Information Factor", self.show_privacy_info, "#94127e"),
+            ("SUDA", self.show_suda_info, "#94127e"),
+        ]
+
+        # Load the icon for the "Load CSV/TSV File" button
+        csv_icon = QIcon("output-onlinepngtools.png")  # Make sure to provide the correct path to your PNG file
+        preview_icon = QIcon("output-onlinepngtools-2.png")
+
+        for text, slot, color in buttons:
+            btn = QPushButton(text)
+            
+            # Set common styling for all buttons
+            btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {color}; 
+                    color: white;  /* Change text color to white */
+                    font-family: 'Roboto'; /* Set font family */
+                    font-weight: bold; 
+                    font-size: 14px;
+                    border-radius: 1px; 
+                    padding: 5px;
+                    min-height: 20px;
+                    width: 180px;      /* Set a fixed width */
+                }}
+                QPushButton:pressed {{
+                    background-color: #808080; /* Change color when pressed */
+                    border-radius: 8px; /* Optional: slightly decrease border radius */
+                }}
+                QPushButton:hover {{
+                    background-color: #b0529c; /* Change to a matte or darker color on hover */
+                    color: white; /* Keep text color white */
+                }}
+            """)
+
+            # Set icon for "Load CSV/TSV File" button on both sides
+            if text == "Load CSV/TSV File":
+                btn.setIcon(csv_icon)
+                btn.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                btn.setStyleSheet(btn.styleSheet() + "QPushButton::icon { margin-right: 10px; margin-left: 10px; }")
+
+
+            if text == "Preview Data":
+                btn.setIcon(preview_icon)
+                btn.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                btn.setStyleSheet(btn.styleSheet() + "QPushButton::icon { margin-right: 10px; margin-left: 10px; }")
+
+
+            btn.clicked.connect(slot)
+            button_layout.addWidget(btn)
 
 
     def show_graph_categorical_dialog(self):
@@ -267,9 +1567,6 @@ class metaprivBIDS(QMainWindow):
                 self.plot_tree_graph(column_name)  # Plot with the updated combined values
         else:
             QMessageBox.warning(self, "Warning", "No data loaded. Please load a file first.")
-
-
-
 
 
     def plot_tree_graph(self, column_name):
@@ -357,7 +1654,6 @@ class metaprivBIDS(QMainWindow):
 
         plt.title(f'Tree Graph of Values in Column \"{column_name}\"', fontsize=12)
         plt.show()
-
 
 
     def show_combine_values_dialog(self):
@@ -453,8 +1749,6 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.warning(self, "Warning", "No data loaded. Please load a file first.")
 
 
-
-
     def combine_selected_values(self, column_name, selected_items):
         """
         Combines selected values in a specified column with a new replacement value.
@@ -517,194 +1811,126 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.information(self, "Success", "Values have been successfully combined.")
 
 
-    def compute_cig(self):
-        """
-        Computes and displays the Categorical Information Gain (CIG) for selected columns in the DataFrame.
-
-        This method performs the following steps:
-        1. Retrieves the selected columns from the DataFrame.
-        2. Prompts the user to input a mask value, which is used to set specific values to zero in the CIG computation.
-        - If a valid numeric mask value is provided, it is applied to the DataFrame.
-        - If the input is "NaN", it masks the NaN values.
-        3. Converts NaN values in the DataFrame to the string 'NaN' to avoid treating them as missing values.
-        4. Computes the CIG values using the 'PIF' module and stores the results in a DataFrame.
-        5. Adds a 'RIG' column to the DataFrame, which contains the sum of CIG values for each row.
-        6. Prompts the user to input a percentile value to calculate the PIF (Percentile Information Factor).
-        7. Displays the computed CIG values in an HTML table, along with the calculated PIF at the specified percentile.
-
-        Parameters:
-        -----------
-        Mask Value
-        Percentile value for PIF. (Default: 95)
-        
-
-        Notes:
-        ------
-        - The method requires the 'piflib.pif_calculator' module for computing CIG values.
-        - The mask value is used to set specific values to zero in the CIG DataFrame if provided.
-        - The percentile input is used to calculate the PIF value, which is displayed along with the CIG values.
-
-        Raises:
-        -------
-        ValueError: If the mask value is not a valid number or 'NaN'.
-        ValueError: If the percentile input is not within the range 0-100.
-
-        Returns:
-        --------
-        Cell Information Gain (CIG) in tabular format. 
-        """
-
-        selected_columns = self.get_selected_columns()
-
-        if not selected_columns:
-            self.cig_result_browser.setPlainText("Please select at least one column.")
-            return
-        df = self.data[selected_columns]
-
-        if df.empty:
-            self.cig_result_browser.setPlainText("Data not available.")
-            return
-
-      
-        df = df.astype(object).where(pd.notnull(df), 'NaN')
-
-        mask_value, ok = QInputDialog.getText(None, 'Input Mask Value', 'Enter a mask value (or type "NaN" for missing values):')
-
-        if ok and mask_value != '':
-            try:
-                if mask_value.lower() == 'nan':
-                  
-                    mask = df == 'NaN'
-                else:
-                    # Otherwise, convert input to float and create mask for that value
-                    mask_value = float(mask_value)
-                    mask = df == mask_value
-            except ValueError:
-                self.cig_result_browser.setPlainText("Invalid mask value. Please enter a number or 'NaN'.")
-                return
-
-
-            cigs = pif.compute_cigs(df)
-            cigs_df = pd.DataFrame(cigs)
-            cigs_df[mask] = 0
-        else:
-          
-            cigs = pif.compute_cigs(df)
-            cigs_df = pd.DataFrame(cigs)
-
-
-        cigs_df['RIG'] = cigs_df.sum(axis=1)
-
-     
-        percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
-
-        if not ok:
-            self.cig_result_browser.setPlainText("Percentile input canceled.")
-            return
-
-      
-        pif_value = np.percentile(cigs_df['RIG'], percentile)
-
-     
-        self.cigs_df = cigs_df
-        cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)
-
-        self.cigs_df_display = cigs_df_display 
-     
-        cigs_df_display = cigs_df_display.applymap(lambda x: f"{x:.2f}")
-
-     
-        cigs_html = cigs_df_display.to_html(classes='dataframe', index=True, border=0)
-        custom_css = """
-        <style>
-        .container {
-            max-height: 300px; /* Set your desired maximum height here */
-            overflow-y: auto; /* Enable vertical scrolling */
-        }
-        table.dataframe {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table.dataframe, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        </style>
-        """
-
-        self.cig_result_browser.setHtml(f"{custom_css}<html><body><p>PIF at {percentile}th percentile: {pif_value:.2f}</p>{cigs_html}</body></html>")
-        self.cig_result_browser.setMaximumHeight(400)
-
-
-
-
 
     def describe_cig(self):
         """
         Generates and displays a statistical description of the CIG (Categorical Information Gain) DataFrame.
-
-        This method provides a summary of statistics for the CIG DataFrame ('cigs_df') by generating 
-        descriptive statistics and formatting the output as an HTML table. The following actions are performed:
-        1. Checks if 'cigs_df' exists and is not empty.
-        2. Excludes the 'RIG' column from the description if it exists.
-        3. Computes descriptive statistics for the remaining columns.
-        4. Formats the statistics to two decimal places and converts them to an HTML table.
-        5. Applies custom CSS styles to the HTML table for better readability and displays it in the 'cig_result_browser'.
-
-        If 'cigs_df' is not available or is empty, a message prompting the user to compute CIG is shown instead.
-
-
-        Notes:
-        ------
-        - The method requires that the 'cigs_df' attribute is present and contains data.
-        - Custom CSS is used to enhance the visual appearance of the HTML table.
-
-        Raises:
-        -------
-        Missing CIG calculation: "Please compute CIG before describing it."
-
-        Returns:
-        --------
-        CIG statistical description.
         """
-
         if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
+            # Drop the 'RIG' column if it exists
             if 'RIG' in self.cigs_df.columns:
                 cigs_df_for_description = self.cigs_df.drop(columns=['RIG'])
             else:
                 cigs_df_for_description = self.cigs_df
             
-            description = cigs_df_for_description.describe()
+            # Compute descriptive statistics
+            description = cigs_df_for_description.describe()  # This includes mean, std, etc.
+            description = description.drop('count', axis=0)
+
+            # Transpose to have statistics as rows
+            description = description.T  
+
+            # Format to two decimal places
             description = description.applymap(lambda x: f"{x:.2f}")
-            description_html = description.to_html(classes='dataframe', border=0)
-            custom_css = """
-            <style>
-            .dataframe {
-                border-collapse: collapse;
-                width: 100%;
-                color: #FFFFFF;
-                background-color: #333333;
-            }
-            .dataframe th, .dataframe td {
-                border: 1px solid #666666;
-                padding: 8px;
-                text-align: right;
-            }
-            .dataframe th {
-                background-color: #444444;
-            }
-            .dataframe tr:nth-child(even) {
-                background-color: #2c2c2c;
-            }
-            </style>
-            """    
-            self.cig_result_browser.setHtml(f"{custom_css}<html><body>{description_html}</body></html>")
-            self.cig_result_browser.setMaximumHeight(400)  
+
+            # Clear previous QTableWidget if it exists
+            if hasattr(self, 'cig_description_table'):
+                self.cig_description_frame.layout().removeWidget(self.cig_description_table)  # Remove previous QTableWidget
+                self.cig_description_table.deleteLater()  # Delete the widget to free up memory
+
+            # Create a new QTableWidget for displaying the description
+            self.cig_description_table = QTableWidget(self.cig_description_frame)  
+            self.cig_description_table.setRowCount(len(description))  # Set the number of rows
+            self.cig_description_table.setColumnCount(len(description.columns) + 1)  # +1 for index names
+
+            # Set header labels, including the index label for statistics and original column names
+            self.cig_description_table.setHorizontalHeaderLabels(['Statistic'] + description.columns.tolist())
+
+            # Populate the QTableWidget with data from the descriptive statistics
+            for row in range(len(description)):
+                # Set the index name (statistic) in the first column
+                self.cig_description_table.setItem(row, 0, QTableWidgetItem(description.index[row]))  # Set index name
+                for col in range(len(description.columns)):
+                    value = description.iat[row, col]  # Get the value
+                    item = QTableWidgetItem(str(value))  # Create a QTableWidgetItem
+                    self.cig_description_table.setItem(row, col + 1, item)  # Add item to the table (offset by 1)
+
+            # Highlight the largest numbers in the mean column
+            self.highlight_highest_mean_value()
+
+            # Set the style of the QTableWidget
+            self.cig_description_table.setStyleSheet("""
+                QTableWidget {
+                    background-color: #121212; 
+                    color: white;
+                }
+                QHeaderView::section {
+                    background-color: #121212;  /* Set header background to dark grey */
+                    color: white;  /* Set header text color to white */
+                    font-weight: bold;  /* Make header text bold */
+                }
+            """)
+
+            # Make the columns stretch to fit the width of the table
+            self.cig_description_table.horizontalHeader().setStretchLastSection(True)  # Allow the last section to stretch
+            self.cig_description_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # Stretch all columns
+
+            # Check if a scroll area already exists, if so, remove it
+            if hasattr(self, 'cig_description_scroll_area'):
+                self.cig_description_frame.layout().removeWidget(self.cig_description_scroll_area)
+                self.cig_description_scroll_area.deleteLater()
+
+            # Create a scroll area for the QTableWidget
+            self.cig_description_scroll_area = QScrollArea(self.cig_description_frame)
+            self.cig_description_scroll_area.setWidgetResizable(True)
+            self.cig_description_scroll_area.setWidget(self.cig_description_table)  # Set the QTableWidget as the widget of the scroll area
+
+            # Ensure the layout is initialized
+            if self.cig_description_frame.layout() is None:
+                self.cig_description_frame.setLayout(QVBoxLayout())  # Initialize the layout if not already done
+
+            # Clear any existing layout and add the scroll area
+            layout = self.cig_description_frame.layout()
+            layout.addWidget(self.cig_description_scroll_area)  # Add the scroll area to the description frame
+
         else:
-            self.cig_result_browser.setPlainText("Please compute CIG before describing it.")
+            self.cig_description_label.setText("Please compute CIG before summary statistics.")  # Inform user
+
+
+
+    def highlight_highest_mean_value(self):
+        """
+        Highlights the largest values in the 'mean' column of the QTableWidget.
+        """
+        # Find the index of the 'mean' column by checking the header labels
+        mean_col_index = -1
+        for index in range(self.cig_description_table.columnCount()):
+            if self.cig_description_table.horizontalHeaderItem(index).text() == 'mean':
+                mean_col_index = index
+                break
+
+        # Ensure the 'mean' column was found
+        if mean_col_index == -1:
+            print("Mean column not found.")
+            return  # Exit if the mean column is not found
+
+        # Get the maximum value from the 'mean' column
+        max_mean_value = float('-inf')
+
+        # First pass: find the maximum mean value
+        for row in range(self.cig_description_table.rowCount()):
+            mean_value = float(self.cig_description_table.item(row, mean_col_index).text())
+            if mean_value > max_mean_value:
+                max_mean_value = mean_value
+
+        # Second pass: highlight cells that match the maximum mean value
+        for row in range(self.cig_description_table.rowCount()):
+            mean_value = float(self.cig_description_table.item(row, mean_col_index).text())
+            if mean_value == max_mean_value:
+                item = self.cig_description_table.item(row, mean_col_index)
+                item.setForeground(QBrush(QColor("red")))  # Set text color to red
+                item.setFont(QFont("Arial", 14, QFont.Bold))  # Set font to bold
+
 
 
     def generate_heatmap(self):
@@ -725,7 +1951,6 @@ class metaprivBIDS(QMainWindow):
         Notes:
         ------
         - The heatmap is saved as 'heatmap.png' in the current working directory.
-        - A custom color map from seaborn's "RdYlGn" palette is used for the heatmap.
         - The method checks for and manages the presence of 'heatmap_label' to display the heatmap 
           and ensures the 'close_heatmap_button' is visible.
 
@@ -740,139 +1965,29 @@ class metaprivBIDS(QMainWindow):
 
         if hasattr(self, 'cigs_df') and not self.cigs_df.empty:
             cigs_df_no_rig = self.cigs_df.drop(columns=['RIG'])
-            color_map = mcolors.ListedColormap(sns.color_palette("RdYlGn", 256).as_hex()[::-1])
-      
-            heatmap_filename = "heatmap.png"
-            plt.figure(figsize=(10, 8))
-            sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
+            color_map = sns.color_palette("RdYlGn", 256)
+
+            # Create a new figure and show the heatmap in a standalone window
+            plt.figure(figsize=(10, 8))  # Adjust the figure size as needed
+            ax = sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
             plt.title("CIG Heatmap")
-            plt.xticks(fontsize=10)
-            plt.yticks(fontsize=10)
-            plt.savefig(heatmap_filename, bbox_inches='tight', pad_inches=0.1)  # Save the heatmap image
-            plt.close()  # Close the plot to free up memory
 
+            # Rotate x-axis labels for better readability
+            plt.xticks(rotation=45, ha='right', fontsize=10)  # Rotate 45 degrees, right-align
+            plt.yticks(fontsize=10)  # Adjust font size for y-axis labels
 
-            if not hasattr(self, 'heatmap_label'):
-                self.heatmap_label = QLabel()
-                self.privacy_info_layout.addWidget(self.heatmap_label)
+            plt.yticks(fontsize=6)
 
-          
-            self.heatmap_label.setPixmap(QPixmap(heatmap_filename))
-            self.heatmap_label.show()
-            self.close_heatmap_button.show()  # Ensure the close button is visible
+            # Automatically adjust the layout to fit the labels
+            plt.tight_layout()
+
+            # Display the heatmap in a separate Matplotlib window
+            plt.show()
+
         else:
             self.cig_result_browser.setPlainText("Please compute CIG before generating the heatmap.")
 
-
-
-    def hide_heatmap(self):
-        """
-        Hides the heatmap and its associated controls from the user interface.
-
-        This method checks if the heatmap label and the close heatmap button exist as attributes. 
-        If they are present, it hides both the heatmap label and the close heatmap button from view.
-        """
-
-        if hasattr(self, 'heatmap_label'):
-            self.heatmap_label.hide()
-        if hasattr(self, 'close_heatmap_button'):
-            self.close_heatmap_button.hide()
-
-
-
-    def show_privacy_info(self):
-        self.stacked_widget.setCurrentWidget(self.privacy_info_page)
-
-
-    def add_buttons(self, layout):
-
-        """
-        Add a row of buttons to the specified layout.
-
-        This method creates a horizontal layout containing a set of buttons, each
-        associated with a specific functionality of the application. It then adds
-        this horizontal layout to the provided `layout`. Each button is styled with
-        a unique background color and connected to its corresponding event handler.
-
-        Args:
-            layout (QVBoxLayout): The layout to which the buttons will be added.
-        
-        Buttons:
-            - "Load CSV/TSV File": Opens a dialog to load a CSV/TSV file.
-            - "Privacy Calculation": Calculates unique rows for privacy analysis.
-            - "Variable Optimization": Finds the lowest unique columns for optimization.
-            - "Preview Data": Shows a preview of the loaded data.
-            - "Compute SUDA": Computes SUDA (Statistical Disclosure Control).
-            - "Privacy Information Factor": Displays privacy information.
-        """
-
-        button_layout = QHBoxLayout()
-        layout.addLayout(button_layout)
-
-        buttons = [
-            ("Load CSV/TSV File", self.load_file, "#4CAF50"),
-            ("Privacy Calculation", self.calculate_unique_rows, "#2196F3"),
-            ("Variable Optimization", self.find_lowest_unique_columns, "#FFC107"),
-            ("Preview Data", self.show_preview, "#009688"),
-            ("Compute SUDA", self.compute_suda, "#4CAF50"),
-            ("Privacy Information Factor", self.show_privacy_info, "#9C27B0"),
-        ]
-
-        for text, slot, color in buttons:
-            btn = QPushButton(text)
-            btn.setStyleSheet(f"background-color: {color}; color: #FFFFFF;")
-            btn.clicked.connect(slot)
-            button_layout.addWidget(btn)
-
-
-    def compute_suda(self):
-        """
-        Computes the Sample Uniques Detection Algorithm (SUDA) metrics for the selected columns of data.
-        """
-
-        if self.data is None:
-            QMessageBox.warning(self, 'Error', 'No data loaded.')
-            return
-
-        max_msu, ok = QInputDialog.getInt(self, "Input", "Enter the max_msu value:", 2, 1, 100, 1)
-        if not ok:
-            return  # User cancelled or input is invalid
-
-        # Prompt the user for the sample fraction S instead of dis
-        sample_fraction, ok = QInputDialog.getDouble(self, "Input", "Enter the sample fraction (S) value:", 0.30, 0.0, 1.0, 4)
-        if not ok:
-            return  # User cancelled or input is invalid
-
-        self.data = self.original_data.copy()
-
-        selected_columns = self.get_selected_columns()
-        original_index = self.data.index
-
-        filtered_data = self.data[selected_columns]
-
-        if not selected_columns:
-            QMessageBox.warning(self, 'Error', 'No columns selected.')
-            return
-
-        # Pass the sample fraction instead of dis to suda_calculation
-        suda_result = suda_calculation(filtered_data, max_msu=max_msu, sample_fraction=sample_fraction)
-        suda_result['original_index'] = original_index
-        columns = ['original_index'] + [col for col in suda_result.columns if col != 'original_index']
-
-        suda_result = suda_result[columns]
-
-        median = suda_result['dis-suda'].median()
-        absolute_deviations = (suda_result['dis-suda'] - median).abs()
-        mad = absolute_deviations.median()
-        
-        mad_formatted = f"{mad:.5f}"
-        
-        self.show_results_dialog(suda_result, result_type="suda", mad_value=mad_formatted)
-
-
-
-        
-
+      
 
     def compute_combined_column_contribution(self):
         """
@@ -962,7 +2077,6 @@ class metaprivBIDS(QMainWindow):
         
   
         self.show_results_dialog(all_combinations_df)
-
 
 
 
@@ -1141,9 +2255,6 @@ class metaprivBIDS(QMainWindow):
 
 
 
-
-
-
     def add_load_results_layout(self):
 
         """
@@ -1175,7 +2286,6 @@ class metaprivBIDS(QMainWindow):
 
 
 
-
     def add_variable_optimization_layout(self):
 
         """
@@ -1198,84 +2308,6 @@ class metaprivBIDS(QMainWindow):
         self.results_view.setModel(self.results_model)
         self.setup_treeview(self.results_view)
         variable_optimization_layout.addWidget(self.results_view)
-
-
-
-
-
-
-
-    def add_preview_page_widgets(self, layout):
-        """
-        Add preview page widgets to the specified layout.
-
-        This method creates and adds various widgets to the given layout, including:
-        - A horizontal layout of buttons for rounding values, adding noise, reverting data, and combining values.
-        - A 'Graph Categorical' button to display graphs for categorical data.
-        - A label for metadata display and a dropdown for selecting columns.
-        - A 'Load JSON Metadata' button for loading and displaying metadata.
-
-        Parameters:
-        -----------
-        layout : QVBoxLayout
-            The layout to which the widgets will be added.
-        """
-
-        button_layout = QHBoxLayout()
-        
-  
-        button_data = [
-            ('Round Continuous Values', '673AB7', self.round_values),
-            ('Add Laplacian Noise', '009688', lambda: self.add_noise('laplacian')),
-            ('Add Gaussian Noise', '4CAF50', lambda: self.add_noise('gaussian')),
-            ('Revert to Original', 'FF5722', self.revert_to_original),
-            ('Combine Values', 'FF9800', self.show_combine_values_dialog)  # Add Combine Values button
-        ]
-
-        for text, color, func in button_data:
-            button = QPushButton(text)
-            button.setStyleSheet(f"background-color: #{color}; color: #FFFFFF;")
-            button.clicked.connect(func)
-            button_layout.addWidget(button)
-        
-     
-        self.graph_button = QPushButton('Graph Categorical')
-        self.graph_button.setStyleSheet("background-color: #3F51B5; color: #FFFFFF;")
-        self.graph_button.clicked.connect(self.show_graph_categorical_dialog)
-        button_layout.addWidget(self.graph_button)
-        
-        layout.addLayout(button_layout)
-
-      
-        self.metadata_display = QLabel('')
-        self.metadata_display.setStyleSheet("color: #FFFFFF;")
-        layout.addWidget(self.metadata_display)
-
-    
-        metadata_layout = QVBoxLayout()
-        self.column_dropdown = QComboBox()
-        self.column_dropdown.addItem("Select Column")
-        self.column_dropdown.currentIndexChanged.connect(self.show_metadata_for_column)
-        self.column_dropdown.setStyleSheet("""
-            QComboBox {
-                border: 2px solid #FFFFFF;
-                border-radius: 5px;
-                padding: 2px 4px;
-                background-color: #121212;
-                color: #FFFFFF;
-            }
-            QComboBox::drop-down {
-                border-left: 2px solid #FFFFFF;
-            }
-        """)
-        metadata_layout.addWidget(self.column_dropdown)
-        self.load_metadata_button = QPushButton('Load JSON Metadata')
-        self.load_metadata_button.setStyleSheet("background-color: #3F51B5; color: #FFFFFF;")
-        self.load_metadata_button.clicked.connect(self.load_metadata)
-        metadata_layout.addWidget(self.load_metadata_button)
-
-        layout.addLayout(metadata_layout)
-
 
 
     def create_noise_menu(self):
@@ -1607,7 +2639,6 @@ class metaprivBIDS(QMainWindow):
 
 
 
-
     def calculate_l_diversity(self, selected_columns, sensitive_attr):
         """
         Calculates the L-Diversity for the specified columns in the dataset with respect to a sensitive attribute.
@@ -1640,7 +2671,6 @@ class metaprivBIDS(QMainWindow):
 
         grouped = self.data.groupby(selected_columns)
         return grouped[sensitive_attr].nunique().min()
-
 
 
 
@@ -1693,66 +2723,27 @@ class metaprivBIDS(QMainWindow):
                 self.result_label.setText(f"An error occurred: {e}")
 
 
-
-    def show_preview(self):
-        """
-        Displays the first 10 rows of the loaded dataset in a preview table.
-
-        Raises:
-        -------
-        QMessageBox
-            If no data is loaded.
-
-        Example:
-        --------
-        Shows the first 10 rows of the dataset with column headers in a table view.
-
-        Notes:
-        ------
-        - Table height is set to a maximum of 200 pixels.
-        - Dropdown menu for columns is updated accordingly.
-        """
-
-        if self.data is not None:
-            preview_data = self.data.head(10)
-            model = QStandardItemModel()
-            model.setHorizontalHeaderLabels(preview_data.columns)
-            for row in preview_data.itertuples(index=False):
-                items = [NumericStandardItem(str(item)) if isinstance(item, (int, float)) else QStandardItem(str(item)) for item in row]
-                model.appendRow(items)
-            self.preview_table.setModel(model)
-            self.preview_table.setMaximumHeight(200) 
-            self.update_column_dropdown()
-            self.stacked_widget.setCurrentWidget(self.preview_page)
-        else:
-            QMessageBox.warning(self, "Warning", "No data loaded. Please load a file first.")
-
-
-
-
     def load_metadata(self):
         """
         Loads metadata from a JSON file and updates the column dropdown.
 
-        Opens a file dialog to select a JSON file. Loads the selected file's content into 'self.metadata'and updates the column dropdown. Shows an error message if file loading fails.
-
-        Example:
-        --------
-        Opens a file dialog to select a JSON file, loads the file's content, and updates UI elements.
-
-        Raises:
-        -------
-        QMessageBox
-            If an error occurs while loading the file.
+        Opens a file dialog to select a JSON file. Loads the selected file's content into 'self.metadata' and updates the column dropdown. Shows an error message if file loading fails.
         """
         file_path, _ = QFileDialog.getOpenFileName(self, "Open JSON File", QDir.homePath(), "JSON files (*.json)")
         if file_path:
             try:
                 with open(file_path, 'r') as f:
                     self.metadata = json.load(f)
-                self.update_column_dropdown()
+
+                if self.metadata:  # Ensure metadata is not empty
+                    self.update_column_dropdown()  # Update dropdown with new metadata
+                    self.metadata_output_label.setText("Metadata loaded successfully. Please select a column.")  # Inform user to select a column
+                else:
+                    self.metadata_output_label.setText("No metadata found in the file.")
+
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"An error occurred: {e}")
+                self.metadata_output_label.setText("Failed to load metadata.")  # Optional: display error message
 
 
 
@@ -1770,30 +2761,20 @@ class metaprivBIDS(QMainWindow):
                 self.column_dropdown.addItem(column)
 
 
-
     def show_metadata_for_column(self):
         """
         Displays metadata for the currently selected column in the dropdown.
 
         Retrieves metadata for the selected column from `self.metadata` and displays it in `self.metadata_display`. Shows a warning if no metadata is available for the selected column.
-
-        Example:
-        --------
-        Displays metadata information for the column selected in the dropdown menu.
-
-        Raises:
-        -------
-        QMessageBox
-            If no metadata is available for the selected column.
         """
-
         column_name = self.column_dropdown.currentText()
         if column_name in self.metadata:
             metadata_info = self.metadata[column_name]
-            self.metadata_display.setText(f"Metadata for {column_name}:\n{json.dumps(metadata_info, indent=4)}")
+            # Update the QLabel in the empty frame to display the metadata
+            self.metadata_output_label.setText(f"Metadata for {column_name}:\n{json.dumps(metadata_info, indent=4)}")
         else:
             QMessageBox.warning(self, "No metadata available for the selected column.")
-
+            self.metadata_output_label.setText("")  # Clear the label if no metadata is available
 
 
 
@@ -1830,12 +2811,6 @@ class metaprivBIDS(QMainWindow):
                     QMessageBox.critical(self, "Error", f"An error occurred while rounding: {e}")
 
 
-
-
-
-
-
-
     def revert_to_original(self):
         """
         Reverts the values in a selected column to their original state.
@@ -1861,7 +2836,6 @@ class metaprivBIDS(QMainWindow):
 
 
 
-
     def show_main_page(self):
         """
         Switches the displayed widget to the main page.
@@ -1870,7 +2844,6 @@ class metaprivBIDS(QMainWindow):
         """
 
         self.stacked_widget.setCurrentWidget(self.main_page)
-
 
 
 
