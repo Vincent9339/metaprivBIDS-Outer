@@ -87,8 +87,8 @@ git clone https://github.com/CPernet/metaprivBIDS.git
 
 # Dependencies
 
-To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment. 
-This can be done by running
+To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment as stated in the software installation. 
+This can be done by first ```cd``` into the MetaprivBIDS directiory and then running
 
 ```console
 pip install -e . 
