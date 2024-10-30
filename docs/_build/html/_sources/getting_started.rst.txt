@@ -23,6 +23,8 @@ or
     conda create --name venv python=3.x.x
     conda activate venv 
     conda install graphviz pygraphviz
+    conda install -c conda-forge r-base r-sdcMicro rpy2
+
 
 You can then install metaprivBIDS by cloning the git respository.
 
