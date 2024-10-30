@@ -63,6 +63,7 @@ Graphviz requires system level dependencies and might need to be installed with
 
 ```console
 conda install graphviz pygraphviz
+conda install -c conda-forge r-base r-sdcMicro rpy2
 ```
 
 if not avaliable. 
