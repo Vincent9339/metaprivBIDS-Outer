@@ -36,23 +36,12 @@ For meta information an option of load of json file is possible.
 
 # Software installation
 
-### Option 1 
+
+### Option 1
 The metaprivBIDS software runs on multiple platforms (e.g. Linux, MacOS, Windows) that have a Python 3 installation.
 It is recommended (but not required) to first create a virtual environment.
 
-```console 
-python -m venv venv
-source venv/bin/activate
-```
-
-You can then install metaprivBIDS by cloning the git respository.
-
-```console
-git clone https://github.com/CPernet/metaprivBIDS.git
-```
-
-### Option 2 
-
+  
  In the event of permission issues for system dependent files, you might want to set the pkgs_dirs option in Conda's configuration to use a directory that is writable by you.
  
 ```console 
@@ -77,6 +66,32 @@ conda install graphviz pygraphviz
 ```
 
 if not avaliable. 
+
+You can then install metaprivBIDS by furst cloning the git respository.
+
+```console
+git clone https://github.com/CPernet/metaprivBIDS.git
+```
+
+cd into the MetaprivBIDS folder  
+
+```console
+cd MetaprivBIDS
+```
+and then run 
+
+```console
+pip install -e . 
+```
+
+
+### Option 2 
+
+
+```console 
+python -m venv venv
+source venv/bin/activate
+```
 
 You can then install metaprivBIDS by cloning the git respository.
 
