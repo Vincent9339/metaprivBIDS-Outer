@@ -87,9 +87,17 @@ This Python build tool enables a user to calculate a variety of different data p
 <div class="section" id="installation">
 <h2>installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
 <p>The metaprivBIDS software runs on multiple platforms (e.g. Linux, MacOS, Windows) that have a Python 3.7 installation.
-It is recommended (but not required) to first create a virtual environment.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+It is recommended (but not required) to first create a virtual environment. This can be done with <code class="docutils literal notranslate"><span class="pre">venv</span></code> or, if pygraphviz fails (as it happens), with <code class="docutils literal notranslate"><span class="pre">conda</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>metapriv
+<span class="nb">source</span><span class="w"> </span>metapriv/bin/activate
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>config<span class="w"> </span>--add<span class="w"> </span>pkgs_dirs<span class="w"> </span>~/conda_pkgs
+conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>venv<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.x.x
+conda<span class="w"> </span>activate<span class="w"> </span>venv
+conda<span class="w"> </span>install<span class="w"> </span>graphviz<span class="w"> </span>pygraphviz
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>r-base<span class="w"> </span>r-sdcMicro<span class="w"> </span>rpy2
 </pre></div>
 </div>
 <p>You can then install metaprivBIDS by cloning the git respository.</p>
@@ -98,7 +106,8 @@ It is recommended (but not required) to first create a virtual environment.</p>
 </div>
 <p>To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment.
 This can be done by running</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>metaprivBIDS
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
 </div>

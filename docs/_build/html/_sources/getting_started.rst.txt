@@ -25,7 +25,6 @@ or
     conda install graphviz pygraphviz
     conda install -c conda-forge r-base r-sdcMicro rpy2
 
-
 You can then install metaprivBIDS by cloning the git respository.
 
 .. code-block:: bash

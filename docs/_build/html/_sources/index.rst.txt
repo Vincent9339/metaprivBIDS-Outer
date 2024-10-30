@@ -27,7 +27,7 @@ metaprivBIDS provides tool for data risk assesment, including methods:
 .. [3] Elliott, M. J., & Skinner, C. J. (2000). Identifying population uniques using limited information. *Proceedings of the Annual Meeting of the American Statistical Association*.
 .. [4] Information Governance ANZ. (2019). *Privacy Impact Assessment eReport.* https://www.infogovanz.com/wp-content/uploads/2020/01/191202-ACS-Privacy-eReport.pdf
 
-Licene 
+License 
 ======================================================
 
  metaprivBIDS is licensed under the MIT License (https://opensource.org/licenses/MIT).
