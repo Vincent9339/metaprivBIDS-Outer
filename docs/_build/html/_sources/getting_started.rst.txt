@@ -20,7 +20,7 @@ or
 .. code-block:: bash
 
     conda config --add pkgs_dirs ~/conda_pkgs
-    conda create --name venv "python>=3.7" graphviz pygraphviz -c conda-forge r-base r-sdcMicro rpy2
+    conda create --name venv -c conda-forge "python>=3.7" graphviz pygraphviz r-base r-sdcMicro rpy2
     conda activate venv
 
 You can then install metaprivBIDS by cloning the git respository.
