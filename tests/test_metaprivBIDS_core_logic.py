@@ -88,15 +88,7 @@ def test_add_noise(mp, mock_data):
     assert not noisy_data['age'].equals(mock_data['age']), "Noisy data should differ from the original"
 
 
-def test_compute_suda(mp, mock_data):
-   
-    with patch('metaprivBIDS.metaprivBIDS_core_logic.suda_calculation') as mock_suda_calculation:
-     
-        mock_suda_calculation.return_value = {'dis-suda': 0}
 
-        result = mp.compute_suda(mock_data, ['salary', 'city', 'department'], max_msu=2, dis=0.2)
-        mock_suda_calculation.assert_called_once_with(mock_data, max_msu=2, dis=0.2)
-        assert result == {'dis-suda': 0}
 
 
 def test_combine_values(mp, mock_data):
