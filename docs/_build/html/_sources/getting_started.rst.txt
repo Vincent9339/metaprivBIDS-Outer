@@ -20,7 +20,7 @@ or
 .. code-block:: bash
 
     conda config --add pkgs_dirs ~/conda_pkgs
-    conda create --name venv python=3.x.x
+    conda create --name venv "python>=3.7"
     conda activate venv 
     conda install graphviz pygraphviz
     conda install -c conda-forge r-base r-sdcMicro rpy2
