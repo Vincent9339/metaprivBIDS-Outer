@@ -81,7 +81,7 @@ class metaprivBIDS(QMainWindow):
           
 
     def show_splash_screen(self):
-        splash_pix = QPixmap("hacker_8334462.png")  # Change to your splash image path
+        splash_pix = QPixmap("icons/hacker.png")  # Change to your splash image path
         self.splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
         self.splash.setMask(splash_pix.mask())
         self.splash.setAutoFillBackground(True)
@@ -326,7 +326,7 @@ class metaprivBIDS(QMainWindow):
         
 
 
-        temp_icon_path = "colorkit.svg"  # Change to your actual path
+        temp_icon_path = "icons/colorkit.svg"  # Change to your actual path
         
 
         # Add a placeholder frame for the CIG results
@@ -687,7 +687,7 @@ class metaprivBIDS(QMainWindow):
         back_button.setFixedSize(200, 20)  # Set the button size to 100x20
 
 
-        back_icon = QIcon("/icons/output-onlinepngtools copy 2.png")
+        back_icon = QIcon("icons/back.png")
         back_button.setIcon(back_icon)
         back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
 
@@ -1168,7 +1168,7 @@ class metaprivBIDS(QMainWindow):
         back_button = QPushButton('Back to Main')
         back_button.setFixedSize(180, 30)  # Set the size for the back button
 
-        back_icon = QIcon("icons/output-onlinepngtools copy 2.png")
+        back_icon = QIcon("icons/back.png")
         back_button.setIcon(back_icon)
         back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
         back_button.setStyleSheet("""
@@ -1298,14 +1298,14 @@ class metaprivBIDS(QMainWindow):
             button_layout.addWidget(button)
 
             if text == 'Revert to Original':
-                revert_icon = QIcon("/icons/output-onlinepngtools-5.png")  # Replace with your icon file path
+                revert_icon = QIcon("icons/revert.png")  # Replace with your icon file path
                 button.setIcon(revert_icon)
                 button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
                 button.setLayoutDirection(Qt.RightToLeft)
 
         self.graph_button = QPushButton('Graph Display')
 
-        graph_icon = QIcon("/icons/output-onlinepngtools-5 copy.png")
+        graph_icon = QIcon("icons/graph.png")
         self.graph_button.setIcon(graph_icon)
         self.graph_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
         self.graph_button.setLayoutDirection(Qt.RightToLeft)
@@ -1362,7 +1362,7 @@ class metaprivBIDS(QMainWindow):
         # Move the Load JSON Metadata button to the inner frame's layout
         self.load_metadata_button = QPushButton('Load JSON Metadata')
 
-        metadata_icon = QIcon("/icons/output-onlinepngtools.png")
+        metadata_icon = QIcon("icons/load.png")
         self.load_metadata_button.setIcon(metadata_icon)
         self.load_metadata_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
 
@@ -1482,8 +1482,8 @@ class metaprivBIDS(QMainWindow):
         ]
 
         # Load the icon for the "Load CSV/TSV File" button
-        csv_icon = QIcon("/icons/output-onlinepngtools.png")  # Make sure to provide the correct path to your PNG file
-        preview_icon = QIcon("/icons/output-onlinepngtools-2.png")
+        csv_icon = QIcon("icons/load.png")  # Make sure to provide the correct path to your PNG file
+        preview_icon = QIcon("icons/looker.png")
 
         for text, slot, color in buttons:
             btn = QPushButton(text)
