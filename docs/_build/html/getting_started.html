@@ -94,10 +94,8 @@ It is recommended (but not required) to first create a virtual environment. This
 </div>
 <p>or</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>config<span class="w"> </span>--add<span class="w"> </span>pkgs_dirs<span class="w"> </span>~/conda_pkgs
-conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>venv<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.x.x
+conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>venv<span class="w"> </span><span class="s2">&quot;python&gt;=3.7&quot;</span><span class="w"> </span>graphviz<span class="w"> </span>pygraphviz<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>r-base<span class="w"> </span>r-sdcMicro<span class="w"> </span>rpy2
 conda<span class="w"> </span>activate<span class="w"> </span>venv
-conda<span class="w"> </span>install<span class="w"> </span>graphviz<span class="w"> </span>pygraphviz
-conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>r-base<span class="w"> </span>r-sdcMicro<span class="w"> </span>rpy2
 </pre></div>
 </div>
 <p>You can then install metaprivBIDS by cloning the git respository.</p>
