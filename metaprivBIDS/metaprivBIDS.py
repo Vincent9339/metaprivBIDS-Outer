@@ -417,18 +417,18 @@ class metaprivBIDS(QMainWindow):
 
 
 
-        # Add a placeholder frame for the CIG description
+        
         self.cig_description_frame = QFrame()
         self.cig_description_frame.setFrameShape(QFrame.StyledPanel)
-        self.cig_description_frame.setStyleSheet("background-color: #121212; border: 0.5px solid #94127e;")  # Background for description
-        self.cig_description_frame.setMinimumHeight(250)  # Increased height for better visibility
-        self.cig_description_frame.setMaximumHeight(250)  # Set a maximum height for the frame
+        self.cig_description_frame.setStyleSheet("background-color: #121212; border: 0.5px solid #94127e;")  
+        self.cig_description_frame.setMinimumHeight(250)  
+        self.cig_description_frame.setMaximumHeight(250)  
 
         privacy_layout.addWidget(self.cig_description_frame)
         
         description_layout = QVBoxLayout(self.cig_description_frame)
         self.icon_label_descrip = QLabel(self.cig_description_frame)
-        self.icon_label_descrip.setFixedSize(40, 40)  # Set a fixed size for the icon label
+        self.icon_label_descrip.setFixedSize(40, 40) 
         self.icon_label_descrip.setStyleSheet("background: transparent; border: none;")
         icon_pixmap = QPixmap(temp_icon_path).scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.icon_label_descrip.setPixmap(icon_pixmap)  
@@ -438,30 +438,30 @@ class metaprivBIDS(QMainWindow):
         # Create a QLabel for displaying CIG description
         self.cig_description_label = QLabel("PIF Percentile: To be computed.")
         self.cig_description_label.setAlignment(Qt.AlignCenter)
-        self.cig_description_label.setStyleSheet("color: white;")  # Set text color to white
+        self.cig_description_label.setStyleSheet("color: white;")  
         privacy_layout.addWidget(self.cig_description_label)
 
 
 
-        # Set up the stacked widget
+        
         self.stacked_widget.addWidget(self.privacy_info_page)
 
     def save_boxplot_rig_values(self):
-        # Check if 'RIG' column exists in cigs_df_display
+       
         if 'RIG' in self.cigs_df_display.columns:
-            # Extract the RIG data
+         
             rig_data = self.cigs_df_display['RIG'].values
             
-            # Check if there's enough data to create a meaningful boxplot
+         
             if len(rig_data) < 5:
                 print("Not enough data to generate a boxplot.")
                 return None
 
-            # Calculate median and MAD
+         
             median_value = np.median(rig_data)
             mad = median_abs_deviation(rig_data)
 
-            # Set the box bounds: 1.5 MADs above and below the median
+        
             lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
             upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
 
@@ -472,10 +472,10 @@ class metaprivBIDS(QMainWindow):
             # Identify outliers: values outside the whiskers
             outliers = rig_data[(rig_data < whisker_low) | (rig_data > whisker_high)]
 
-            # Create a figure and axis
+           
             fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
 
-            # Create custom boxplot with the median in the middle and MAD-based whiskers
+           
             ax.bxp([{
                 'med': median_value,      # Center on the median
                 'q1': lower_bound,        # 1.5 MAD below the median
@@ -485,36 +485,36 @@ class metaprivBIDS(QMainWindow):
                 'fliers': outliers        # Outliers
             }], showfliers=True)
 
-            # Set title and labels
+           
             ax.set_title(f'Custom Boxplot of RIG Values (MAD Spread = 3) / MAD = {mad:.2f}')
 
-            # Customize the boxplot style (remove spines)
+           
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
             ax.spines['bottom'].set_visible(False)
 
-            # Render the figure to a byte array in PNG format
+           
             buf = io.BytesIO()
             fig.savefig(buf, format='png', bbox_inches='tight')
             buf.seek(0)
             plt.close(fig)  # Close the figure to free memory
 
-            # Load the image data from the buffer and convert it to a QPixmap
+           
             image = QPixmap()
             image.loadFromData(buf.getvalue())
             
             return image
 
     def display_boxplot(self):
-        # Get the QPixmap with the boxplot
+       
         pixmap = self.save_boxplot_rig_values()
 
-        # Set the pixmap directly to the QLabel
+        
         self.boxplot_label.setPixmap(pixmap)
 
-        # Optionally, adjust the size and layout
-        self.boxplot_label.setScaledContents(True)  # Scale the contents to fit the label
+       
+        self.boxplot_label.setScaledContents(True) 
         self.boxplot_label.show()
 
     def compute_cig(self):
@@ -524,8 +524,8 @@ class metaprivBIDS(QMainWindow):
         selected_columns = self.get_selected_columns()
 
         if not selected_columns:
-            self.cig_table_widget.clear()  # Clear previous data
-            self.cig_description_label.setText("No columns selected.")  # Inform user
+            self.cig_table_widget.clear()  
+            self.cig_description_label.setText("No columns selected.")  
             return
 
         df = self.data[selected_columns]
@@ -534,8 +534,8 @@ class metaprivBIDS(QMainWindow):
         print("Selected DataFrame for CIG computation:")
 
         if df.empty:
-            self.cig_table_widget.clear()  # Clear previous data
-            self.cig_description_label.setText("DataFrame is empty.")  # Inform user
+            self.cig_table_widget.clear()  
+            self.cig_description_label.setText("DataFrame is empty.") 
             return
 
         df = df.astype(object).where(pd.notnull(df), 'NaN')
@@ -550,28 +550,28 @@ class metaprivBIDS(QMainWindow):
                     mask_value = float(mask_value)
                     mask = df == mask_value
             except ValueError:
-                self.cig_table_widget.clear()  # Clear previous data
-                self.cig_description_label.setText("Invalid mask value entered.")  # Inform user
+                self.cig_table_widget.clear() 
+                self.cig_description_label.setText("Invalid mask value entered.") 
                 return
 
             cigs = pif.compute_cigs(df)
-            # Use the original index when creating the DataFrame
-            cigs_df = pd.DataFrame(cigs, index=df.index)  # Retain original index
+           
+            cigs_df = pd.DataFrame(cigs, index=df.index)  
             cigs_df[mask] = 0
         else:
             cigs = pif.compute_cigs(df)
-            cigs_df = pd.DataFrame(cigs, index=df.index)  # Retain original index
+            cigs_df = pd.DataFrame(cigs, index=df.index)  
 
         cigs_df['RIG'] = cigs_df.sum(axis=1)
 
-        # Debug: Print the computed CIG DataFrame
+       
         print("Computed CIG DataFrame:")
 
         percentile, ok = QInputDialog.getInt(None, 'Input Percentile', 'Enter percentile (0-100):', 95, 0, 100)
 
         if not ok:
-            self.cig_table_widget.clear()  # Clear previous data
-            self.cig_description_label.setText("Percentile input canceled.")  # Inform user
+            self.cig_table_widget.clear() 
+            self.cig_description_label.setText("Percentile input canceled.")
             return
 
         pif_value = np.percentile(cigs_df['RIG'], percentile)
@@ -579,41 +579,41 @@ class metaprivBIDS(QMainWindow):
         self.cigs_df = cigs_df
         self.cigs_df_display = cigs_df.sort_values(by='RIG', ascending=False)  # Ensure you set this correctly
 
-        # Set up the QTableWidget
-        self.cig_table_widget.setRowCount(len(self.cigs_df_display))  # Set the number of rows
-        self.cig_table_widget.setColumnCount(len(self.cigs_df_display.columns))  # Set the number of columns
-        self.cig_table_widget.setHorizontalHeaderLabels(self.cigs_df_display.columns.tolist())  # Set header labels
-        self.cig_table_widget.horizontalHeader().setStretchLastSection(True)  # Allow the last section to stretch
-        self.cig_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # Stretch all columns
+        
+        self.cig_table_widget.setRowCount(len(self.cigs_df_display))  
+        self.cig_table_widget.setColumnCount(len(self.cigs_df_display.columns))  
+        self.cig_table_widget.setHorizontalHeaderLabels(self.cigs_df_display.columns.tolist())
+        self.cig_table_widget.horizontalHeader().setStretchLastSection(True)  
+        self.cig_table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
 
 
      
 
-        # Populate the QTableWidget with data from the DataFrame
+        
         for row in range(len(self.cigs_df_display)):
             for col in range(len(self.cigs_df_display.columns)):
                 value = self.cigs_df_display.iat[row, col]
                 # Format to 2 decimal places if numeric
                 if isinstance(value, (int, float)):
                     value = f"{value:.2f}"
-                item = QTableWidgetItem(str(value))  # Create a QTableWidgetItem
-                self.cig_table_widget.setItem(row, col, item)  # Add item to the table
+                item = QTableWidgetItem(str(value))  
+                self.cig_table_widget.setItem(row, col, item)  
                 
-                # Make the RIG column bold and set background color
+                
                 if self.cigs_df_display.columns[col] == 'RIG':
                     font = item.font()
-                    font.setBold(True)  # Set the font to bold
-                    item.setFont(font)  # Apply the bold font to the item
-                    item.setBackground(QColor(169, 169, 169))  # Set background color to light grey
+                    font.setBold(True)  
+                    item.setFont(font) 
+                    item.setBackground(QColor(169, 169, 169))  
 
 
         self.display_boxplot()
 
-        # Resize columns to fit content
+        
         for i in range(len(self.cigs_df_display.columns)):
             self.cig_table_widget.resizeColumnToContents(i)
 
-        # Display the PIF value and percentile in the labels
+       
         self.cig_description_label.setText(f"PIF at {percentile}th percentile: {pif_value:.2f}") 
         self.cig_description_label.setStyleSheet("color: white;")
 
@@ -657,9 +657,9 @@ class metaprivBIDS(QMainWindow):
         # Align buttons to the left
         button_layout.setAlignment(Qt.AlignLeft)
 
-        # Create the 'SU' button (smaller button)
+       
         su_button = QPushButton('SUDA2 Computation')
-        su_button.setFixedSize(200, 20)  # Set the button size to 50x20
+        su_button.setFixedSize(200, 20)  
         su_button.setStyleSheet(f"""
                     QPushButton {{
                         background-color: #94127e; 
@@ -682,14 +682,14 @@ class metaprivBIDS(QMainWindow):
                 """)
         su_button.clicked.connect(self.compute_and_display_suda2_results)
 
-        # Create the 'Back to Main' button (smaller button)
+       
         back_button = QPushButton('Back to Main')
-        back_button.setFixedSize(200, 20)  # Set the button size to 100x20
+        back_button.setFixedSize(200, 20) 
 
 
         back_icon = QIcon("icons/back.png")
         back_button.setIcon(back_icon)
-        back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+        back_button.setIconSize(QSize(24, 24))  
 
 
         back_button.setStyleSheet(f"""
@@ -715,7 +715,7 @@ class metaprivBIDS(QMainWindow):
 
         back_button.clicked.connect(self.show_main_page)
 
-        # Remove the space between the buttons
+        
         button_layout.setSpacing(10)
 
 
@@ -742,13 +742,13 @@ class metaprivBIDS(QMainWindow):
                             color: white; 
                         }}
                     """)
-        save_csv_button.clicked.connect(self.save_suda_dataframe_to_csv)  # Connect to the save function
+        save_csv_button.clicked.connect(self.save_suda_dataframe_to_csv)  
 
 
 
         # Add buttons to the button layout (side by side, aligned to the left)
         button_layout.addWidget(su_button)
-        button_layout.addWidget(save_csv_button)  # Add the Save CSV button to the layout
+        button_layout.addWidget(save_csv_button)  
         button_layout.addWidget(back_button)
 
 
@@ -758,107 +758,107 @@ class metaprivBIDS(QMainWindow):
 
         # Create and add QLabel at the top below the buttons
         title_label = QLabel("SUDA Calculation DIS-Score & Individual Attribution Score")
-        title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #FFFFFF;")  # Set font size and weight
-        title_label.setAlignment(Qt.AlignLeft)  # Align the label text
-        suda_layout.addWidget(title_label)  # Add the title label to the layout
+        title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #FFFFFF;")  
+        title_label.setAlignment(Qt.AlignLeft) 
+        suda_layout.addWidget(title_label)  
 
-        # Use a QGridLayout to control the layout of info_frame, att_frame, and indi_frame
+       
         frames_layout = QGridLayout()
-        frames_layout.setContentsMargins(5, 5, 5, 5)  # 5px margins around the grid layout
-        frames_layout.setSpacing(10)  # 5px spacing between frames
+        frames_layout.setContentsMargins(5, 5, 5, 5) 
+        frames_layout.setSpacing(10)  
 
-        # Create the info_frame
+       
         self.info_frame = QFrame()
         self.info_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
-        self.info_frame.setFixedHeight(350)  # Set a fixed height for the info_frame
-        self.info_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Expand width, fixed height
+        self.info_frame.setFixedHeight(350)  
+        self.info_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) 
 
-        # Create a layout for the info_frame
+      
         info_frame_layout = QVBoxLayout(self.info_frame)
-        info_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the info_frame
+        info_frame_layout.setContentsMargins(10, 10, 10, 10) 
         info_label = QLabel("SUDA Information (No Initialized Computation)")
         info_label.setStyleSheet("color: #FFFFFF;")
         info_frame_layout.addWidget(info_label)
 
-        # Add info_frame to the grid layout spanning columns 0 and 1
-        frames_layout.addWidget(self.info_frame, 0, 0, 1, 2, Qt.AlignTop)  # Span across column 0 and 1
+        
+        frames_layout.addWidget(self.info_frame, 0, 0, 1, 2, Qt.AlignTop) 
 
-        # Ensure that the second and third columns do not stretch unnecessarily
-        frames_layout.setColumnStretch(2, 0)  # Set the att_frame column not to stretch
-
-
+      
+        frames_layout.setColumnStretch(2, 0)  
 
 
 
-        # Create the att_frame (to the right of info_frame)
+
+
+        
         self.att_frame = QFrame()
         self.att_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
-        self.att_frame.setFixedHeight(710)  # Set a fixed height for att_frame
-        self.att_frame.setMinimumWidth(400)  # Set minimum width for att_frame
-        self.att_frame.setMaximumWidth(400)  # Set maximum width for att_frame
+        self.att_frame.setFixedHeight(710)  
+        self.att_frame.setMinimumWidth(400) 
+        self.att_frame.setMaximumWidth(400) 
         self.att_frame.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        # Create a layout for the att_frame
+      
         att_frame_layout = QVBoxLayout(self.att_frame)
-        att_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the att_frame
+        att_frame_layout.setContentsMargins(10, 10, 10, 10) 
         att_label = QLabel("Individual Attribute Information (No Initialized Computation)")
         att_label.setStyleSheet("color: #FFFFFF;")
         att_frame_layout.addWidget(att_label)
 
-        # Add att_frame to the grid layout (first row, second column)
-        frames_layout.addWidget(self.att_frame, 0, 2, 2, 1, Qt.AlignTop)  # Span over two rows to keep it aligned with indi_frame
+        
+        frames_layout.addWidget(self.att_frame, 0, 2, 2, 1, Qt.AlignTop)  
 
-        # Create the indi_frame below the info_frame and aligned closely
+       
         self.indi_frame = QFrame()
         self.indi_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
-        self.indi_frame.setMaximumWidth(400)  # Set maximum width for indi_frame
-        self.indi_frame.setFixedHeight(350)  # Set a fixed height for indi_frame
+        self.indi_frame.setMaximumWidth(400)  
+        self.indi_frame.setFixedHeight(350)  
         self.indi_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        # Create a layout for indi_frame
+       
         indi_frame_layout = QVBoxLayout(self.indi_frame)
-        indi_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the indi_frame
+        indi_frame_layout.setContentsMargins(10, 10, 10, 10) 
         indi_label = QLabel("Individual Frame Information (No Initialized Computation)")
         indi_label.setStyleSheet("color: #FFFFFF;")
         indi_frame_layout.addWidget(indi_label)
 
-        # Create the new_frame (same size as indi_frame)
+        
         self.new_frame = QFrame()
         self.new_frame.setStyleSheet("background-color: #2E2E2E; border: 1px solid #FFFFFF;")
-        self.new_frame.setFixedHeight(350)  # Set a fixed height for indi_frame
+        self.new_frame.setFixedHeight(350)  
         self.new_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
 
-        # Create a layout for new_frame
+       
         self.new_frame_layout = QVBoxLayout(self.new_frame)
-        self.new_frame_layout.setContentsMargins(10, 10, 10, 10)  # Set 10px margins inside the new_frame
+        self.new_frame_layout.setContentsMargins(10, 10, 10, 10)  
         new_label = QLabel("New Frame Information")
         new_label.setStyleSheet("color: #FFFFFF;")
         self.new_frame_layout.addWidget(new_label)
 
-        # Add new_frame to the grid layout (row 1, column 0)
+       
         frames_layout.addWidget(self.new_frame, 1, 0, Qt.AlignTop)
 
-        # Add a spacer item between new_frame and indi_frame to create space between the frames
-        spacer_between_frames = QSpacerItem(10, 0, QSizePolicy.Fixed, QSizePolicy.Minimum)  # 100px wide spacer
+      
+        spacer_between_frames = QSpacerItem(10, 0, QSizePolicy.Fixed, QSizePolicy.Minimum)  
 
-        # Add the spacer (row 1, column 1) to push indi_frame to the right
+       
         frames_layout.addItem(spacer_between_frames, 1, 1)
 
-        # Add indi_frame directly after the spacer (row 1, column 2)
+        
         frames_layout.addWidget(self.indi_frame, 1, 1, Qt.AlignTop)
 
 
-        # Add the frames_layout (containing all frames) to the main vertical layout (suda_layout)
+        
         suda_layout.addLayout(frames_layout)
 
-        # Add stretch to push the layout content down if needed
+        
         suda_layout.addStretch()
 
-        # Add the complete SUDA info page to the stacked widget
+       
         self.stacked_widget.addWidget(self.suda_info_page)
 
-        # Optionally, force the layout to update
+       
         suda_layout.update()
 
     def save_suda_dataframe_to_csv(self):
@@ -866,14 +866,14 @@ class metaprivBIDS(QMainWindow):
         This function saves the SUDA DataFrame (df) to a CSV file.
         """
         if hasattr(self, 'df') and not self.df.empty:
-            # Show a file dialog to choose where to save the CSV
+            
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             file_name, _ = QFileDialog.getSaveFileName(self, "Save SUDA DataFrame as CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
             
             if file_name:
                 try:
-                    # Save the DataFrame (df) to the chosen CSV file
+                  
                     self.df.to_csv(file_name, index=False)
                     QMessageBox.information(self, "Success", f"SUDA DataFrame saved successfully to {file_name}")
                 except Exception as e:
@@ -884,41 +884,41 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.warning(self, "No Data", "The SUDA DataFrame is empty or not available.")
 
     def save_and_display_boxplot_in_frame(self):
-        # Clear any previous widgets in the layout to avoid duplication
+        
         while self.new_frame_layout.count():
             child = self.new_frame_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
 
-        # Check if 'dis-score' column exists in df_copy
+        
         if 'dis-score' in self.df_copy.columns:
-            # Extract the dis-score data
+           
             dis_data = self.df_copy['dis-score'].values
 
-            # Check if there's enough data to create a meaningful boxplot
+            
             if len(dis_data) < 5:
                 print("Not enough data to generate a boxplot.")
                 return None
 
-            # Calculate median and MAD
+           
             median_value = np.mean(dis_data)
             mad = median_abs_deviation(dis_data)
 
-            # Set the box bounds: 1.5 MADs above and below the median
+           
             lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
             upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
 
-            # Set the whiskers: 3 MADs above and below the median
+           
             whisker_low = median_value - 3 * mad  # 3 MAD below the median
             whisker_high = median_value + 3 * mad  # 3 MAD above the median
 
-            # Identify outliers: values outside the whiskers
+            
             outliers = dis_data[(dis_data < whisker_low) | (dis_data > whisker_high)]
 
-            # Create a figure and axis for the boxplot
+            
             fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
 
-            # Create custom boxplot with the median in the middle and MAD-based whiskers
+           
             ax.bxp([{
                 'med': median_value,      # Center on the median
                 'q1': lower_bound,        # 1.5 MAD below the median
@@ -928,43 +928,43 @@ class metaprivBIDS(QMainWindow):
                 'fliers': outliers        # Outliers
             }], showfliers=True)
 
-            # Set title and labels
+           
             ax.set_title(f'Custom Boxplot of DIS-Score (MAD Spread = 3) / MAD = {mad:.2f}')
 
-            # Customize the boxplot style (remove spines)
+            
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
             ax.spines['bottom'].set_visible(False)
 
-            # Save the plot to a byte buffer
+           
             buf = io.BytesIO()
             fig.savefig(buf, format='png', bbox_inches='tight')
             buf.seek(0)
             plt.close(fig)  # Close the figure to free memory
 
-            # Load the image from the buffer into a QPixmap
+           
             pixmap = QPixmap()
             pixmap.loadFromData(buf.getvalue())
 
-            # Create QLabel to display the boxplot
+            
             self.boxplot_label_su = QLabel(self.new_frame)
             self.boxplot_label_su.setAlignment(Qt.AlignCenter)
             self.boxplot_label_su.setPixmap(pixmap)
             self.boxplot_label_su.setScaledContents(True)  # Scale the contents to fit the label
 
-            # Add the QLabel with the boxplot to the new_frame layout
+            
             self.new_frame_layout.addWidget(self.boxplot_label_su)
 
     def display_dis_score_boxplot(self):
-        # Get the QPixmap with the boxplot for the dis-score
+       
         pixmap = self.save_boxplot_dis_score()
 
-        # Set the pixmap directly to the QLabel
+        
         self.boxplot_label.setPixmap(pixmap)
 
-        # Optionally, adjust the size and layout
-        self.boxplot_label.setScaledContents(True)  # Scale the contents to fit the label
+       
+        self.boxplot_label.setScaledContents(True) 
 
     def compute_and_display_suda2_results(self):
         """
@@ -981,32 +981,32 @@ class metaprivBIDS(QMainWindow):
             return
 
         try:
-            # Step 1: Ask user for the 'missing' value (with a default of -999)
+            
             missing_value, ok = QInputDialog.getText(self, "Input Missing Value", 
                                                      "Enter missing value (default: -999):", text="-999")
-            if not ok:  # If user cancels the dialog
+            if not ok:  
                 return
-            missing_value = float(missing_value)  # Convert input to float
+            missing_value = float(missing_value)  
 
-            # Step 2: Ask user for the 'DisFraction' (with a default of 0.30)
+           
             dis_fraction, ok = QInputDialog.getDouble(self, "Input DisFraction", 
                                                       "Enter DisFraction (default: 0.30):", 0.30, 0.0, 1.0, 2)
-            if not ok:  # If user cancels the dialog
+            if not ok: 
                 return
 
-            # Step 3: Convert object-type columns to numeric codes
+            
             for col in df.select_dtypes(include=['object']).columns:
                 df[col] = df[col].astype('category').cat.codes
 
-            # Step 4: Convert pandas DataFrame to an R DataFrame (ensure columns are floats)
+           
             r_df = robjects.DataFrame({
                 name: robjects.FloatVector(df[name].astype(float)) for name in df.columns
             })
 
-            # Step 5: Call the suda2 function from the sdcMicro package using the user input
+            
             suda_result = sdcMicro.suda2(r_df, missing=missing_value, DisFraction=dis_fraction)
 
-            # Step 6: Extract the relevant components from the suda2 result
+            
             contribution_percent = list(suda_result.rx2('contributionPercent'))
             score = list(suda_result.rx2('score'))
             dis_score = list(suda_result.rx2('disScore'))
@@ -1038,19 +1038,19 @@ class metaprivBIDS(QMainWindow):
 
 
 
-            # Round contribution values to 2 decimal places
+            
             attribute_level_contributions['contribution'] = attribute_level_contributions['contribution'].round(2)
             attribute_contributions['contribution'] = attribute_contributions['contribution'].round(2)
 
-            # Sort by 'variable' and 'contribution'
+            
             attribute_level_contributions = attribute_level_contributions.sort_values(by=['variable', 'contribution'], ascending=[True, False])
 
-            # Step 7: Update the info_frame with df_copy (including the dis_score column)
+            
             df_copy = df.copy()
             df_copy['dis-score'] = dis_score
             df_copy = df_copy.sort_values(by='dis-score', ascending=False)
 
-            self.df_copy = df.copy()  # Set df_copy as a class-level attribute
+            self.df_copy = df.copy()  
             self.df_copy['dis-score'] = dis_score
 
             df['dis-score'] = dis_score
@@ -1068,7 +1068,7 @@ class metaprivBIDS(QMainWindow):
 
             self.update_frame_with_dataframe(self.info_frame, df_copy)
 
-            # Step 8: Update the att_frame with attribute_level_contributions
+            
             self.update_frame_with_dataframe(self.att_frame, attribute_level_contributions)
 
             self.update_frame_with_dataframe(self.indi_frame, attribute_contributions)
@@ -1084,71 +1084,71 @@ class metaprivBIDS(QMainWindow):
         """
         layout = frame.layout()
 
-        # Clear existing widgets in the frame
+       
         for i in reversed(range(layout.count())):
             widget = layout.itemAt(i).widget()
             if widget is not None:
                 widget.deleteLater()
 
-        # Create QTableWidget to display the DataFrame
+       
         table = QTableWidget()
-        table.setRowCount(dataframe.shape[0])  # Set number of rows based on DataFrame
-        table.setColumnCount(dataframe.shape[1])  # Set number of columns based on DataFrame
-        table.setHorizontalHeaderLabels(dataframe.columns)  # Set column headers
+        table.setRowCount(dataframe.shape[0])  
+        table.setColumnCount(dataframe.shape[1]) 
+        table.setHorizontalHeaderLabels(dataframe.columns) 
 
-        # Check if 'variable' column exists for coloring
+       
         if 'variable' in dataframe.columns:
-            # Get unique variables from the 'variable' column
+            
             unique_variables = dataframe['variable'].unique()
             num_unique_variables = len(unique_variables)
 
-            # Generate colors using a colormap from matplotlib
-            cmap = plt.get_cmap('tab20')  # You can try other colormaps like 'viridis', 'plasma', etc.
+          
+            cmap = plt.get_cmap('tab20')  
             variable_colors = {}
 
-            # Assign colors for each unique variable
+           
             for i, variable in enumerate(unique_variables):
-                # Normalize color generation based on the number of unique variables
+               
                 rgba_color = cmap(i / num_unique_variables)
-                # Convert to QColor and store in the variable_colors dictionary
+               
                 variable_colors[variable] = QColor(int(rgba_color[0] * 255), int(rgba_color[1] * 255), int(rgba_color[2] * 255))
 
-        # Populate the table with DataFrame contents
+       
         for row in range(dataframe.shape[0]):
             for col in range(dataframe.shape[1]):
                 item = QTableWidgetItem(str(dataframe.iat[row, col]))
 
-                # Apply color to the 'variable' column if it exists
+              
                 if 'variable' in dataframe.columns and dataframe.columns[col] == 'variable':
-                    # Set text color based on the variable value
+                    
                     variable_value = dataframe.iat[row, col]
                     item.setForeground(variable_colors[variable_value])
 
                 table.setItem(row, col, item)
 
-        # Add the QTableWidget to the layout of the frame
+       
         layout.addWidget(table)
 
-        # --- Adjust the width of the `indi_frame` based on both column name size and content ---
-        if frame == self.indi_frame:  # Ensure this adjustment is ONLY for indi_frame
-            # Iterate through each column to calculate the required width based on both the column name and the content
+      
+        if frame == self.indi_frame:  
+           
             for col in range(dataframe.shape[1]):
-                # Calculate the width needed for the column name
+           
                 column_name = dataframe.columns[col]
                 column_name_width = table.fontMetrics().horizontalAdvance(column_name)
 
-                # Calculate the width needed for the content in the column (longest cell content)
+              
                 max_content_width = max([table.fontMetrics().horizontalAdvance(str(dataframe.iat[row, col])) for row in range(dataframe.shape[0])])
 
-                # Set the column width to the larger of the column name width or content width
-                column_width = max(column_name_width, max_content_width) + 40  # Add some padding to the width
+              
+                column_width = max(column_name_width, max_content_width) + 40
                 table.setColumnWidth(col, column_width)
 
             # Calculate the total width of the table based on the column widths
             total_column_width = sum([table.columnWidth(i) for i in range(table.columnCount())])
 
             # Set the frame width to accommodate both the column names and content
-            frame.setFixedWidth(total_column_width + table.verticalHeader().width() + 40)  # Add padding for the vertical header
+            frame.setFixedWidth(total_column_width + table.verticalHeader().width() + 40)  
             frame.adjustSize()  # Force layout to update the size
 
 
@@ -1159,18 +1159,18 @@ class metaprivBIDS(QMainWindow):
         """
         self.preview_page = QWidget()
         preview_layout = QVBoxLayout(self.preview_page)
-        preview_layout.setContentsMargins(0, 0, 0, 0)  # No outer margins
-        preview_layout.setSpacing(10)  # Adjust spacing between widgets
+        preview_layout.setContentsMargins(0, 0, 0, 0)  
+        preview_layout.setSpacing(10)
 
 
 
-        # Create the 'Back to Main' button and place it at the top of the layout
+       
         back_button = QPushButton('Back to Main')
-        back_button.setFixedSize(180, 30)  # Set the size for the back button
+        back_button.setFixedSize(180, 30)  
 
         back_icon = QIcon("icons/back.png")
         back_button.setIcon(back_icon)
-        back_button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+        back_button.setIconSize(QSize(24, 24))  
         back_button.setStyleSheet("""
             QPushButton {
                 background-color: #94127e; 
@@ -1187,64 +1187,64 @@ class metaprivBIDS(QMainWindow):
                 color: #FFFFFF;  /* Keep text color white */
             }
         """)
-        back_button.clicked.connect(self.show_main_page)  # Ensure show_main_page is defined to handle the navigation
+        back_button.clicked.connect(self.show_main_page) 
         preview_layout.addWidget(back_button, alignment=Qt.AlignLeft)
 
-        # Add QLabel at the top
+       
         label = QLabel("Preview of Loaded Data & Optinal Json File Load")
-        label.setAlignment(Qt.AlignLeft)  # Center the label text
-        label.setFixedHeight(30)  # Set a fixed height for the label
-        label.setStyleSheet("font-size: 18px; font-weight: bold; padding: 0px; margin: 0px;")  # No padding or margins
+        label.setAlignment(Qt.AlignLeft) 
+        label.setFixedHeight(30) 
+        label.setStyleSheet("font-size: 18px; font-weight: bold; padding: 0px; margin: 0px;")  
         preview_layout.addWidget(label)
 
-        # Create a horizontal layout for the table and frame
+       
         table_frame_layout = QHBoxLayout()
 
-        # Initialize and add the preview table to the layout
+       
         self.preview_table = QTableView()
         self.preview_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.preview_table.setStyleSheet("margin-top: 5px; margin-bottom: 0px;")  # Set margin for the table
+        self.preview_table.setStyleSheet("margin-top: 5px; margin-bottom: 0px;")  
         table_frame_layout.addWidget(self.preview_table)
 
-        # Create an empty QFrame with the same dimensions as the preview table
+       
         self.empty_frame = QFrame()
-        self.empty_frame.setStyleSheet("background-color: #121212; border: 0.2px solid #FFFFFF;")  # Background color and border
+        self.empty_frame.setStyleSheet("background-color: #121212; border: 0.2px solid #FFFFFF;")
         self.empty_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.empty_frame.setMaximumWidth(1000)
         self.empty_frame.setMinimumWidth(100)  # Adjust as needed
         self.empty_frame.setMaximumHeight(300)  # Set the same height as the table
 
-        # Create a vertical layout for the empty frame
+       
         empty_frame_layout = QVBoxLayout(self.empty_frame)
 
-        # Create the inner frame that will act as a rectangular bar
+       
         self.inner_frame = QFrame()
-        self.inner_frame.setStyleSheet("background-color: #3E3E3E;border: 0.2px solid #FFFFFF;")  # Optional: set a different background color for the bar
-        self.inner_frame.setFixedHeight(60)  # Set a fixed height for the inner frame
-        self.inner_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Keep expanding width but allow flexible height
+        self.inner_frame.setStyleSheet("background-color: #3E3E3E;border: 0.2px solid #FFFFFF;")  
+        self.inner_frame.setFixedHeight(60)  
+        self.inner_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  
 
-        # Add the inner frame to the layout of the empty frame
-        empty_frame_layout.addWidget(self.inner_frame)  # Add the inner frame at the top
+       
+        empty_frame_layout.addWidget(self.inner_frame)
 
-        # Create a QLabel for displaying metadata output
-        self.metadata_output_label = QLabel("")  # Initialize the label with empty text
-        self.metadata_output_label.setStyleSheet("color: #FFFFFF; padding: 5px; 0.2px solid #FFFFFF; border: none;")  # Set the style for the label
-        empty_frame_layout.addWidget(self.metadata_output_label)  # Add the label to the empty frame layout
+      
+        self.metadata_output_label = QLabel("")
+        self.metadata_output_label.setStyleSheet("color: #FFFFFF; padding: 5px; 0.2px solid #FFFFFF; border: none;")  
+        empty_frame_layout.addWidget(self.metadata_output_label)  
 
-        # Ensure that the empty frame's layout also expands the table to fill the rest of the space
-        empty_frame_layout.addStretch()  # This will push the rest of the empty frame content down
+       
+        empty_frame_layout.addStretch()  
 
-        # Add the empty frame to the main horizontal layout
+      
         table_frame_layout.addWidget(self.empty_frame)
 
-        # Add the horizontal layout to the main preview layout
+       
         preview_layout.addLayout(table_frame_layout)
 
-        # Add additional widgets like buttons through a separate method
+       
         self.add_preview_page_widgets(preview_layout)
 
 
-        # Add the complete preview page to the stacked widget
+
         self.stacked_widget.addWidget(self.preview_page)
 
     def add_preview_page_widgets(self, layout):
