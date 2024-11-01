@@ -1015,7 +1015,7 @@ class metaprivBIDS(QMainWindow):
 
             
 
-            # Extract attribute_contributions
+        
             attribute_contributions = pd.DataFrame({
                 'variable': list(suda_result.rx2('attribute_contributions').rx2('variable')),
                 'contribution': list(suda_result.rx2('attribute_contributions').rx2('contribution'))
@@ -1211,8 +1211,8 @@ class metaprivBIDS(QMainWindow):
         self.empty_frame.setStyleSheet("background-color: #121212; border: 0.2px solid #FFFFFF;")
         self.empty_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.empty_frame.setMaximumWidth(1000)
-        self.empty_frame.setMinimumWidth(100)  # Adjust as needed
-        self.empty_frame.setMaximumHeight(300)  # Set the same height as the table
+        self.empty_frame.setMinimumWidth(100) 
+        self.empty_frame.setMaximumHeight(300) 
 
        
         empty_frame_layout = QVBoxLayout(self.empty_frame)
@@ -1276,7 +1276,7 @@ class metaprivBIDS(QMainWindow):
         for text, color, func in button_data:
             button = QPushButton(text)
 
-            # Define normal and hover styles
+           
             button.setStyleSheet(f"""
                 QPushButton {{
                     background-color: #{color}; 
@@ -1298,16 +1298,16 @@ class metaprivBIDS(QMainWindow):
             button_layout.addWidget(button)
 
             if text == 'Revert to Original':
-                revert_icon = QIcon("icons/revert.png")  # Replace with your icon file path
+                revert_icon = QIcon("icons/revert.png")  
                 button.setIcon(revert_icon)
-                button.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                button.setIconSize(QSize(24, 24)) 
                 button.setLayoutDirection(Qt.RightToLeft)
 
         self.graph_button = QPushButton('Graph Display')
 
         graph_icon = QIcon("icons/graph.png")
         self.graph_button.setIcon(graph_icon)
-        self.graph_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
+        self.graph_button.setIconSize(QSize(24, 24)) 
         self.graph_button.setLayoutDirection(Qt.RightToLeft)
         self.graph_button.setStyleSheet(f"""
                 QPushButton {{
@@ -1328,8 +1328,8 @@ class metaprivBIDS(QMainWindow):
         self.graph_button.clicked.connect(self.show_graph_categorical_dialog)
         button_layout.addWidget(self.graph_button)
 
-        # Create a new layout for the inner frame to hold the Load Metadata button and dropdown
-        inner_frame_layout = QVBoxLayout(self.inner_frame)  # Assuming self.inner_frame is defined in setupPreviewPage
+        
+        inner_frame_layout = QVBoxLayout(self.inner_frame) 
 
         layout.addLayout(button_layout)
 
@@ -1337,7 +1337,7 @@ class metaprivBIDS(QMainWindow):
         self.metadata_display.setStyleSheet("color: #FFFFFF;")
         layout.addWidget(self.metadata_display)
 
-        # Create a horizontal layout inside the inner frame for button and dropdown
+        
         dropdown_button_layout = QHBoxLayout()
 
         self.column_dropdown = QComboBox()
@@ -1356,15 +1356,15 @@ class metaprivBIDS(QMainWindow):
             }
         """)
         
-        # Add the dropdown and button to the horizontal layout
+      
         dropdown_button_layout.addWidget(self.column_dropdown)
         
-        # Move the Load JSON Metadata button to the inner frame's layout
+       
         self.load_metadata_button = QPushButton('Load JSON Metadata')
 
         metadata_icon = QIcon("icons/load.png")
         self.load_metadata_button.setIcon(metadata_icon)
-        self.load_metadata_button.setIconSize(QSize(24, 24))  # Adjust icon size as needed
+        self.load_metadata_button.setIconSize(QSize(24, 24)) 
 
 
         self.load_metadata_button.setStyleSheet("""
@@ -1383,14 +1383,13 @@ class metaprivBIDS(QMainWindow):
             }
         """)
 
-        #self.load_metadata_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Allow button to expand
+      
         self.load_metadata_button.clicked.connect(self.load_metadata)
-        dropdown_button_layout.addWidget(self.load_metadata_button)  # Add to the horizontal layout
+        dropdown_button_layout.addWidget(self.load_metadata_button)  
 
-        # Add the horizontal layout to the inner frame
-        inner_frame_layout.addLayout(dropdown_button_layout)  # Add the button and dropdown layout to inner frame
-
-        # No need to add metadata_layout, remove that line
+       
+        inner_frame_layout.addLayout(dropdown_button_layout) 
+      
 
     def show_preview(self):
         """
@@ -1481,14 +1480,14 @@ class metaprivBIDS(QMainWindow):
             ("SUDA", self.show_suda_info, "#94127e"),
         ]
 
-        # Load the icon for the "Load CSV/TSV File" button
-        csv_icon = QIcon("icons/load.png")  # Make sure to provide the correct path to your PNG file
+       
+        csv_icon = QIcon("icons/load.png")  
         preview_icon = QIcon("icons/looker.png")
 
         for text, slot, color in buttons:
             btn = QPushButton(text)
             
-            # Set common styling for all buttons
+        
             btn.setStyleSheet(f"""
                 QPushButton {{
                     background-color: {color}; 
@@ -1511,16 +1510,16 @@ class metaprivBIDS(QMainWindow):
                 }}
             """)
 
-            # Set icon for "Load CSV/TSV File" button on both sides
+          
             if text == "Load CSV/TSV File":
                 btn.setIcon(csv_icon)
-                btn.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                btn.setIconSize(QSize(24, 24)) 
                 btn.setStyleSheet(btn.styleSheet() + "QPushButton::icon { margin-right: 10px; margin-left: 10px; }")
 
 
             if text == "Preview Data":
                 btn.setIcon(preview_icon)
-                btn.setIconSize(QSize(24, 24))  # Adjust icon size if needed
+                btn.setIconSize(QSize(24, 24)) 
                 btn.setStyleSheet(btn.styleSheet() + "QPushButton::icon { margin-right: 10px; margin-left: 10px; }")
 
 
@@ -1564,7 +1563,7 @@ class metaprivBIDS(QMainWindow):
             column_name, ok = QInputDialog.getItem(self, "Select Column", "Select column to graph:", categorical_columns, 0, False)
 
             if ok and column_name:
-                self.plot_tree_graph(column_name)  # Plot with the updated combined values
+                self.plot_tree_graph(column_name) 
         else:
             QMessageBox.warning(self, "Warning", "No data loaded. Please load a file first.")
 
@@ -1794,7 +1793,7 @@ class metaprivBIDS(QMainWindow):
             self.original_columns[column_name] = self.data[column_name].copy()
         replacement_value, ok = QInputDialog.getText(self, "Combine Values", "Enter the new value for the selected items:")
         
-        if ok and replacement_value:  # Check if the user clicked OK and provided a value
+        if ok and replacement_value: 
            
             selected_values = list(map(str, selected_values))
             replacement_value = str(replacement_value)
@@ -1823,42 +1822,42 @@ class metaprivBIDS(QMainWindow):
             else:
                 cigs_df_for_description = self.cigs_df
             
-            # Compute descriptive statistics
-            description = cigs_df_for_description.describe()  # This includes mean, std, etc.
+           
+            description = cigs_df_for_description.describe() 
             description = description.drop('count', axis=0)
 
-            # Transpose to have statistics as rows
+           
             description = description.T  
 
-            # Format to two decimal places
+           
             description = description.applymap(lambda x: f"{x:.2f}")
 
-            # Clear previous QTableWidget if it exists
+            
             if hasattr(self, 'cig_description_table'):
-                self.cig_description_frame.layout().removeWidget(self.cig_description_table)  # Remove previous QTableWidget
-                self.cig_description_table.deleteLater()  # Delete the widget to free up memory
+                self.cig_description_frame.layout().removeWidget(self.cig_description_table) 
+                self.cig_description_table.deleteLater() 
 
-            # Create a new QTableWidget for displaying the description
+           
             self.cig_description_table = QTableWidget(self.cig_description_frame)  
-            self.cig_description_table.setRowCount(len(description))  # Set the number of rows
-            self.cig_description_table.setColumnCount(len(description.columns) + 1)  # +1 for index names
+            self.cig_description_table.setRowCount(len(description))  
+            self.cig_description_table.setColumnCount(len(description.columns) + 1) 
 
             # Set header labels, including the index label for statistics and original column names
             self.cig_description_table.setHorizontalHeaderLabels(['Statistic'] + description.columns.tolist())
 
-            # Populate the QTableWidget with data from the descriptive statistics
+          
             for row in range(len(description)):
-                # Set the index name (statistic) in the first column
-                self.cig_description_table.setItem(row, 0, QTableWidgetItem(description.index[row]))  # Set index name
+               
+                self.cig_description_table.setItem(row, 0, QTableWidgetItem(description.index[row])) 
                 for col in range(len(description.columns)):
-                    value = description.iat[row, col]  # Get the value
-                    item = QTableWidgetItem(str(value))  # Create a QTableWidgetItem
-                    self.cig_description_table.setItem(row, col + 1, item)  # Add item to the table (offset by 1)
+                    value = description.iat[row, col] 
+                    item = QTableWidgetItem(str(value)) 
+                    self.cig_description_table.setItem(row, col + 1, item) 
 
-            # Highlight the largest numbers in the mean column
+            
             self.highlight_highest_mean_value()
 
-            # Set the style of the QTableWidget
+           
             self.cig_description_table.setStyleSheet("""
                 QTableWidget {
                     background-color: #121212; 
@@ -1871,11 +1870,11 @@ class metaprivBIDS(QMainWindow):
                 }
             """)
 
-            # Make the columns stretch to fit the width of the table
-            self.cig_description_table.horizontalHeader().setStretchLastSection(True)  # Allow the last section to stretch
-            self.cig_description_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # Stretch all columns
+           
+            self.cig_description_table.horizontalHeader().setStretchLastSection(True) 
+            self.cig_description_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
 
-            # Check if a scroll area already exists, if so, remove it
+           
             if hasattr(self, 'cig_description_scroll_area'):
                 self.cig_description_frame.layout().removeWidget(self.cig_description_scroll_area)
                 self.cig_description_scroll_area.deleteLater()
@@ -1883,18 +1882,18 @@ class metaprivBIDS(QMainWindow):
             # Create a scroll area for the QTableWidget
             self.cig_description_scroll_area = QScrollArea(self.cig_description_frame)
             self.cig_description_scroll_area.setWidgetResizable(True)
-            self.cig_description_scroll_area.setWidget(self.cig_description_table)  # Set the QTableWidget as the widget of the scroll area
+            self.cig_description_scroll_area.setWidget(self.cig_description_table)
 
-            # Ensure the layout is initialized
+          
             if self.cig_description_frame.layout() is None:
-                self.cig_description_frame.setLayout(QVBoxLayout())  # Initialize the layout if not already done
+                self.cig_description_frame.setLayout(QVBoxLayout()) 
 
-            # Clear any existing layout and add the scroll area
+          
             layout = self.cig_description_frame.layout()
-            layout.addWidget(self.cig_description_scroll_area)  # Add the scroll area to the description frame
+            layout.addWidget(self.cig_description_scroll_area) 
 
         else:
-            self.cig_description_label.setText("Please compute CIG before summary statistics.")  # Inform user
+            self.cig_description_label.setText("Please compute CIG before summary statistics.")  
 
 
 
@@ -1909,27 +1908,27 @@ class metaprivBIDS(QMainWindow):
                 mean_col_index = index
                 break
 
-        # Ensure the 'mean' column was found
+      
         if mean_col_index == -1:
             print("Mean column not found.")
-            return  # Exit if the mean column is not found
+            return 
 
-        # Get the maximum value from the 'mean' column
+       
         max_mean_value = float('-inf')
 
-        # First pass: find the maximum mean value
+       
         for row in range(self.cig_description_table.rowCount()):
             mean_value = float(self.cig_description_table.item(row, mean_col_index).text())
             if mean_value > max_mean_value:
                 max_mean_value = mean_value
 
-        # Second pass: highlight cells that match the maximum mean value
+       
         for row in range(self.cig_description_table.rowCount()):
             mean_value = float(self.cig_description_table.item(row, mean_col_index).text())
             if mean_value == max_mean_value:
                 item = self.cig_description_table.item(row, mean_col_index)
-                item.setForeground(QBrush(QColor("red")))  # Set text color to red
-                item.setFont(QFont("Arial", 14, QFont.Bold))  # Set font to bold
+                item.setForeground(QBrush(QColor("red")))  
+                item.setFont(QFont("Arial", 14, QFont.Bold)) 
 
 
 
@@ -1967,21 +1966,21 @@ class metaprivBIDS(QMainWindow):
             cigs_df_no_rig = self.cigs_df.drop(columns=['RIG'])
             color_map = sns.color_palette("RdYlGn", 256)
 
-            # Create a new figure and show the heatmap in a standalone window
-            plt.figure(figsize=(10, 8))  # Adjust the figure size as needed
+           
+            plt.figure(figsize=(10, 8)) 
             ax = sns.heatmap(cigs_df_no_rig, cmap=color_map, annot=False, fmt="g", cbar=True)
             plt.title("CIG Heatmap")
 
-            # Rotate x-axis labels for better readability
-            plt.xticks(rotation=45, ha='right', fontsize=10)  # Rotate 45 degrees, right-align
-            plt.yticks(fontsize=10)  # Adjust font size for y-axis labels
+           
+            plt.xticks(rotation=45, ha='right', fontsize=10)  
+            plt.yticks(fontsize=10) 
 
             plt.yticks(fontsize=6)
 
-            # Automatically adjust the layout to fit the labels
+            
             plt.tight_layout()
 
-            # Display the heatmap in a separate Matplotlib window
+           
             plt.show()
 
         else:
@@ -2029,16 +2028,16 @@ class metaprivBIDS(QMainWindow):
 
         min_size, ok_min = QInputDialog.getInt(self, "Select Minimum Combination Size", "Enter minimum combination size:", 3, 1, len(selected_columns))
         if not ok_min:
-            return  # User canceled the input dialog
+            return 
         
         max_size, ok_max = QInputDialog.getInt(self, "Select Maximum Combination Size", "Enter maximum combination size:", 7, min_size, len(selected_columns))
         if not ok_max:
-            return  # User canceled the input dialog
+            return 
         
         results = []
         total_unique_rows = None
 
-        for r in range(min_size, max_size + 1):  # Adjust based on user input
+        for r in range(min_size, max_size + 1): 
             print(f"Processing combinations of size {r}...")
             
             all_combinations = combinations(selected_columns, r)
@@ -2055,7 +2054,7 @@ class metaprivBIDS(QMainWindow):
                     value_counts_excluded = self.data[remaining_columns].value_counts()
                     num_excluded_unique_rows = len(value_counts_excluded[value_counts_excluded == 1])
                 else:
-                    num_excluded_unique_rows = 0  # If no remaining columns, set to 0
+                    num_excluded_unique_rows = 0  
                 
             
                 results.append({
@@ -2135,8 +2134,8 @@ class metaprivBIDS(QMainWindow):
 
         results_table.setModel(model)
 
-        results_table.setSortingEnabled(True)  # Enable sorting of columns
-        results_table.resizeColumnsToContents()  # Auto resize columns to fit content
+        results_table.setSortingEnabled(True) 
+        results_table.resizeColumnsToContents() 
 
         layout.addWidget(results_table)
 
