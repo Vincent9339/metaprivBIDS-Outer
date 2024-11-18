@@ -9,6 +9,11 @@ import math
 from piflib.pif_calculator import compute_cigs
 
 
+import numpy as np
+from rpy2.robjects import pandas2ri, localconverter
+import rpy2.robjects as robjects
+from sdcMicro import sdcMicro
+
 
 class metaprivBIDS_core_logic:
     def __init__(self):
@@ -246,3 +251,22 @@ class metaprivBIDS_core_logic:
             plt.show()
         else:
             raise ValueError("Please compute CIG before generating the heatmap.")
+
+
+    def convert_to_numeric(df):
+        for col in df.select_dtypes(include=['object']).columns:
+            df[col] = df[col].astype('category').cat.codes
+        return df
+
+
+    
+    def compute_suda2(self, dataframe, sample_fraction=0.2, missing_value=np.NaN):
+        with localconverter(pandas2ri.converter):
+            r_df = robjects.conversion.py2rpy(dataframe)
+        self.convert_to_numeric(dataframe)
+        suda_result = sdcMicro.suda2(r_df, missing=missing_value, DisFraction=sample_fraction)
+        contribution_percent = list(suda_result.rx2('contributionPercent'))
+        score = list(suda_result.rx2('score'))
+        dis_score = list(suda_result.rx2('disScore'))
+        return contribution_percent, score, dis_score, suda_result
+
