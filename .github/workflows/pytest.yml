@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Latest version compatible with Node20
+        uses: actions/checkout@v3 
 
       - name: Install system dependencies
         run: |
@@ -27,7 +27,7 @@ jobs:
             r-base r-base-dev  # Install R base and development packages
 
       - name: Set up Python
-        uses: actions/setup-python@v4  # Latest version compatible with Node20
+        uses: actions/setup-python@v4 
         with:
           python-version: '3.9'
 
@@ -39,6 +39,16 @@ jobs:
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/metaprivBIDS" >> $GITHUB_ENV
+
+      - name: Configure R environment for rpy2
+        run: |
+          echo "R_HOME=$(R RHOME)" >> $GITHUB_ENV
+          echo "PATH=$PATH:/usr/lib/R/bin" >> $GITHUB_ENV
+
+      - name: Verify R installation
+        run: |
+          R --version
+          Rscript -e 'print("R is properly installed and configured.")'
 
       - name: Run tests
         run: |
