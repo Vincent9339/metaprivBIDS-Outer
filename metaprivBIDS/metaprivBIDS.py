@@ -883,6 +883,10 @@ class metaprivBIDS(QMainWindow):
         else:
             QMessageBox.warning(self, "No Data", "The SUDA DataFrame is empty or not available.")
 
+
+
+
+
     def save_and_display_boxplot_in_frame(self):
         
         while self.new_frame_layout.count():
@@ -1042,10 +1046,27 @@ class metaprivBIDS(QMainWindow):
             attribute_level_contributions['contribution'] = attribute_level_contributions['contribution'].round(2)
             attribute_contributions['contribution'] = attribute_contributions['contribution'].round(2)
 
+
             
             attribute_level_contributions = attribute_level_contributions.sort_values(by=['variable', 'contribution'], ascending=[True, False])
 
             
+            # Ask if the user wants to save attribute contributions
+            reply = QMessageBox.question(self, "Save Confirmation", "Do you want to save attribute contributions?",
+                                     QMessageBox.Yes | QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                # If Yes, open a file dialog to choose the save location
+                options = QFileDialog.Options()
+                file_path, _ = QFileDialog.getSaveFileName(self, "Save File", "att_suda.csv",
+                                                       "CSV Files (*.csv);;All Files (*)", options=options)
+                if file_path:
+                    attribute_contributions.to_csv(file_path, sep=',')
+                    print(f"File saved to: {file_path}")
+                else:
+                    print("Save cancelled.")
+
+
+
             df_copy = df.copy()
             df_copy['dis-score'] = dis_score
             df_copy = df_copy.sort_values(by='dis-score', ascending=False)
@@ -2541,7 +2562,7 @@ class metaprivBIDS(QMainWindow):
             sensitive_attr = self.get_sensitive_attribute()
             try:
             
-                value_counts = self.data[selected_columns].value_counts()
+                value_counts = self.data[selected_columns].value_counts(dropna=False)
                 num_unique_rows = len(value_counts[value_counts == 1])
             
                 total_rows = len(self.data)
@@ -2673,8 +2694,9 @@ class metaprivBIDS(QMainWindow):
 
 
 
-    def find_lowest_unique_columns(self):
 
+
+    def find_lowest_unique_columns(self):
         """
         Identify columns with the lowest impact on unique row counts when removed.
 
@@ -2693,13 +2715,12 @@ class metaprivBIDS(QMainWindow):
         - Normalized difference
 
         If an error occurs, an error message is displayed on 'result_label'.
-
         """
         selected_columns = self.get_selected_columns()
         if selected_columns:
             try:
                 subset_data = self.data[selected_columns]
-                value_counts = subset_data.value_counts()
+                value_counts = subset_data.value_counts(dropna=False)
                 unique_rows = value_counts[value_counts == 1].index
                 all_unique_count = len(unique_rows)
 
@@ -2708,7 +2729,7 @@ class metaprivBIDS(QMainWindow):
                     temp_columns = [col for col in selected_columns if col != column]
                     if temp_columns:
                         subset_data_after_removal = self.data[temp_columns]
-                        value_counts_after_removal = subset_data_after_removal.value_counts()
+                        value_counts_after_removal = subset_data_after_removal.value_counts(dropna=False)
                         unique_rows_after_removal = value_counts_after_removal[value_counts_after_removal == 1].index
                         unique_count_after_removal = len(unique_rows_after_removal)
                         difference = all_unique_count - unique_count_after_removal
@@ -2718,8 +2739,26 @@ class metaprivBIDS(QMainWindow):
 
                 results.sort(key=lambda x: x[3], reverse=True)
                 self.update_treeview(self.results_model, results, add_checkbox=False)
+
+                # Ask the user if they want to save the results
+                reply = QMessageBox.question(self, "Save Results", "Do you want to save the normalized difference results?",
+                                             QMessageBox.Yes | QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    # Open a file dialog to select save location
+                    options = QFileDialog.Options()
+                    file_path, _ = QFileDialog.getSaveFileName(self, "Save File", "normalized_difference_results.csv",
+                                                               "CSV Files (*.csv);;All Files (*)", options=options)
+                    if file_path:
+                        # Convert results to DataFrame and save as CSV
+                        df_results = pd.DataFrame(results, columns=['Column', 'Unique Rows After Removal', 
+                                                                    'Difference in Unique Rows', 'Normalized Difference'])
+                        df_results.to_csv(file_path, index=False)
+                        print(f"Results saved to: {file_path}")
+                    else:
+                        print("Save cancelled.")
             except Exception as e:
                 self.result_label.setText(f"An error occurred: {e}")
+
 
 
     def load_metadata(self):
@@ -2779,14 +2818,15 @@ class metaprivBIDS(QMainWindow):
 
     def round_values(self):
         """
-        Rounds values in a selected continuous column to a specified precision.
+        Rounds values in a selected continuous column to a specified precision or removes decimal numbers.
 
-        Rounds the values in the selected column according to the chosen precision. Stores the original data if not already stored and updates the preview.
+        Rounds the values in the selected column according to the chosen precision or truncates the values. 
+        Stores the original data if not already stored and updates the preview.
 
         Raises:
         -------
         QMessageBox
-            If no continuous columns are available or if an error occurs during rounding.
+            If no continuous columns are available or if an error occurs during rounding or truncation.
         """
 
         continuous_columns = [self.columns_model.item(row, 0).text() for row in range(self.columns_model.rowCount())
@@ -2796,18 +2836,27 @@ class metaprivBIDS(QMainWindow):
             QMessageBox.warning(self, "No Continuous Columns", "No continuous columns available for rounding.")
             return
 
-        column_name, ok = QInputDialog.getItem(self, "Select Column", "Select column to round:", continuous_columns, 0, False)
+        column_name, ok = QInputDialog.getItem(self, "Select Column", "Select column to round or truncate:", continuous_columns, 0, False)
         if ok and column_name:
-            precision, ok = QInputDialog.getItem(self, "Select Precision", "Select rounding precision:", ["10^1", "10^2", "10^3", "10^4", "10^5", "10^6"], 0, False)
+            precision_options = ["10^1", "10^2", "10^3", "10^4", "10^5", "10^6", "Remove Decimals"]
+            precision, ok = QInputDialog.getItem(self, "Select Precision", "Select rounding precision or remove decimals:", precision_options, 0, False)
             if ok and precision:
                 try:
-                    factor = 10 ** int(precision.split('^')[1])
-                    if column_name in self.data.columns:
-                        self.original_columns.setdefault(column_name, self.data[column_name].copy())  # Store original data if not already
-                        self.data[column_name] = (self.data[column_name] / factor).round() * factor
-                        self.show_preview()
+                    if precision == "Remove Decimals":
+                        # Truncate by converting to integers
+                        if column_name in self.data.columns:
+                            self.original_columns.setdefault(column_name, self.data[column_name].copy())  # Store original data if not already
+                            self.data[column_name] = self.data[column_name].astype(int)
+                    else:
+                        # Round to specified precision
+                        factor = 10 ** int(precision.split('^')[1])
+                        if column_name in self.data.columns:
+                            self.original_columns.setdefault(column_name, self.data[column_name].copy())  # Store original data if not already
+                            self.data[column_name] = (self.data[column_name] / factor).round() * factor
+                    self.show_preview()
                 except Exception as e:
-                    QMessageBox.critical(self, "Error", f"An error occurred while rounding: {e}")
+                    QMessageBox.critical(self, "Error", f"An error occurred: {e}")
+
 
 
     def revert_to_original(self):
