@@ -24,7 +24,8 @@ dependencies = [
     "numpy>=1.21.6",
     "piflib>=0.1.1",
     "scipy>=1.7.3",
-    "setuptools>=42"
+    "setuptools>=42",
+    "rpy2>=3.5.16"
 ]
 
 [project.scripts]
