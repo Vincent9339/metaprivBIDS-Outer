@@ -59,7 +59,7 @@ Activates the environment.
 conda activate venv 
 ```
 
-Graphviz requires system level dependencies and might need to be installed with 
+Graphviz requires system level dependencies as well as rpy2 and might need to be installed with 
 
 ```console
 conda install graphviz pygraphviz
