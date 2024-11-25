@@ -62,8 +62,7 @@ conda activate venv
 Graphviz requires system level dependencies as well as rpy2 and might need to be installed with 
 
 ```console
-conda install graphviz pygraphviz
-conda install -c conda-forge r-base r-sdcMicro rpy2
+conda create --name venv -c conda-forge "python>=3.7" graphviz pygraphviz r-base r-sdcMicro rpy2
 ```
 
 if not avaliable. 
