@@ -446,65 +446,80 @@ class metaprivBIDS(QMainWindow):
         
         self.stacked_widget.addWidget(self.privacy_info_page)
 
-    def save_boxplot_rig_values(self):
-       
+
+
+
+
+
+    def save_boxplot_rig_values(self, k=2.2414):
         if 'RIG' in self.cigs_df_display.columns:
-         
-            rig_data = self.cigs_df_display['RIG'].values
+            rig_data = self.cigs_df_display['RIG'].dropna().values  # Handle missing data
             
-         
             if len(rig_data) < 5:
                 print("Not enough data to generate a boxplot.")
                 return None
 
-         
-            median_value = np.median(rig_data)
-            mad = median_abs_deviation(rig_data)
+            # Calculate median and MAD
+            median = np.nanmedian(rig_data)
+            mad = np.nanmedian(np.abs(rig_data - median))
+            madn = mad / 0.6745  # Adjust MAD to robust standard deviation
 
-        
-            lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
-            upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
+            # Calculate Z-scores
+            z_scores = (rig_data - median) / madn
 
-            # Set the whiskers: 3 MADs above and below the median
-            whisker_low = median_value - 3 * mad  # 3 MAD below the median
-            whisker_high = median_value + 3 * mad  # 3 MAD above the median
+            # Outlier detection based on the threshold k
+            outliers = rig_data[np.abs(z_scores) > k]
 
-            # Identify outliers: values outside the whiskers
-            outliers = rig_data[(rig_data < whisker_low) | (rig_data > whisker_high)]
+            # Create the box plot
+            fig, ax = plt.subplots(figsize=(8, 5))
+            boxplot = ax.boxplot(
+                z_scores,
+                vert=False,
+                patch_artist=True,
+                boxprops=dict(facecolor='lightblue', color='blue'),
+                medianprops=dict(color='orange'),
+                flierprops=dict(marker='o', color='red', alpha=0.6)
+            )
 
-           
-            fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
+            # Adjust whiskers manually to limit them to -k and +k
+            for line in boxplot['whiskers']:
+                xdata = line.get_xdata()
+                capped_xdata = np.clip(xdata, -k, k)  # Cap whisker ends to -k and +k
+                line.set_xdata(capped_xdata)
 
-           
-            ax.bxp([{
-                'med': median_value,      # Center on the median
-                'q1': lower_bound,        # 1.5 MAD below the median
-                'q3': upper_bound,        # 1.5 MAD above the median
-                'whislo': whisker_low,    # 3 MAD below the median
-                'whishi': whisker_high,   # 3 MAD above the median
-                'fliers': outliers        # Outliers
-            }], showfliers=True)
+            for cap in boxplot['caps']:
+                xdata = cap.get_xdata()
+                capped_xdata = np.clip(xdata, -k, k)  # Cap caps to -k and +k
+                cap.set_xdata(capped_xdata)
 
-           
-            ax.set_title(f'Custom Boxplot of RIG Values (MAD Spread = 3) / MAD = {mad:.2f}')
+            # Add threshold lines for -k and +k
+            ax.axvline(x=-k, color='red', linestyle='--', label=f'Lower Threshold (-{k})')
+            ax.axvline(x=k, color='red', linestyle='--', label=f'Upper Threshold (+{k})')
 
-           
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.spines['left'].set_visible(False)
-            ax.spines['bottom'].set_visible(False)
+            # Plot customization
+            ax.set_title(f'Boxplot of Z-Scores with MAD-based Outlier Thresholds (k={k})')
+            ax.set_xlabel('Z-Score')
+            ax.legend(loc='upper left')
 
-           
+            # Save the plot to a buffer and convert to QPixmap
             buf = io.BytesIO()
             fig.savefig(buf, format='png', bbox_inches='tight')
             buf.seek(0)
-            plt.close(fig)  # Close the figure to free memory
+            plt.close(fig)
 
-           
             image = QPixmap()
             image.loadFromData(buf.getvalue())
             
             return image
+
+
+
+
+
+
+
+
+
 
     def display_boxplot(self):
        
@@ -887,78 +902,68 @@ class metaprivBIDS(QMainWindow):
 
 
 
-    def save_and_display_boxplot_in_frame(self):
-        
+    def save_and_display_boxplot_in_frame(self, k=2.2414):
         while self.new_frame_layout.count():
             child = self.new_frame_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
 
-        
         if 'dis-score' in self.df_copy.columns:
-           
-            dis_data = self.df_copy['dis-score'].values
+            dis_data = self.df_copy['dis-score'].dropna().values
 
-            
             if len(dis_data) < 5:
                 print("Not enough data to generate a boxplot.")
                 return None
 
-           
-            median_value = np.mean(dis_data)
-            mad = median_abs_deviation(dis_data)
+            median = np.nanmedian(dis_data)
+            mad = np.nanmedian(np.abs(dis_data - median))
+            madn = mad / 0.6745
 
-           
-            lower_bound = median_value - 1.5 * mad  # 1.5 MAD below the median
-            upper_bound = median_value + 1.5 * mad  # 1.5 MAD above the median
+            z_scores = (dis_data - median) / madn
+            outliers = dis_data[np.abs(z_scores) > k]
 
-           
-            whisker_low = median_value - 3 * mad  # 3 MAD below the median
-            whisker_high = median_value + 3 * mad  # 3 MAD above the median
+            fig, ax = plt.subplots(figsize=(8, 5))
+            boxplot = ax.boxplot(
+                z_scores,
+                vert=False,
+                patch_artist=True,
+                boxprops=dict(facecolor='lightblue', color='blue'),
+                medianprops=dict(color='orange'),
+                flierprops=dict(marker='o', color='red', alpha=0.6)
+            )
 
-            
-            outliers = dis_data[(dis_data < whisker_low) | (dis_data > whisker_high)]
+            for line in boxplot['whiskers']:
+                xdata = line.get_xdata()
+                capped_xdata = np.clip(xdata, -k, k)
+                line.set_xdata(capped_xdata)
 
-            
-            fig, ax = plt.subplots(figsize=(6, 4))  # Set the size of the plot
+            for cap in boxplot['caps']:
+                xdata = cap.get_xdata()
+                capped_xdata = np.clip(xdata, -k, k)
+                cap.set_xdata(capped_xdata)
 
-           
-            ax.bxp([{
-                'med': median_value,      # Center on the median
-                'q1': lower_bound,        # 1.5 MAD below the median
-                'q3': upper_bound,        # 1.5 MAD above the median
-                'whislo': whisker_low,    # 3 MAD below the median
-                'whishi': whisker_high,   # 3 MAD above the median
-                'fliers': outliers        # Outliers
-            }], showfliers=True)
+            ax.axvline(x=-k, color='red', linestyle='--', label=f'Lower Threshold (-{k})')
+            ax.axvline(x=k, color='red', linestyle='--', label=f'Upper Threshold (+{k})')
 
-           
-            ax.set_title(f'Custom Boxplot of DIS-Score (MAD Spread = 3) / MAD = {mad:.2f}')
+            ax.set_title(f'Boxplot of Z-Scores for DIS-Score with MAD-based Thresholds (k={k})')
+            ax.set_xlabel('Z-Score')
+            ax.legend(loc='upper left')
 
-            
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.spines['left'].set_visible(False)
-            ax.spines['bottom'].set_visible(False)
-
-           
             buf = io.BytesIO()
             fig.savefig(buf, format='png', bbox_inches='tight')
             buf.seek(0)
-            plt.close(fig)  # Close the figure to free memory
+            plt.close(fig)
 
-           
             pixmap = QPixmap()
             pixmap.loadFromData(buf.getvalue())
 
-            
             self.boxplot_label_su = QLabel(self.new_frame)
             self.boxplot_label_su.setAlignment(Qt.AlignCenter)
             self.boxplot_label_su.setPixmap(pixmap)
-            self.boxplot_label_su.setScaledContents(True)  # Scale the contents to fit the label
+            self.boxplot_label_su.setScaledContents(True)
 
-            
             self.new_frame_layout.addWidget(self.boxplot_label_su)
+
 
     def display_dis_score_boxplot(self):
        
