@@ -123,7 +123,7 @@ prompting the program to start.
 
 ## Related tools
 
-- https://github.com/JiscDACT/suda/blob/main/test/test_suda.py
+
 
 
 
