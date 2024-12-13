@@ -121,7 +121,8 @@ prompting the program to start.
 
 
 # Command-Line Execution
-The metrics within the MetaprivBIDS tool can be called through the 
+The metrics within the MetaprivBIDS tool can be called through the metaprivBIDS_core_logic.py file without making use of the GUI.
+
 
 
 ## Related tools
