@@ -120,6 +120,8 @@ metaprivBIDS
 prompting the program to start.
 
 
+# Usage Integrated Metrics Without The GUI Interface. 
+
 
 ## Related tools
 
