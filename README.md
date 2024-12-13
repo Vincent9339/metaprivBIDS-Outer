@@ -120,7 +120,8 @@ metaprivBIDS
 prompting the program to start.
 
 
-# Usage Integrated Metrics Without The GUI Interface. 
+# Command-Line Execution
+The metrics within the MetaprivBIDS tool can be called through the 
 
 
 ## Related tools
