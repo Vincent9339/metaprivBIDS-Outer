@@ -139,9 +139,9 @@ print(data_info["column_types"],'\n')
 
 # Select Quasi-Identifiers
 selected_columns = ["age", "education", "marital-status", "occupation", "relationship","sex","salary-class"]
-results = metapriv.find_lowest_unique_columns(data, selected_columns)
+results_k_global = metapriv.find_lowest_unique_columns(data, selected_columns)
 print('Find Influential Columns:','\n')
-print(results)
+print(results_k_global)
 
 # Compute Personal Information Factor 
 pif_value, cig_df = metapriv.compute_cig(data, selected_columns)
@@ -151,12 +151,12 @@ print(cig_df)
 
 
 # Run SUDA2 computation
-results = metapriv.compute_suda2(data, selected_columns, sample_fraction=0.3, missing_value=-999)
+results_suda = metapriv.compute_suda2(data, selected_columns, sample_fraction=0.3, missing_value=-999)
 
 # Access results
-data_with_scores = results["data_with_scores"]
-attribute_contributions = results["attribute_contributions"]
-attribute_level_contributions = results["attribute_level_contributions"]
+data_with_scores = results_suda["data_with_scores"]
+attribute_contributions = results_suda["attribute_contributions"]
+attribute_level_contributions = results_suda["attribute_level_contributions"]
 ```
 
 
