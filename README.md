@@ -142,6 +142,11 @@ selected_columns = ["age", "education", "marital-status", "occupation", "relatio
 results = metapriv.find_lowest_unique_columns(data, selected_columns)
 print('Find Influential Columns:','\n')
 print(results)
+
+pif_value, cig_df = metapriv.compute_cig(data, selected_columns)
+print("PIF Value:", pif_value)
+print("CIG DataFrame:")
+print(cig_df)
 ```
 
 
