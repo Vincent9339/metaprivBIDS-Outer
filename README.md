@@ -143,11 +143,22 @@ results = metapriv.find_lowest_unique_columns(data, selected_columns)
 print('Find Influential Columns:','\n')
 print(results)
 
+# Compute Personal Information Factor 
 pif_value, cig_df = metapriv.compute_cig(data, selected_columns)
 print("PIF Value:", pif_value)
 print("CIG DataFrame:")
 print(cig_df)
+
+
+# Run SUDA2 computation
+results = metapriv.compute_suda2(data, selected_columns, sample_fraction=0.3, missing_value=-999)
+
+# Access results
+data_with_scores = results["data_with_scores"]
+attribute_contributions = results["attribute_contributions"]
+attribute_level_contributions = results["attribute_level_contributions"]
 ```
+
 
 
 
