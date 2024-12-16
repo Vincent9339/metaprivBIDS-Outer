@@ -121,7 +121,7 @@ prompting the program to start.
 
 
 # Command-Line Execution
-The metrics within the MetaprivBIDS tool can be called through an import statement without making use of the GUI.
+After following the installation guide, the metrics within the MetaprivBIDS tool can be called through an import statement without making use of the GUI.   
 
 e.g. 
 
