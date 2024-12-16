@@ -128,6 +128,20 @@ e.g.
 ```python
 from metaprivBIDS.metaprivBIDS.corelogic.metapriv_corelogic import metaprivBIDS_core_logic
 metapriv = metaprivBIDS_core_logic()
+
+# Load the data
+data_info = metapriv.load_data('metaprivBIDS/Use_Case_Data/adult_mini.csv')
+
+# Inspect {column, unique value count, column type}
+data = data_info["data"]
+print("Column Types:",'\n')
+print(data_info["column_types"],'\n')
+
+# Select Quasi-Identifiers
+selected_columns = ["age", "education", "marital-status", "occupation", "relationship","sex","salary-class"]
+results = metapriv.find_lowest_unique_columns(data, selected_columns)
+print('Find Influential Columns:','\n')
+print(results)
 ```
 
 
