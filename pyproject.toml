@@ -35,7 +35,7 @@ metaprivBIDS = 'metaprivBIDS.metaprivBIDS:main'
 repository = "https://github.com/cpernet/metaprivBIDS"
 
 [tool.setuptools]
-packages = ["metaprivBIDS"]
+packages = ["metaprivBIDS", "metaprivBIDS.corelogic"]
 
 [project.optional-dependencies]
 docs = [
