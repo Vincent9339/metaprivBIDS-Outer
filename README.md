@@ -126,6 +126,8 @@ The metrics within the MetaprivBIDS tool can be called through an import stateme
 e.g. 
 
 ```python
+from metaprivBIDS.metaprivBIDS.corelogic.metapriv_corelogic import metaprivBIDS_core_logic
+metapriv = metaprivBIDS_core_logic()
 ```
 
 
