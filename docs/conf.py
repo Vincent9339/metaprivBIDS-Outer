@@ -18,7 +18,7 @@ class Mock(MagicMock):
         return MagicMock()
 
 # List of modules to mock
-MOCK_MODULES = ['rpy2', 'rpy2.robjects', 'rpy2.rinterface']
+MOCK_MODULES = ['rpy2', 'rpy2.robjects', 'rpy2.rinterface','rpy2.robjects.packages']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Project information -----------------------------------------------------
