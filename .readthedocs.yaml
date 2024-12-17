@@ -1,4 +1,3 @@
-# .readthedocs.yaml
 version: 2
 
 build:
@@ -10,6 +9,8 @@ python:
   install:
     - method: pip
       path: .
-      # Read the dependencies from pyproject.toml
-      extra_requirements:
-        - docs  # If you have a `[project.optional-dependencies.docs]` section in pyproject.toml
+      extra_requirements: [docs]  # This should correctly pull in the dependencies defined under 'docs' in pyproject.toml
+
+# Optionally, set environment variables if needed (not necessary for this specific case but useful for other configurations)
+env:
+  READTHEDOCS: True
