@@ -9,7 +9,4 @@ python:
   install:
     - method: pip
       path: .
-      extra_requirements: [docs]  
-
-env:
-  - READTHEDOCS: "True"
+      extra_requirements: [docs] 
