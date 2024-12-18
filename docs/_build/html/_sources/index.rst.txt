@@ -19,8 +19,8 @@ metaprivBIDS provides tool for data risk assesment, including methods:
 - Sample Unique Detection Algorithm (SUDA) [3]_
    - The SUDA (Sample Unique Detection Algorithm) identifies records in a dataset that are unique based on a combination of quasi-identifiers. It works by flagging records with rare attribute combinations, indicating a higher risk of re-identification.
 
-- Privacy Information Factor (PIF) [4]_
-   - The Privacy Information Factor (PIF) measures the risk of re-identification by analyzing how a record's quasi-identifiers deviate from the overall distribution in the dataset. A higher PIF suggests that the record's combination of attributes is rare, making it more likely to be uniquely identifiable within the population.
+- Personal Information Factor (PIF) [4]_
+   - The Personal Information Factor (PIF) measures the risk of re-identification by analyzing how a record's quasi-identifiers deviate from the overall distribution in the dataset. A higher PIF suggests that the record's combination of attributes is rare, making it more likely to be uniquely identifiable within the population.
 
 
 - K-Global 
