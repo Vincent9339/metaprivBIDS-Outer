@@ -168,12 +168,6 @@ class metaprivBIDS_core_logic:
 
 
 
-    def show_preview(self, data):
-        return data.head(10)
-
-
-
-
 
     def add_noise(self, data, column_name, noise_type):
         if column_name not in data.columns:
@@ -187,20 +181,28 @@ class metaprivBIDS_core_logic:
 
 
 
-
     def combine_values(self, data, column_name):
         if column_name not in data.columns:
             raise ValueError(f"Column {column_name} not found in the data.")
-        print(f"Unique values in '{column_name}': {data[column_name].unique()}")
+        data_mod = data.copy()
+        for col, history in self.combined_values_history.items():
+            for values_to_combine, replacement_value in history:
+                data_mod[col] = data_mod[col].replace(values_to_combine, replacement_value)
+        data_mod[column_name] = data_mod[column_name].str.strip()
+        print(f"Unique values in '{column_name}': {data_mod[column_name].unique()}")
         values_to_combine = input(f"Enter values to combine in '{column_name}' (comma-separated): ").split(",")
-        values_to_combine = [v.strip() for v in values_to_combine]
-        replacement_value = input("Enter the replacement value: ").strip()
+        values_to_combine = [v.strip().strip("'\"") for v in values_to_combine]
+        replacement_value = input("Enter the replacement value: ").strip().strip("'\"")
         if column_name not in self.combined_values_history:
             self.combined_values_history[column_name] = []
         self.combined_values_history[column_name].append((values_to_combine, replacement_value))
-        data[column_name] = data[column_name].replace(values_to_combine, replacement_value)
-        print(f"Replaced {values_to_combine} with '{replacement_value}' in '{column_name}'.")
-        return self.combined_values_history
+        for col, history in self.combined_values_history.items():
+            for values_to_combine, replacement_value in history:
+                data_mod[col] = data_mod[col].replace(values_to_combine, replacement_value)
+        return data_mod
+
+
+
 
 
 
