@@ -22,6 +22,11 @@ metaprivBIDS provides tool for data risk assesment, including methods:
 - Privacy Information Factor (PIF) [4]_
    - The Privacy Information Factor (PIF) measures the risk of re-identification by analyzing how a record's quasi-identifiers deviate from the overall distribution in the dataset. A higher PIF suggests that the record's combination of attributes is rare, making it more likely to be uniquely identifiable within the population.
 
+
+- K-Global 
+   - K-Global attempts to capture individual variables K-anonymity contribution in the context of all other quasi-identifiers. This is done by evaluating the difference in unique row, given the removal of a given variable. To then account for the fact that e.g. continuous variables often result in more unique entries we normalise by the unique value counts of the column. Subsequently penalising variables with few unique values but a high impact on unique rows. 
+
+
 .. [1] Sweeney, L. (2002). k-Anonymity: A Model for Protecting Privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, 10(05), 557-570.
 .. [2] Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M. (2007). ℓ-Diversity: Privacy Beyond k-Anonymity. *ACM Transactions on Knowledge Discovery from Data (TKDD)*, 1(1), 3-es.
 .. [3] Elliott, M. J., & Skinner, C. J. (2000). Identifying population uniques using limited information. *Proceedings of the Annual Meeting of the American Statistical Association*.

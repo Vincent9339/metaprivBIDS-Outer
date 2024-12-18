@@ -107,6 +107,13 @@
 </dd>
 </dl>
 </li>
+<li><dl class="simple">
+<dt>K-Global</dt><dd><ul>
+<li><p>K-Global attempts to capture individual variables K-anonymity contribution in the context of all other quasi-identifiers. This is done by evaluating the difference in unique row, given the removal of a given variable. To then account for the fact that e.g. continuous variables often result in more unique entries we normalise by the unique value counts of the column. Subsequently penalising variables with few unique values but a high impact on unique rows.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 <dl class="footnote brackets">
 <dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
@@ -134,6 +141,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#command-line-execution">Command-Line Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#next-steps">Next Steps</a></li>
 </ul>
 </li>

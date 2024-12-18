@@ -52,9 +52,53 @@ Once installed, you can call and execute the program globally from any directory
 prompting the program to start.
 
 
+Command-Line Execution
+----------------------
+ 
+After following the installation guide, the metrics within the MetaprivBIDS tool can be called through an import statement without making use of the GUI.   
+
+e.g. 
+
+.. code-block:: python 
+
+    from metaprivBIDS.metaprivBIDS.corelogic.metapriv_corelogic import metaprivBIDS_core_logic
+    metapriv = metaprivBIDS_core_logic()
+
+    # Load the data
+    data_info = metapriv.load_data('metaprivBIDS/Use_Case_Data/adult_mini.csv')
+
+    # Inspect {column, unique value count, column type}
+    data = data_info["data"]
+    print("Column Types:",'\n')
+    print(data_info["column_types"],'\n')
+
+    # Select Quasi-Identifiers
+    selected_columns = ["age", "education", "marital-status", "occupation", "relationship","sex","salary-class"]
+    results_k_global = metapriv.find_lowest_unique_columns(data, selected_columns)
+    print('Find Influential Columns:','\n')
+    print(results_k_global)
+
+    # Compute Personal Information Factor 
+    pif_value, cig_df = metapriv.compute_cig(data, selected_columns)
+    print("PIF Value:", pif_value)
+    print("CIG DataFrame:")
+    print(cig_df)
+
+
+    # Run SUDA2 computation
+    results_suda = metapriv.compute_suda2(data, selected_columns, sample_fraction=0.3, missing_value=-999)
+
+    # Access results
+    data_with_scores = results_suda["data_with_scores"]
+    attribute_contributions = results_suda["attribute_contributions"]
+    attribute_level_contributions = results_suda["attribute_level_contributions"]
+
+
+
+
 Next Steps
 ----------
 
 
-- Explore the :ref:`Examples <examples_section>` to see Interactive Tutorial.
+- Explore the :ref:`Examples <examples_section>` to see Interactive Tutorial of how to navigate the graphical user interface for MetaprivBIDS.
 

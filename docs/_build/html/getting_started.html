@@ -49,6 +49,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-execution">Command-Line Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
@@ -117,10 +118,48 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </div>
 <p>prompting the program to start.</p>
 </div>
+<div class="section" id="command-line-execution">
+<h2>Command-Line Execution<a class="headerlink" href="#command-line-execution" title="Permalink to this heading"></a></h2>
+<p>After following the installation guide, the metrics within the MetaprivBIDS tool can be called through an import statement without making use of the GUI.</p>
+<p>e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">metaprivBIDS.metaprivBIDS.corelogic.metapriv_corelogic</span> <span class="kn">import</span> <span class="n">metaprivBIDS_core_logic</span>
+<span class="n">metapriv</span> <span class="o">=</span> <span class="n">metaprivBIDS_core_logic</span><span class="p">()</span>
+
+<span class="c1"># Load the data</span>
+<span class="n">data_info</span> <span class="o">=</span> <span class="n">metapriv</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;metaprivBIDS/Use_Case_Data/adult_mini.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Inspect {column, unique value count, column type}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data_info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Column Types:&quot;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_info</span><span class="p">[</span><span class="s2">&quot;column_types&quot;</span><span class="p">],</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Select Quasi-Identifiers</span>
+<span class="n">selected_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;education&quot;</span><span class="p">,</span> <span class="s2">&quot;marital-status&quot;</span><span class="p">,</span> <span class="s2">&quot;occupation&quot;</span><span class="p">,</span> <span class="s2">&quot;relationship&quot;</span><span class="p">,</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span><span class="s2">&quot;salary-class&quot;</span><span class="p">]</span>
+<span class="n">results_k_global</span> <span class="o">=</span> <span class="n">metapriv</span><span class="o">.</span><span class="n">find_lowest_unique_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">selected_columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Find Influential Columns:&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results_k_global</span><span class="p">)</span>
+
+<span class="c1"># Compute Personal Information Factor</span>
+<span class="n">pif_value</span><span class="p">,</span> <span class="n">cig_df</span> <span class="o">=</span> <span class="n">metapriv</span><span class="o">.</span><span class="n">compute_cig</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">selected_columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PIF Value:&quot;</span><span class="p">,</span> <span class="n">pif_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CIG DataFrame:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cig_df</span><span class="p">)</span>
+
+
+<span class="c1"># Run SUDA2 computation</span>
+<span class="n">results_suda</span> <span class="o">=</span> <span class="n">metapriv</span><span class="o">.</span><span class="n">compute_suda2</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">selected_columns</span><span class="p">,</span> <span class="n">sample_fraction</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=-</span><span class="mi">999</span><span class="p">)</span>
+
+<span class="c1"># Access results</span>
+<span class="n">data_with_scores</span> <span class="o">=</span> <span class="n">results_suda</span><span class="p">[</span><span class="s2">&quot;data_with_scores&quot;</span><span class="p">]</span>
+<span class="n">attribute_contributions</span> <span class="o">=</span> <span class="n">results_suda</span><span class="p">[</span><span class="s2">&quot;attribute_contributions&quot;</span><span class="p">]</span>
+<span class="n">attribute_level_contributions</span> <span class="o">=</span> <span class="n">results_suda</span><span class="p">[</span><span class="s2">&quot;attribute_level_contributions&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Explore the <a class="reference internal" href="examples.html#examples-section"><span class="std std-ref">Examples</span></a> to see Interactive Tutorial.</p></li>
+<li><p>Explore the <a class="reference internal" href="examples.html#examples-section"><span class="std std-ref">Examples</span></a> to see Interactive Tutorial of how to navigate the graphical user interface for MetaprivBIDS.</p></li>
 </ul>
 </div>
 </div>
