@@ -9,7 +9,7 @@ import math
 from piflib.pif_calculator import compute_cigs
 
 
-
+import io 
 from rpy2 import robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects import pandas2ri
@@ -242,41 +242,42 @@ class metaprivBIDS_core_logic:
         if df.empty:
             raise ValueError("Data not available.")
 
+        # Input mask value
         mask_value = input('Enter a mask value (or leave blank to skip):')
-        if mask_value != '':
+        if mask_value.strip().lower() == 'nan':  # Check if user inputs 'nan'
+            mask_value = np.nan
+            mask = df.isna()  # Create mask for NaN values
+        elif mask_value != '':
             try:
                 mask_value = float(mask_value)
-                mask = df == mask_value
+                mask = df == mask_value  # Create mask for specific value
             except ValueError:
-                raise ValueError("Invalid mask value. Please enter a number.")
-            cigs = pif.compute_cigs(df)
-            cigs_df = pd.DataFrame(cigs)
-            cigs_df[mask] = 0
+                raise ValueError("Invalid mask value. Please enter a number or 'nan'.")
         else:
-            cigs = pif.compute_cigs(df)
-            cigs_df = pd.DataFrame(cigs)
+            mask = None  # No masking applied
+
+        # Compute CIGs
+        cigs = pif.compute_cigs(df)
+        cigs_df = pd.DataFrame(cigs)
+
+        if mask is not None:
+            cigs_df[mask] = 0  # Apply masking
 
         cigs_df['RIG'] = cigs_df.sum(axis=1)
         cigs_df_sorted = cigs_df.sort_values(by='RIG', ascending=False)
 
-        percentile = int(input('Enter percentile (0-100): '))
+        # Input percentile
+        try:
+            percentile = int(input('Enter percentile (0-100): '))
+        except ValueError:
+            raise ValueError("Invalid input for percentile. Please enter a number between 0 and 100.")
+
         if percentile < 0 or percentile > 100:
             raise ValueError("Percentile must be between 0 and 100.")
 
         pif_value = np.percentile(cigs_df_sorted['RIG'], percentile)
         return pif_value, cigs_df_sorted
 
-    def describe_cig(self, cigs_df):
-        if not cigs_df.empty:
-            if 'RIG' in cigs_df.columns:
-                cigs_df_for_description = cigs_df.drop(columns=['RIG'])
-            else:
-                cigs_df_for_description = cigs_df
-
-            description = cigs_df_for_description.describe()
-            return description.applymap(lambda x: f"{x:.2f}")
-        else:
-            raise ValueError("Please compute CIG before describing it.")
 
 
 
@@ -311,38 +312,135 @@ class metaprivBIDS_core_logic:
 
 
     
-def compute_suda2(self, data, selected_columns, sample_fraction=0.2, missing_value=-999):
+    def compute_suda2(self, data, selected_columns, sample_fraction=0.2, missing_value=None):
+        """
+        Compute SUDA2 on selected columns of the dataset.
 
-    if not selected_columns:
-        raise ValueError("No columns selected for SUDA2 computation.")
+        Parameters:
+            data (pd.DataFrame): The input data.
+            selected_columns (list): List of columns to include in the computation.
+            sample_fraction (float): Fraction of the sample to use for SUDA2.
+            missing_value: Value to treat as missing. Can be any value, including np.nan.
 
-    df = data[selected_columns].copy()
-    for col in df.select_dtypes(include=['object']).columns:
-        df[col] = df[col].astype('category').cat.codes
+        Returns:
+            dict: A dictionary containing the results of SUDA2 computation.
+        """
+        if not selected_columns:
+            raise ValueError("No columns selected for SUDA2 computation.")
 
-    r_df = robjects.DataFrame({name: robjects.FloatVector(df[name].astype(float)) for name in df.columns})
-    suda_result = sdcMicro.suda2(r_df, missing=missing_value, DisFraction=sample_fraction)
+        # Copy selected columns without modifying missing values
+        df = data[selected_columns].copy()
 
-    dis_score = [round(x, 4) for x in list(suda_result.rx2('disScore'))]
-    score = list(suda_result.rx2('score'))
-    attribute_contributions = pd.DataFrame({
-        'variable': list(suda_result.rx2('attribute_contributions').rx2('variable')),
-        'contribution': list(suda_result.rx2('attribute_contributions').rx2('contribution')).round(2)
-    }).sort_values(by='contribution', ascending=False)
+        # Handle categorical encoding
+        for col in df.select_dtypes(include=['object']).columns:
+            df[col] = df[col].astype('category').cat.codes
 
-    attribute_level_contributions = pd.DataFrame({
-        'variable': list(suda_result.rx2('attribute_level_contributions').rx2('variable')),
-        'attribute': list(suda_result.rx2('attribute_level_contributions').rx2('attribute')),
-        'contribution': list(suda_result.rx2('attribute_level_contributions').rx2('contribution')).round(2)
-    }).sort_values(by=['variable', 'contribution'], ascending=[True, False])
+        # Convert to R DataFrame (missing values are passed unchanged)
+        r_df = robjects.DataFrame({
+            name: robjects.FloatVector(df[name]) for name in df.columns
+        })
 
-    df['dis-score'] = dis_score
-    df['score'] = score
+        # Call the suda2 function
+        suda_result = sdcMicro.suda2(
+            r_df,
+            missing=missing_value if missing_value is not None else None,
+            DisFraction=sample_fraction
+        )
 
-    return {
-        "data_with_scores": df,
-        "attribute_contributions": attribute_contributions,
-        "attribute_level_contributions": attribute_level_contributions
-    }
+        # Extract results
+        dis_score = [round(x, 4) for x in list(suda_result.rx2('disScore'))]
+        score = list(suda_result.rx2('score'))
+
+        # Attribute contributions
+        attribute_contributions = pd.DataFrame({
+            'variable': list(suda_result.rx2('attribute_contributions').rx2('variable')),
+            'contribution': [round(x, 2) for x in list(suda_result.rx2('attribute_contributions').rx2('contribution'))]
+        }).sort_values(by='contribution', ascending=False)
+
+        # Attribute level contributions
+        attribute_level_contributions = pd.DataFrame({
+            'variable': list(suda_result.rx2('attribute_level_contributions').rx2('variable')),
+            'attribute': list(suda_result.rx2('attribute_level_contributions').rx2('attribute')),
+            'contribution': [round(x, 2) for x in list(suda_result.rx2('attribute_level_contributions').rx2('contribution'))]
+        }).sort_values(by=['variable', 'contribution'], ascending=[True, False])
+
+        # Add scores to DataFrame
+        df['dis-score'] = dis_score
+        df['score'] = score
+
+        # Return results
+        return {
+            "data_with_scores": df,
+            "attribute_contributions": attribute_contributions,
+            "attribute_level_contributions": attribute_level_contributions
+        }
+
+
+    def save_boxplot(self, df, column_name, k=2.2414):
+ 
+        if column_name not in df.columns:
+            raise ValueError(f"Column '{column_name}' not found in the DataFrame.")
+        
+        column_data = df[column_name].dropna()  # Extract the column data and drop missing values
+
+        if len(column_data) < 5:
+            print("Not enough data to generate a boxplot.")
+            return
+
+        # Calculate median and MAD
+        median = np.nanmedian(column_data)
+        mad = np.nanmedian(np.abs(column_data - median))
+        madn = mad / 0.6745  # Adjust MAD to robust standard deviation
+
+        # Calculate Z-scores
+        z_scores = (column_data - median) / madn
+
+        # Identify outliers above the threshold k
+        outlier_mask = z_scores > k
+        outliers = column_data[outlier_mask]
+        outlier_indices = outliers.index.tolist()  # Get indices of outliers
+
+        # Print outlier indices and values
+        if len(outliers) > 0:
+            print(f"Outliers detected in column '{column_name}' above threshold {k}:")
+            for idx in outlier_indices:
+                print(f"Index: {idx}, Value: {df.loc[idx, column_name]}, Z-Score: {z_scores[idx]}")
+        else:
+            print(f"No outliers detected in column '{column_name}' above threshold {k}.")
+
+        # Create the box plot
+        fig, ax = plt.subplots(figsize=(8, 5))
+        boxplot = ax.boxplot(
+            z_scores,
+            vert=False,
+            patch_artist=True,
+            boxprops=dict(facecolor='lightblue', color='blue'),
+            medianprops=dict(color='orange'),
+            flierprops=dict(marker='o', color='red', alpha=0.6)
+        )
+
+        # Adjust whiskers manually to limit them to -k and +k
+        for line in boxplot['whiskers']:
+            xdata = line.get_xdata()
+            capped_xdata = np.clip(xdata, -k, k)  # Cap whisker ends to -k and +k
+            line.set_xdata(capped_xdata)
+
+        for cap in boxplot['caps']:
+            xdata = cap.get_xdata()
+            capped_xdata = np.clip(xdata, -k, k)  # Cap caps to -k and +k
+            cap.set_xdata(capped_xdata)
+
+        # Add threshold line for +k
+        ax.axvline(x=k, color='red', linestyle='--', label=f'Threshold (+{k})')
+
+        # Plot customization
+        ax.set_title(f'Boxplot of Z-Scores with MAD-based Outlier Threshold (k={k})')
+        ax.set_xlabel('Z-Score')
+        ax.legend(loc='upper left')
+
+        # Display the plot
+        plt.show()
+
+
 
 
