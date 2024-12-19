@@ -14,7 +14,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-      R_LIBS_USER: $HOME/R/x86_64-pc-linux-gnu-library/4.0  # Set writable library path
+      R_LIBS_USER: $HOME/R/x86_64-pc-linux-gnu-library/4.0  # Custom R library path
 
     steps:
       - name: Checkout repository
@@ -23,11 +23,13 @@ jobs:
       - name: Create a writable R library path
         run: mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
 
-      - name: Check R library path
-        run: |
-          echo "R_LIBS_USER=$R_LIBS_USER"
-          mkdir -p $R_LIBS_USER
-          ls -ld $R_LIBS_USER
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-R-${{ hashFiles('**/install.R') }}
+          restore-keys: |
+            ${{ runner.os }}-R-
 
       - name: Install system dependencies
         run: |
@@ -36,8 +38,8 @@ jobs:
             graphviz libgraphviz-dev pkg-config \
             r-base r-base-dev libtirpc-dev
 
-      - name: Install R packages
-        run: Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org", lib=Sys.getenv("R_LIBS_USER"))'
+      - name: Install only required R package
+        run: Rscript -e 'if (!requireNamespace("sdcMicro", quietly = TRUE)) install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"))'
 
       - name: Verify sdcMicro installation
         run: Rscript -e 'if (!require("sdcMicro", lib=Sys.getenv("R_LIBS_USER"))) quit(status = 1)'
