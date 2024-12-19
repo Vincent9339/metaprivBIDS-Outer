@@ -13,12 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force Node20 usage
-      R_LIBS_USER: /usr/local/lib/R/site-library  # Ensure correct R library path
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+      R_LIBS_USER: $HOME/R/x86_64-pc-linux-gnu-library/4.0  # Set writable library path
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Create a writable R library path
+        run: mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
 
       - name: Install system dependencies
         run: |
@@ -28,8 +31,7 @@ jobs:
             r-base r-base-dev libtirpc-dev
 
       - name: Install R packages
-        run: |
-          Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org")'
+        run: Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org")'
 
       - name: Verify sdcMicro installation
         run: Rscript -e 'if (!require("sdcMicro")) quit(status = 1)'
