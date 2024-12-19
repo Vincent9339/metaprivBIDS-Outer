@@ -14,6 +14,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force Node20 usage
+      R_LIBS_USER: /usr/local/lib/R/site-library  # Ensure correct R library path
 
     steps:
       - name: Checkout repository
@@ -24,8 +25,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             graphviz libgraphviz-dev pkg-config \
-            r-base r-base-dev \
-            libtirpc-dev
+            r-base r-base-dev libtirpc-dev
+
+      - name: Install R packages
+        run: |
+          Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org")'
+
+      - name: Verify sdcMicro installation
+        run: Rscript -e 'if (!require("sdcMicro")) quit(status = 1)'
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -42,16 +49,11 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/metaprivBIDS" >> $GITHUB_ENV
 
-      - name: Configure R environment for rpy2
+      - name: Verify R environment for rpy2
         run: |
           echo "R_HOME=$(R RHOME)" >> $GITHUB_ENV
           echo "PATH=$PATH:/usr/lib/R/bin" >> $GITHUB_ENV
-
-      - name: Verify R installation
-        run: |
-          R --version
-          Rscript -e 'print("R is properly installed and configured.")'
+          Rscript -e "sessionInfo()"
 
       - name: Run tests
-        run: |
-          python -m pytest --maxfail=1 --disable-warnings
+        run: python -m pytest --maxfail=1 --disable-warnings
