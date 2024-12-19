@@ -23,6 +23,12 @@ jobs:
       - name: Create a writable R library path
         run: mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
 
+      - name: Check R library path
+        run: |
+          echo "R_LIBS_USER=$R_LIBS_USER"
+          mkdir -p $R_LIBS_USER
+          ls -ld $R_LIBS_USER
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -31,10 +37,10 @@ jobs:
             r-base r-base-dev libtirpc-dev
 
       - name: Install R packages
-        run: Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org")'
+        run: Rscript -e 'install.packages("sdcMicro", repos = "http://cran.r-project.org", lib=Sys.getenv("R_LIBS_USER"))'
 
       - name: Verify sdcMicro installation
-        run: Rscript -e 'if (!require("sdcMicro")) quit(status = 1)'
+        run: Rscript -e 'if (!require("sdcMicro", lib=Sys.getenv("R_LIBS_USER"))) quit(status = 1)'
 
       - name: Set up Python
         uses: actions/setup-python@v4
