@@ -378,8 +378,10 @@ class metaprivBIDS_core_logic:
         }
 
 
+
+
     def save_boxplot(self, df, column_name, k=2.2414):
- 
+     
         if column_name not in df.columns:
             raise ValueError(f"Column '{column_name}' not found in the DataFrame.")
         
@@ -396,6 +398,15 @@ class metaprivBIDS_core_logic:
 
         # Calculate Z-scores
         z_scores = (column_data - median) / madn
+
+        # If Z-scores contain inf, print outliers and skip plotting
+        if np.isinf(z_scores).any():
+            print(f"Outliers detected in column '{column_name}':")
+            outliers = column_data[np.isinf(z_scores)]
+            for idx in outliers.index.tolist():
+                print(f"Index: {idx}, Value: {df.loc[idx, column_name]}, Z-Score: inf")
+            print("No plot given due to 'inf' values in Z-scores.")
+            return
 
         # Identify outliers above the threshold k
         outlier_mask = z_scores > k
@@ -442,6 +453,7 @@ class metaprivBIDS_core_logic:
 
         # Display the plot
         plt.show()
+
 
 
 
