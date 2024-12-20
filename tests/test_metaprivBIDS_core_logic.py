@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch
-from metaprivBIDS.metaprivBIDS_core_logic import metaprivBIDS_core_logic
+from metaprivBIDS.corelogic import metapriv_corelogic
 
 
 @pytest.fixture
