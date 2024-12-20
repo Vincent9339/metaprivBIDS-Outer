@@ -919,7 +919,7 @@ class metaprivBIDS(QMainWindow):
             mad = np.nanmedian(np.abs(dis_data - median))
 
             if mad == 0:
-                print("MAD is zero, recalculating without zero entries.")
+                QMessageBox.warning(self, "Warning", "MAD is zero, recalculating without zero entries.")
                 dis_data = dis_data[dis_data != 0]  # Exclude zero entries
                 if len(dis_data) < 5:
                     print("Not enough non-zero data to generate a boxplot.")
@@ -975,7 +975,6 @@ class metaprivBIDS(QMainWindow):
             self.boxplot_label_su.setScaledContents(True)
 
             self.new_frame_layout.addWidget(self.boxplot_label_su)
-
 
     def display_dis_score_boxplot(self):
        
