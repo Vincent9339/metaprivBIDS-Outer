@@ -42,13 +42,13 @@ class metaprivBIDS_core_logic:
         results = {}
         for column in selected_columns:
             subset_data = data[selected_columns]
-            value_counts = subset_data.value_counts()
+            value_counts = subset_data.value_counts(dropna=False)
             unique_rows = value_counts[value_counts == 1].index
             all_unique_count = len(unique_rows)
             temp_columns = [col for col in selected_columns if col != column]
             if temp_columns:
                 subset_data_after_removal = data[temp_columns]
-                value_counts_after_removal = subset_data_after_removal.value_counts()
+                value_counts_after_removal = subset_data_after_removal.value_counts(dropna=False)
                 unique_rows_after_removal = value_counts_after_removal[value_counts_after_removal == 1].index
                 unique_count_after_removal = len(unique_rows_after_removal)
                 difference = all_unique_count - unique_count_after_removal
@@ -77,7 +77,7 @@ class metaprivBIDS_core_logic:
 
 
     def calculate_unique_rows(self, data, selected_columns, sensitive_attr=None):
-        value_counts = data[selected_columns].value_counts()
+        value_counts = data[selected_columns].value_counts(dropna=False)
         num_unique_rows = len(value_counts[value_counts == 1])
         total_rows = len(data)
         total_columns = len(data.columns)

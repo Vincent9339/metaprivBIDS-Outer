@@ -917,8 +917,20 @@ class metaprivBIDS(QMainWindow):
 
             median = np.nanmedian(dis_data)
             mad = np.nanmedian(np.abs(dis_data - median))
-            madn = mad / 0.6745
 
+            if mad == 0:
+                print("MAD is zero, recalculating without zero entries.")
+                dis_data = dis_data[dis_data != 0]  # Exclude zero entries
+                if len(dis_data) < 5:
+                    print("Not enough non-zero data to generate a boxplot.")
+                    return None
+                median = np.nanmedian(dis_data)
+                mad = np.nanmedian(np.abs(dis_data - median))
+                if mad == 0:
+                    print("MAD remains zero after excluding zeros.")
+                    return None
+
+            madn = mad / 0.6745
             z_scores = (dis_data - median) / madn
             outliers = dis_data[np.abs(z_scores) > k]
 
@@ -974,6 +986,8 @@ class metaprivBIDS(QMainWindow):
 
        
         self.boxplot_label.setScaledContents(True) 
+
+
 
     def compute_and_display_suda2_results(self):
         """
