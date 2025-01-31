@@ -70,7 +70,7 @@ This is an interactive step-by-step guide:
             "<p style='margin-top: 16px;'>1) the smaller the size of the MSU within a record, the higher the risk associated with that record.<br>" + 
             "2) the greater the number of MSUs contained in the record, the higher its risk." +
 
-            "<p style='margin-top: 16px;'> The user will be asked to fill out both the specificed max size of variables to consider. This can be a minimum of 1 field and max of total amount of fields available.<br>" +
+            "<p style='margin-top: 16px;'> The user will be asked to fill out both the specified max size of variables to consider. This can be a minimum of 1 field and max of total amount of fields available.<br>" +
             " The Data Intrusion Simulation (DIS) metric has to be between 0 to 1, the default is set to: 0.2. The higher the DIS, the more background knowledge we assume an adversary has.",
 
             "Step 6: To see a preview of the data the user can push the Preview Data Button.",
@@ -104,7 +104,7 @@ This is an interactive step-by-step guide:
             "<p style='margin-top: 16px;'> The user can based on this information choose to anynomise the data further by use of the methods from the preview page or manually outside the program discard rows with a user-specficed threshold", 
 
 
-            "Step 13: To access the data privacy risk on a field level we can use the Genrate CIG Heatpmap button.<br>" +
+            "Step 13: To access the data privacy risk on a field level we can use the Generate CIG Heatpmap button.<br>" +
             " This gives the user the opportunity to directly view which quasi-identfiers contribute the most to the overall risk in the dataset." +
             
             "<p style='margin-top: 16px;'> For example, here we see that Age has a very high contribution to the risk factor whereas Sex and Salary-class contribute less.",

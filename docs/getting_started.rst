@@ -23,14 +23,14 @@ or
     conda create --name venv -c conda-forge "python>=3.7" graphviz pygraphviz r-base r-sdcMicro rpy2
     conda activate venv
 
-You can then install metaprivBIDS by cloning the git respository.
+You can then install metaprivBIDS by cloning the git repository.
 
 .. code-block:: bash
 
     git clone https://github.com/CPernet/metaprivBIDS.git
 
 
-To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment. 
+To execute the program make sure all dependencies from pyproject.toml is available in a python 3.7 environment. 
 This can be done by running
 
 .. code-block:: bash
