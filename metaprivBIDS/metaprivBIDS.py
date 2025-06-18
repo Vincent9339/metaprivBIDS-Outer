@@ -1230,7 +1230,7 @@ class metaprivBIDS(QMainWindow):
         preview_layout.addWidget(back_button, alignment=Qt.AlignLeft)
 
        
-        label = QLabel("Preview of Loaded Data & Optinal Json File Load")
+        label = QLabel("Preview of Loaded Data & Optional Json File Load")
         label.setAlignment(Qt.AlignLeft) 
         label.setFixedHeight(30) 
         label.setStyleSheet("font-size: 18px; font-weight: bold; padding: 0px; margin: 0px;")  
@@ -2400,7 +2400,7 @@ class metaprivBIDS(QMainWindow):
         Returns:
         --------
         
-        Continous Column with noise. 
+        Continuous Column with noise. 
         """
 
 

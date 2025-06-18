@@ -47,7 +47,7 @@ It is recommended (but not required) to first create a virtual environment.
 ```console 
 conda config --add pkgs_dirs ~/conda_pkgs
 ```
-Creates the enviroment. 
+Creates the environment. 
 
 ```console 
 conda create --name venv python=3.x.x
@@ -65,9 +65,9 @@ Graphviz requires system level dependencies as well as rpy2 and might need to be
 conda create --name venv -c conda-forge "python>=3.7" graphviz pygraphviz r-base r-sdcMicro rpy2
 ```
 
-if not avaliable. 
+if not available. 
 
-You can then install metaprivBIDS by furst cloning the git respository.
+You can then install metaprivBIDS by first cloning the git repository.
 
 ```console
 git clone https://github.com/CPernet/metaprivBIDS.git
@@ -93,7 +93,7 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-You can then install metaprivBIDS by cloning the git respository.
+You can then install metaprivBIDS by cloning the git repository.
 
 ```console
 git clone https://github.com/CPernet/metaprivBIDS.git
@@ -102,8 +102,8 @@ git clone https://github.com/CPernet/metaprivBIDS.git
 
 # Dependencies
 
-To execute the program make sure all dependencies from pyproject.toml is avalible in a python 3.7 enviroment as stated in the software installation. 
-This can be done by first ```cd``` into the MetaprivBIDS directiory and then running
+To execute the program make sure all dependencies from pyproject.toml is available in a python 3.7 environment as stated in the software installation. 
+This can be done by first ```cd``` into the MetaprivBIDS directory and then running
 
 ```console
 pip install -e . 

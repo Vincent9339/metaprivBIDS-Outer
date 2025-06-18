@@ -8,7 +8,7 @@ Welcome to metaprivBIDS documentation!
 
 This documentation provides an overview of the metaprivBIDS Graphical User Interface, including installation instructions, basic usage, and tutorial to get you started.
 
-metaprivBIDS provides tool for data risk assesment, including methods:
+metaprivBIDS provides tool for data risk assessment, including methods:
 
 - K-anonymity [1]_
    - Searching each record in the dataset to see if they are indistinguishable from at least k − 1 other records with respect to a set of quasi-identifiers.
