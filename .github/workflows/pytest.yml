@@ -21,8 +21,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create a writable R library path
-        run: mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
-
+        run: |
+          mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
+          chmod -R 777 $HOME/R
+          
       - name: Cache R packages
         uses: actions/cache@v3
         with:
