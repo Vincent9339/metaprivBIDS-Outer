@@ -42,6 +42,7 @@ jobs:
 
       - name: Install R dependencies
         run: |
+          Rscript -e '.libPaths(c(file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"), .libPaths()))'
           Rscript -e 'install.packages(c("farver", "scales"), repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"))'
           Rscript -e 'install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"), dependencies = TRUE)'
 
