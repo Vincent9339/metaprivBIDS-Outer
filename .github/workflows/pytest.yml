@@ -21,10 +21,8 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create a writable R library path
-        run: |
-          mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
-          chmod -R 777 $HOME/R
-          
+        run: mkdir -p $HOME/R/x86_64-pc-linux-gnu-library/4.0
+
       - name: Cache R packages
         uses: actions/cache@v3
         with:
@@ -38,20 +36,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             graphviz libgraphviz-dev pkg-config \
-            r-base r-base-dev libtirpc-dev --quiet
+            r-base r-base-dev libtirpc-dev
 
-      - name: Install R dependencies
+      - name: Install only required R package
         run: |
-          Rscript -e '.libPaths(Sys.getenv("R_LIBS_USER")); install.packages(c("farver", "scales"), lib=Sys.getenv("R_LIBS_USER"), repos="https://cloud.r-project.org")'
-          Rscript -e '.libPaths(Sys.getenv("R_LIBS_USER")); install.packages("sdcMicro", lib=Sys.getenv("R_LIBS_USER"), repos="https://cloud.r-project.org", dependencies=TRUE)'
+          Rscript -e 'if (!requireNamespace("farver", quietly = TRUE)) install.packages("farver", repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))'
+          Rscript -e 'if (!requireNamespace("scales", quietly = TRUE)) install.packages("scales", repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))'
+          Rscript -e 'if (!requireNamespace("sdcMicro", quietly = TRUE)) install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))'
 
-     
-      - name: Verify installations
-        run: |
-          Rscript -e 'if (!require("farver")) quit(status=1)'
-          Rscript -e 'if (!require("scales")) quit(status=1)'
-          Rscript -e 'if (!require("sdcMicro")) quit(status=1)'
-          
+      - name: Verify sdcMicro installation
+        run: Rscript -e 'if (!require("sdcMicro", lib=file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))) quit(status = 1)'
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
