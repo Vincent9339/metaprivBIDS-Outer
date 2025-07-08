@@ -39,10 +39,9 @@ jobs:
             r-base r-base-dev libtirpc-dev --quiet
 
       - name: Install only required R package
-        run: 
-          Rscript -e 'install.packages(c("farver", "scales"), repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library")'
-          Rscript -e 'if (!requireNamespace("sdcMicro", quietly = TRUE)) install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0", dependencies=TRUE))'
-      
+        run: |
+          Rscript -e 'install.packages(c("farver", "scales"), repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))'
+          Rscript -e 'if (!requireNamespace("sdcMicro", quietly = TRUE)) install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"), dependencies=TRUE)'      
         
       - name: Verify sdcMicro installation
         run: Rscript -e 'if (!require("sdcMicro", lib=file.path(Sys.getenv("HOME"), "R", "x86_64-pc-linux-gnu-library", "4.0"))) quit(status = 1)'
