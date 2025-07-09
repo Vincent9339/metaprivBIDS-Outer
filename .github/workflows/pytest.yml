@@ -40,7 +40,7 @@ jobs:
 
       - name: Install only required R package
         run: |
-          Rscript -e 'install.packages(c("farver", "scales", "Rcpp", "ggplot2"), repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"))'
+          Rscript -e 'install.packages(c("farver", "scales", "Rcpp"), repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"))'
           Rscript -e 'install.packages("sdcMicro", repos = "https://cloud.r-project.org", lib = Sys.getenv("R_LIBS_USER"), dependencies = TRUE)'
           
       - name: Verify sdcMicro installation
